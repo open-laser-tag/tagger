@@ -5,9 +5,8 @@ uint8_t set_baudrate[5]={0xA1, 0xF3, 0x02, 0x00, 0x00};
 int irData = 0;   // for incoming serial data
 int BluetoothData = 0; // the data given from Computer
 int LED_PIN = 1;
-int BUTTON_PIN = 0;
 
-SoftwareSerial ir(2, 5); // RX, TX
+SoftwareSerial ir(2, 0); // RX, TX
 SoftwareSerial BT(4, 3); // RX, TX
 
 // the setup routine runs once when you press reset:
@@ -16,7 +15,6 @@ void setup() {
         ir.begin(9600);
         BT.begin(9600);
         pinMode(LED_PIN, OUTPUT); //LED on Model A   
-        pinMode(BUTTON_PIN, INPUT);
         ir.write(set_baudrate,sizeof(my_serial_bytes));
         statusblink();
 }
@@ -24,8 +22,6 @@ void setup() {
 
 void loop() {
   
-  if (digitalRead(BUTTON_PIN)) digitalWrite(LED_PIN, HIGH); //ir.write(my_serial_bytes,sizeof(my_serial_bytes));
-  else digitalWrite(LED_PIN, LOW); 
   //digitalWrite(LED_PIN, HIGH);
   //ir.write(my_serial_bytes,sizeof(my_serial_bytes));
   //digitalWrite(LED_PIN, LOW); 
@@ -33,7 +29,7 @@ void loop() {
   read_ir();
   delay(1000);
   read_bt();
-  delay(5000);
+  delay(1000);
 }
 
 
@@ -59,6 +55,7 @@ void read_ir() {
 void read_bt() {
   while (BT.available() > 0) {
     BluetoothData=BT.read();
+    if (BluetoothData='1') ir.write(my_serial_bytes,sizeof(my_serial_bytes));
     statusblink();  
   }
 }
