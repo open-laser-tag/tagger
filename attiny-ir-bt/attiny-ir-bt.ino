@@ -9,6 +9,7 @@ int IR_TX_PIN = 0;
 int IR_RX_PIN = 2;
 int BT_TX_PIN = 3;
 int BT_RX_PIN = 4;
+int BUTTON_PIN = 5;
 
 SoftwareSerial ir(IR_RX_PIN, IR_TX_PIN); // RX, TX
 SoftwareSerial BT(BT_RX_PIN, BT_TX_PIN); // RX, TX
@@ -18,7 +19,8 @@ void setup() {
         statusblink();
         ir.begin(9600);
         BT.begin(9600);
-        pinMode(LED_PIN, OUTPUT); //LED on Model A   
+        pinMode(LED_PIN, OUTPUT); //LED on Model A 
+        pinMode(BUTTON_PIN, INPUT);  
         ir.write(set_baudrate,sizeof(my_serial_bytes));
         statusblink();
 }
@@ -30,6 +32,12 @@ void loop() {
   //ir.write(my_serial_bytes,sizeof(my_serial_bytes));
   //digitalWrite(LED_PIN, LOW); 
   //delay(1000);
+  if (digitalRead(BUTTON_PIN) > 0) {
+    digitalWrite(LED_PIN, HIGH);
+    ir.write(my_serial_bytes,sizeof(my_serial_bytes));
+    digitalWrite(LED_PIN, LOW);
+  }
+  //else  digitalWrite(LED_PIN, LOW);
   read_ir();
   delay(1000);
   read_bt();
@@ -61,5 +69,5 @@ void read_bt() {
     BluetoothData=BT.read();
     if (BluetoothData='1') ir.write(my_serial_bytes,sizeof(my_serial_bytes));
     statusblink();  
-  }
+  }u
 }
