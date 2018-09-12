@@ -5,9 +5,13 @@ uint8_t set_baudrate[5]={0xA1, 0xF3, 0x02, 0x00, 0x00};
 int irData = 0;   // for incoming serial data
 int BluetoothData = 0; // the data given from Computer
 int LED_PIN = 1;
+int IR_TX_PIN = 0;
+int IR_RX_PIN = 2;
+int BT_TX_PIN = 3;
+int BT_RX_PIN = 4;
 
-SoftwareSerial ir(2, 0); // RX, TX
-SoftwareSerial BT(4, 3); // RX, TX
+SoftwareSerial ir(IR_RX_PIN, IR_TX_PIN); // RX, TX
+SoftwareSerial BT(BT_RX_PIN, BT_TX_PIN); // RX, TX
 
 // the setup routine runs once when you press reset:
 void setup() {
