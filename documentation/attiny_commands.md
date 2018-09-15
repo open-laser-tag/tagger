@@ -3,14 +3,17 @@
 | ---------------------	| -------------	| ------------- | ------------- |
 | write to register ...	| 0x01		| 0xXX		| 0xXXXXXXXX	|
 | shoot bytes		| 0x01		| 0x01		| 0x00XXXXXX	|
-| shoot freq.		| 0x01		| 0x02		| t in ms	|
+| shoot frequency	| 0x01		| 0x02		| t in ms	|
 | shoot delay		| 0x01		| 0x03		| t in ms	|
-| shoot duration	| 0x01		| 0x04		| t in ms	|
-| shoot mode ...	| 0x01		| 0x05		| 0xXXXXXXXX	|
-| shoot mode manual	| 0x01		| 0x05		| 0x00000001	|
-| shoot mode burst	| 0x01		| 0x05		| 0x00000002	|
-| shoot mode automatic 	| 0x01		| 0x05		| 0x00000003	|
-| burst shot amount	| 0x01		| 0x06		| 0xXXXXXXXX	|
+| shoot duration min	| 0x01		| 0x04		| t in ms	|
+| shoot duration max	| 0x01		| 0x05		| t in ms	|
+| shoot mode ...	| 0x01		| 0x06		| 0xXXXXXXXX	|
+| shoot mode manual	| 0x01		| 0x06		| 0x00000001	|
+| shoot mode burst	| 0x01		| 0x06		| 0x00000002	|
+| shoot mode automatic 	| 0x01		| 0x06		| 0x00000003	|
+| burst shot amount min	| 0x01		| 0x07		| 0xXXXXXXXX	|
+| burst shot amount max | 0x01		| 0x08		| 0xXXXXXXXX	|
+| burst frequency	| 0x01		| 0x09		| t in ms	|
 | stream mode		| 0x02		| -		| 0xXXXXX....\n	|
 
 * example shoot freq. 512 ms: "0x0102000100"
