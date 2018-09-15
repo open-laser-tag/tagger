@@ -1,4 +1,4 @@
-#include <SoftwareSerial.h>
+#include <SoftSerial.h>
 
 uint8_t my_serial_bytes[5]={0xA1, 0xF1, 0x04, 0xFB, 0x12};
 uint8_t set_baudrate[5]={0xA1, 0xF3, 0x02, 0x00, 0x00};
@@ -11,8 +11,8 @@ int BT_TX_PIN = 3;
 int BT_RX_PIN = 4;
 int BUTTON_PIN = 5;
 
-SoftwareSerial ir(IR_RX_PIN, IR_TX_PIN); // RX, TX
-SoftwareSerial BT(BT_RX_PIN, BT_TX_PIN); // RX, TX
+SoftSerial ir(IR_RX_PIN, IR_TX_PIN); // RX, TX
+SoftSerial BT(BT_RX_PIN, BT_TX_PIN); // RX, TX
 
 // the setup routine runs once when you press reset:
 void setup() {
@@ -69,5 +69,5 @@ void read_bt() {
     BluetoothData=BT.read();
     if (BluetoothData='1') ir.write(my_serial_bytes,sizeof(my_serial_bytes));
     statusblink();  
-  }u
+  }
 }
