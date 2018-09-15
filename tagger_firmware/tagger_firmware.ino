@@ -30,7 +30,7 @@ void loop() {
   unsigned long time_in_ms = millis();
 
       // if threads not exits
-//       create thread check_trigger(time_in_ms, check_interval_trigger_in_ms);
+//       create thread check_trigger(time_in_ms, check_interval_trigger_in_ms, shoot* s);
 //       create thread read_bt(time_in_ms, check_interval_bt_in_ms);
 //       create thread stream_to_bt(time_in_ms, check_interval_ir_in_ms);
 //       create thread stream_to_ir(time_in_ms, check_interval_ir_in_ms);
