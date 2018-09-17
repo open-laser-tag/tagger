@@ -15,7 +15,7 @@ BluetoothSerial bt;
 typedef enum {READY, STREAM} state_t ;
 
 state_t state = READY;
-shoot_config shoot;
+shoot_config shootconf;
 
 // the setup routine runs once when you press reset:
 void setup() {
@@ -28,41 +28,42 @@ void setup() {
 
 void loop() {
   unsigned long time_in_ms = millis();
+  boolean shoot_trigger_pressed,
+          reload_trigger_pressed;
+          
   
       // if threads not exits
-//       create thread check_trigger(time_in_ms, check_interval_trigger_in_ms, shoot* s);
-//       create thread stream_ir_to_bt(time_in_ms, check_interval_ir_in_ms);
+//       create thread check_trigger(&time_in_ms, &shootconf, &shoot_trigger_pressed);
+// create thread shoot(&shootconf, &shoot_trigger_pressed)
+//create thread reload(&shootconf, &reload_trigger_pressed)
+//       create thread stream_ir_to_bt();
+//      create thread check_reload();
 
   switch(state) {
     case READY:
-    //       create thread read_bt(time_in_ms, check_interval_bt_in_ms);
+    //       create thread read_bt(&time_in_ms,);
 
       break;
     case STREAM:
-    //       create thread stream_to_ir(time_in_ms, check_interval_ir_in_ms);
+    //       create thread stream_bt_to_ir(&state);
 
       break;
   }
-
-
-
-  
-  //ir.write(my_serial_bytes,sizeof(my_serial_bytes));
 }
 
-
-void check_trigger(unsigned long *time_in_ms, shoot_config *shoot) {
+//TODO use same function for reload trigger
+void check_trigger(unsigned long *time_in_ms, shoot_config *shootconf) {
   
-  unsigned long old_time_status = 0;
+  unsigned long old_time = 0;
   
   boolean trigger_old_status = false,
-          trigger_pressed = false;
           
   while(true) {
-    if (time_in_ms - old_time_status > CHECK_INTERVAL_TRIGGER_IN_MS) {
+    if (time_in_ms - old_time > CHECK_INTERVAL_TRIGGER_IN_MS) {
       //trigger_pressed = trigger_status();
 
-      if (trigger_pressed =! trigger_old_status) {
+      //TODO?: send trigger status when status changes or every time interval?
+      if (trigger_pressed =! trigger_old) {
         //mutex lock
         //send bt trigger pressed
         //mutex unlock
@@ -70,10 +71,11 @@ void check_trigger(unsigned long *time_in_ms, shoot_config *shoot) {
       }
     }
 
-    //ir_shoot(&shoot, &trigger pressed);
+    //ir_shoot(&shootconf, &trigger pressed);
 }
 
-void ir_shoot(unsigned long *time_in_ms, boolean *trigger_pressed, shoot_config *shoot) {
+//TODO: duration_min when trigger released, shoot mode, burst shot, magazine size
+void ir_shoot(unsigned long *time_in_ms, boolean *trigger_pressed, shoot_config *shootconf) {
 
   unsigned long shoot_timestamp = 0;
   typedef enum {READY, DELAY, SHOOTING, COOLDOWN} shoot_phase;
@@ -86,35 +88,47 @@ void ir_shoot(unsigned long *time_in_ms, boolean *trigger_pressed, shoot_config 
       }
       break;
     case DELAY:
-      if (time_in_ms - shoot_timestamp >= shoot->trigger_delay_in_ms) {
+      if (time_in_ms - shoot_timestamp >= shootconf->trigger_delay_in_ms) {
         shoot_timestamp = time_in_ms;
         shoot_phase = SHOOTING;
       }
       break;
     case SHOOTING:
-      if (time_in_ms - shoot_timestamp >= shoot->duration_max_in_ms) {
+      if (time_in_ms - shoot_timestamp >= shootconf->duration_max_in_ms) {
         shoot_timestamp = time_in_ms;
         shoot_phase = COOLDOWN;
       }
-      else //ir send
+      else //ir send shootconf->shoot bytes
       break;
     case COOLDOWN:
-      if (time_in_ms - shoot_timestamp >= shoot->cooldown_in_ms) {
+      if (time_in_ms - shoot_timestamp >= shootconf->cooldown_in_ms) {
         shoot_phase = READY;
       }
       break;
   }
 }
 
-void read_ir() {
-  while (ir.available() > 0) {
-        ir_data = ir.read();
+void stream_ir_to_bt() {          
+  while(true) {
+    //TODO?: use time interval?
+    while (ir.available() > 0) {
+      ir_data = ir.read();
+      //mutex lock
+      //send bt it_data
+      //mutex unlock
+    }
   }
 }
 
-void read_bt() {
-  while (bt.available() > 0) {
-    bt_data=bt.read();
-    if (bt_data='1') ir.write(my_serial_bytes,sizeof(my_serial_bytes));
+void stream_bt_to_ir(state_t *state) {
+  while (true) {
+    while (bt.available() > 0) {
+      bt_data=bt.read();
+      if (bt_data='\n') {
+        state = READY,
+        return; //TODO? end thread?
+      }
+      else ir.write(bt_data,sizeof(bt_data)); //TODO bt_data data type conversion?
+    }
   }
 }

@@ -12,8 +12,9 @@
 #define ADDR_BURST_AMOUNT_MAX	0x08
 #define ADDR_BURST_FREQ	0x09
 #define PIN_TRIGGER	5
+//#define PIN_RELOAD
 #define CHECK_INTERVAL_TRIGGER_IN_MS 50
-#define SEND_TRIGGER_STATUS 100
+#define SEND_TRIGGER_STATUS 100   //use this or when status change?
 #define CHECK_INTERVAL_BT_IN_MS 100
 #define CHECK_INTERVAL_IR_IN_MS	100
 #define SHOOT_MODE_MANUAL 0x00000001
@@ -30,7 +31,9 @@ typedef struct shoot_config {
 			mode = SHOOT_MODE_MANUAL,
 			burst_amount_min = 1, //one shot per trigger
 			burst_amount_max = 1,
-			burst_cooldown_in_ms = 0;  //no burst shot
+			burst_cooldown_in_ms = 0,  //no burst shot
+      magazine_size = 0, //infinte
+      current_magazine_level = 0;
 } shoot_config;
 
 pthread_t	thread_check_trigger,
