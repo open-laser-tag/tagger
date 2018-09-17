@@ -13,6 +13,18 @@
 | burst shot amount min	| 0x01		| 0x07		| 0xXXXXXXXX	|
 | burst shot amount max | 0x01		| 0x08		| 0xXXXXXXXX	|
 | burst frequency	| 0x01		| 0x09		| t in ms	|
+| magazine size		| 0x01		| 0x0A		| 0xXXXXXXXX	|
 | stream mode		| 0x02		| -		| 0xXXXXX....\n	|
 
 * example shoot freq. 512 ms: "0x0102000100"
+
+** explanation **
+* shoot bytes:
+3 bytes long
+
+* burst shot:
+min = max = 1 => single shot per trigger
+
+* magazine size:
+0 => infinite shots
+x > 0 => x shots per magazine
