@@ -36,6 +36,16 @@ typedef struct shoot_config {
       current_magazine_level = 0;
 } shoot_config;
 
+HardwareSerial ir(1); // rx_pin=3, tx_pin=1
+//HardwareSerial audio(2); //rx_pin=9, tx_pin=10
+//HardwareSerial serial(3); //rx_pin=16, tx_pin=17
+BluetoothSerial bt;
+
+typedef enum {READY, STREAM} state_t ;
+
+state_t state = READY;
+shoot_config shootconf;
+
 pthread_t	thread_check_trigger,
 		thread_read_bt,
 		thread_bt_stream,

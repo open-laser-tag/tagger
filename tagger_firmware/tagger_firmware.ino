@@ -2,23 +2,10 @@
 #include "BluetoothSerial.h"
 #include <pthread.h>
 
-uint8_t my_serial_bytes[5]={0xA1, 0xF1, 0x04, 0xFB, 0x12};
-uint8_t set_baudrate_9600[5]={0xA1, 0xF3, 0x02, 0x00, 0x00};
-int ir_data = 0,   // for incoming serial data
-    bt_data = 0; // the data given from Computer
-    
-HardwareSerial ir(1); // rx_pin=3, tx_pin=1
-HardwareSerial audio(2); //rx_pin=9, tx_pin=10
-//HardwareSerial serial(3); //rx_pin=16, tx_pin=17
-BluetoothSerial bt;
 
-typedef enum {READY, STREAM} state_t ;
-
-state_t state = READY;
-shoot_config shootconf;
-
-// the setup routine runs once when you press reset:
 void setup() {
+  uint8_t set_baudrate_9600[5]={0xA1, 0xF3, 0x02, 0x00, 0x00};
+
         ir.begin(9600);
         bt.begin("ESP32");
         pinMode(PIN_TRIGGER, INPUT);  
@@ -33,7 +20,7 @@ void loop() {
           
   
       // if threads not exits
-//       create thread check_trigger(&time_in_ms, &shootconf, &shoot_trigger_pressed);
+//       create thread check_trigger_interval(&time_in_ms, &shootconf, &shoot_trigger_pressed, CHECK_INTERVAL_TRIGGER_IN_MS);
 // create thread shoot(&shootconf, &shoot_trigger_pressed)
 //create thread reload(&shootconf, &reload_trigger_pressed)
 //       create thread stream_ir_to_bt();
@@ -51,27 +38,22 @@ void loop() {
   }
 }
 
-//TODO use same function for reload trigger
-void check_trigger(unsigned long *time_in_ms, shoot_config *shootconf) {
+void check_button_interval(unsigned long *time_in_ms, boolean *button_status, unsigned long time_interval, int button_pin) {
   
   unsigned long old_time = 0;
-  
-  boolean trigger_old_status = false,
+  boolean button_old_status = false;
           
   while(true) {
-    if (time_in_ms - old_time > CHECK_INTERVAL_TRIGGER_IN_MS) {
-      //trigger_pressed = trigger_status();
+    if (time_in_ms - old_time > time_interval) {
+      //button_status = read(button_pin)
 
-      //TODO?: send trigger status when status changes or every time interval?
       if (trigger_pressed =! trigger_old) {
         //mutex lock
-        //send bt trigger pressed
+        //send bt button status
         //mutex unlock
-        //trigger old status = trigger pressed
+        //button_old_status = trigger pressed
       }
     }
-
-    //ir_shoot(&shootconf, &trigger pressed);
 }
 
 //TODO: duration_min when trigger released, shoot mode, burst shot, magazine size
@@ -108,7 +90,8 @@ void ir_shoot(unsigned long *time_in_ms, boolean *trigger_pressed, shoot_config 
   }
 }
 
-void stream_ir_to_bt() {          
+void stream_ir_to_bt() {       
+  int ir_data = 0;   // for incoming serial data from ir
   while(true) {
     //TODO?: use time interval?
     while (ir.available() > 0) {
@@ -121,6 +104,7 @@ void stream_ir_to_bt() {
 }
 
 void stream_bt_to_ir(state_t *state) {
+  int bt_data = 0; // the data given from smart phone app   
   while (true) {
     while (bt.available() > 0) {
       bt_data=bt.read();
