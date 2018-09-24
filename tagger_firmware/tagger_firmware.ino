@@ -91,7 +91,7 @@ void setup() {
 
 
 
-//very shot loop function, is this a good style? I don't know
+//very short loop function, is this a good style? I don't know
 void loop() {
   time_in_ms = millis();
 }
