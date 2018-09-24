@@ -70,6 +70,7 @@ void ir_shoot(unsigned long *time_in_ms) {
         shoot_timestamp = *time_in_ms;
         shoot_phase = COOLDOWN;
       }
+      //TODO disable interrupt to not disturb ir?
       else //ir send shootconf->shoot bytes
       break;
     case COOLDOWN:

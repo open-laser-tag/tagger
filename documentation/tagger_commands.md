@@ -12,9 +12,10 @@
 | shoot mode automatic 	| 0x01		| 0x06		| 0x00000002	|
 | burst shot amount min	| 0x01		| 0x07		| 0xXXXXXXXX	|
 | burst shot amount max | 0x01		| 0x08		| 0xXXXXXXXX	|
-| burst frequency	| 0x01		| 0x09		| t in ms	|
+| burst cooldown	| 0x01		| 0x09		| t in ms	|
 | magazine size		| 0x01		| 0x0A		| 0xXXXXXXXX	|
 | stream mode		| 0x02		| -		| 0xXXXXX....\n	|
+| read register		| 0x03		| 0xXX		| 0x00000000	|
 
 * example shoot freq. 512 ms: "0x0102000100"
 
