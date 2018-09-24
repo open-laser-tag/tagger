@@ -45,8 +45,8 @@ typedef struct Shoot_config {
 Shoot_config    shootconf;
 volatile bool   trigger_status=false;
 unsigned long   time_in_ms = millis(); 
-pthread_t       thread_stream_to_bt;
-pthread_t       thread_ir_shoot;
+pthread_t       thread_send_bt;
+pthread_t       thread_send_ir;
 pthread_t       thread_handle_bt;
 
 typedef enum    {AUTONOMOUS, STREAM}    state_t;
@@ -78,10 +78,9 @@ void setup() {
   ir.write(set_ir_baudrate_9600,sizeof(set_ir_baudrate_9600));
 
   //create threads
-  pthread_create(&thread_stream_to_bt, NULL, stream_to_bt, (void *)i);// i is here for no reason, I didn't make it compile without  
-  pthread_create(&thread_ir_shoot, NULL, ir_shoot, (void *)i );// i is here for no reason, I didn't make it compile without  
+  pthread_create(&thread_send_bt, NULL, send_bt, (void *)i);// i is here for no reason, I didn't make it compile without  
+  pthread_create(&thread_send_ir, NULL, send_ir, (void *)i );// i is here for no reason, I didn't make it compile without  
   pthread_create(&thread_handle_bt, NULL, handle_bt, (void *)i );// i is here for no reason, I didn't make it compile without  
-
 }
 
 
@@ -112,42 +111,51 @@ void handle_trigger() {
 }
 
 //TODO: duration_min when trigger released, shoot mode, burst shot, magazine size
-void *ir_shoot(void *i) {
+void *send_ir(void *i) {
 
   unsigned long shoot_timestamp = 0;
   typedef enum {READY, DELAY, SHOOTING, COOLDOWN} shoot_status;
   shoot_status shoot_phase;
-  
-  switch(shoot_phase) {
-    case READY:
-      if (trigger_status) {
-        shoot_timestamp = time_in_ms;
-        shoot_phase = DELAY;
-      }
+
+  switch(state) {
+    case STREAM:
+      // do nothing
       break;
-    case DELAY:
-      if (time_in_ms - shoot_timestamp >= shootconf.trigger_delay_in_ms) {
-        shoot_timestamp = time_in_ms;
-        shoot_phase = SHOOTING;
-      }
-      break;
-    case SHOOTING:
-      if (time_in_ms - shoot_timestamp >= shootconf.duration_max_in_ms) {
-        shoot_timestamp = time_in_ms;
-        shoot_phase = COOLDOWN;
-      }
-      //TODO disable interrupt to not disturb ir?
-      else //TODO ir send shootconf->shoot bytes
-      break;
-    case COOLDOWN:
-      if (time_in_ms - shoot_timestamp >= shootconf.cooldown_in_ms) {
-        shoot_phase = READY;
+      
+    case AUTONOMOUS:
+
+      switch(shoot_phase) {
+        case READY:
+          if (trigger_status) {
+            shoot_timestamp = time_in_ms;
+            shoot_phase = DELAY;
+          }
+          break;
+        case DELAY:
+          if (time_in_ms - shoot_timestamp >= shootconf.trigger_delay_in_ms) {
+            shoot_timestamp = time_in_ms;
+            shoot_phase = SHOOTING;
+          }
+          break;
+        case SHOOTING:
+          if (time_in_ms - shoot_timestamp >= shootconf.duration_max_in_ms) {
+            shoot_timestamp = time_in_ms;
+            shoot_phase = COOLDOWN;
+          }
+          //TODO disable interrupt to not disturb ir?
+          else //TODO ir send shootconf->shoot bytes
+          break;
+        case COOLDOWN:
+          if (time_in_ms - shoot_timestamp >= shootconf.cooldown_in_ms) {
+            shoot_phase = READY;
+          }
+          break;
       }
       break;
   }
 }
 
-void *stream_to_bt(void *i) { // i is here for no reason, I didn't make it compile without  
+void *send_bt(void *i) { // i is here for no reason, I didn't make it compile without  
   int ir_data = 0;   // for incoming serial data from ir
   bool trigger_old_status = false;
 
