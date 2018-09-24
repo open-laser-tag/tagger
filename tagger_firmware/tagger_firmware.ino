@@ -100,7 +100,7 @@ void stream_to_bt() {
 }
 
 void stream_bt_to_ir() {
-  byte bt_data = 0; // the data given from smart phone app  
+  unsigned char bt_data = 0; // the data given from smart phone app  
    
   while (true) {
     while (bt.available() > 0) {
@@ -114,18 +114,18 @@ void stream_bt_to_ir() {
   }
 }
 
-void write_to_config(byte bt_data[BT_MESSAGE_LENGHT], unsigned long *conf) {
+void write_to_config(unsigned char bt_data[BT_MESSAGE_LENGHT], unsigned long *conf) {
 
   *conf = 0;
   
   for (int i=0; i<DATA_BYTES_LENGHT-1; i++) {
-      shootconf.send_bytes <<= sizeof(byte);
+      shootconf.send_bytes <<= sizeof(unsigned char);
       *conf |= (unsigned long)(bt_data[DATA_BYTES_POS+i]);
   }
 }
 
 void handle_bt() {
-  byte bt_data[BT_MESSAGE_LENGHT];
+  unsigned char bt_data[BT_MESSAGE_LENGHT];
   uint8_t byte_counter=0; 
   
   while(true) {
@@ -164,7 +164,7 @@ void handle_bt() {
 
         //error when unknown command byte
         // TODO else error
-        memset(bt_data,0,BT_MESSAGE_LENGHT*sizeof(byte));
+        memset(bt_data,0,BT_MESSAGE_LENGHT*sizeof(unsigned char));
         byte_counter = 0;
         }
       }

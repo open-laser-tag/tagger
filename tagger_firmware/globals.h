@@ -41,7 +41,7 @@ typedef struct Shoot_config {
 } Shoot_config;
 Shoot_config shootconf;
 
-volatile boolean  trigger_status=false;
+volatile bool  trigger_status=false;
 
 typedef enum {READY, STREAM} state_t ;
 state_t state = READY;
