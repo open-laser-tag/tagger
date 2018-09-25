@@ -53,7 +53,7 @@ typedef enum    {AUTONOMOUS, STREAM}    state_t;
 state_t         state = AUTONOMOUS;
 
 HardwareSerial  ir(1); // rx_pin=3, tx_pin=1
-//HardwareSerial audio(2); //rx_pin=9, tx_handleInterruptpin=10
+//HardwareSerial audio(2); //rx_pin=9, tx_pin=10
 //HardwareSerial serial(3); //rx_pin=16, tx_pin=17
 BluetoothSerial bt;
 
@@ -67,8 +67,6 @@ BluetoothSerial bt;
 
 void setup() {
   uint8_t set_ir_baudrate_9600[5]={0xA1, 0xF3, 0x02, 0x00, 0x00};
-  //void *stream_to_bt_ptr = &stream_to_bt;
-  //int returnValue;
   int i=0; // i is here for no reason, I didn't make it compile without  
 
   ir.begin(9600);
@@ -110,7 +108,7 @@ void handle_trigger() {
   return;
 }
 
-//TODO: duration_min when trigger released, shoot mode, burst shot, magazine size
+//TODO: burst shot, magazine size
 void *send_ir(void *i) {
 
   unsigned long shoot_timestamp = 0;
@@ -125,29 +123,55 @@ void *send_ir(void *i) {
     case AUTONOMOUS:
 
       switch(shoot_phase) {
+
+        
+        //ready to receive trigger signal
         case READY:
           if (trigger_status) {
             shoot_timestamp = time_in_ms;
             shoot_phase = DELAY;
           }
           break;
+
+        //do nothing until delay is over
         case DELAY:
           if (time_in_ms - shoot_timestamp >= shootconf.trigger_delay_in_ms) {
             shoot_timestamp = time_in_ms;
             shoot_phase = SHOOTING;
           }
           break;
+
+        //send ir, duration depending on trigger status
         case SHOOTING:
-          if (time_in_ms - shoot_timestamp >= shootconf.duration_max_in_ms) {
-            shoot_timestamp = time_in_ms;
-            shoot_phase = COOLDOWN;
+        
+          //trigger pressed: long shot
+          if (trigger_status) { 
+            if (time_in_ms - shoot_timestamp >= shootconf.duration_max_in_ms) {
+              shoot_timestamp = time_in_ms;
+              shoot_phase = COOLDOWN;
+            }            
+            //TODO disable interrupt to not disturb ir?
+            else //TODO ir send shootconf->shoot bytes
           }
-          //TODO disable interrupt to not disturb ir?
-          else //TODO ir send shootconf->shoot bytes
+          
+          //trigger released: short shot
+          else { 
+            if (time_in_ms - shoot_timestamp >= shootconf.duration_min_in_ms) {
+              shoot_timestamp = time_in_ms;
+              shoot_phase = COOLDOWN;
+            //TODO disable interrupt to not disturb ir?
+            else //TODO ir send shootconf->shoot bytes
+          }
           break;
+
+        //befor getting ready, wait for cooldown, depending on mode
         case COOLDOWN:
           if (time_in_ms - shoot_timestamp >= shootconf.cooldown_in_ms) {
-            shoot_phase = READY;
+            if (shootconf.smode == SHOOT_MODE_MANUAL && !trigger_status) { //leave cooldown in manual mode only when trigger released
+              shoot_phase = READY;
+            else if (shootconf.smode == SHOOT_MODE_AUTO)
+              shoot_phase = READY;
+            }
           }
           break;
       }
