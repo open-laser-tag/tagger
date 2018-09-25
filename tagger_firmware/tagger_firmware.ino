@@ -126,7 +126,6 @@ void *send_ir(void *i) {
   
         switch(shoot_phase) {
   
-          
           //ready to receive trigger signal
           case READY:
             if (trigger_status) {
@@ -155,9 +154,6 @@ void *send_ir(void *i) {
 
                 if (shootconf.burst_amount_max >= burst_counter) shoot_phase = BURST_COOLDOWN;
                 else shoot_phase = COOLDOWN;
-
-                
-                
               }            
               //TODO disable interrupt to not disturb ir?
               //else //TODO ir send shootconf->shoot bytes
