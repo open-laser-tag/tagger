@@ -6,7 +6,7 @@
 #define BT_MESSAGE_LENGHT 6
 #define COMMAND_WRITE 0x01
 #define COMMAND_STREAM 0x02
-#define COMMAND_READ 0x03
+#define COMMAND_READ 0x03 //TODO not used yet
 #define ADDR_SEND_BYTES  0x01
 #define ADDR_SHOOT_COOLDOWN 0x02
 #define ADDR_SHOOT_DELAY 0x03
@@ -19,9 +19,9 @@
 #define ADDR_MAGAZINE_SIZE 0x0A
 #define PIN_TRIGGER 5
 //#define PIN_RELOAD
-#define SEND_TRIGGER_STATUS_INTERVAL 100   //use this or when status change?
-#define CHECK_INTERVAL_BT_IN_MS 100
-#define CHECK_INTERVAL_IR_IN_MS 100
+#define SEND_TRIGGER_STATUS_INTERVAL 100   //use this or when status change? not used
+#define CHECK_INTERVAL_BT_IN_MS 100 //not used
+#define CHECK_INTERVAL_IR_IN_MS 100 //not used
 #define SHOOT_MODE_MANUAL 0x00000001
 #define SHOOT_MODE_AUTO 0x00000002
 
@@ -209,13 +209,15 @@ void *send_bt(void *i) { // i is here for no reason, I didn't make it compile wi
   while(true) {
     //TODO?: use time interval?
     if (trigger_status =! trigger_old_status) {
-        //send bt trigger status
+        bt.println("Trigger status: ");
+        bt.print(trigger_status);
         trigger_old_status = trigger_status;
       }
     else {
       while (ir.available() > 0) {
         ir_data = ir.read();
-        //send bt it_data
+        bt.println("Incoming IR:");
+        bt.print(ir_data); //TODO: is this correct?
       }
     }
   }
