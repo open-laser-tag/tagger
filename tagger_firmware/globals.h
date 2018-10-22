@@ -1,3 +1,5 @@
+#include "BluetoothSerial.h"
+
 #define ONBOARDLED_PIN            2
 #define DATA_BYTES_POS 2 //0 command byte, 1 address byte, 2 data bytes
 #define DATA_BYTES_LENGHT 4 //sizeof unsinged long
@@ -22,16 +24,16 @@
 #define CHECK_INTERVAL_IR_IN_MS 100 //not used
 #define SHOOT_MODE_MANUAL 0x00000001
 #define SHOOT_MODE_AUTO 0x00000002
-#define TIMING_RESOLUTION_IN_MS 10
+//#define TIMING_RESOLUTION_IN_MS 10
 
 //struct for configuration of ir behaviour when in autonomous mode
 typedef struct Shoot_config {
   //unsigned long = 4 bytes
   unsigned long send_bytes = 0x00FFFFFF, //standard value without bt connection
-                cooldown_in_ms = 1000, //min 1000 ms break after end of shot
-                trigger_delay_in_ms = 1000,  //0 ms delay after triggershoot
-                duration_min_in_ms = 100, //shot duration 100 ms
-                duration_max_in_ms = 100,
+                cooldown_in_ms = 3000, //min 1000 ms break after end of shot
+                trigger_delay_in_ms = 0,  //0 ms delay after triggershoot
+                duration_min_in_ms = 1000, //shot duration 100 ms
+                duration_max_in_ms = 6000,
                 smode = SHOOT_MODE_MANUAL,
                 burst_amount_min = 1, //one shot per trigger
                 burst_amount_max = 1,
@@ -42,12 +44,11 @@ typedef struct Shoot_config {
 Shoot_config    shootconf;
 
 unsigned long shoot_timestamp = 0,
-              burst_counter=0,
-              time_in_ms = 0; 
+              burst_counter=0;
 
 volatile bool   trigger_pressed=false;
 
-typedef enum {READY, DELAY, SHOOTING /*, COOLDOWN, BURST_COOLDOWN*/} shoot_status;
+typedef enum {READY, DELAY, SHOOTING , COOLDOWN/*, BURST_COOLDOWN*/} shoot_status;
 shoot_status shoot_phase = READY;
 
 typedef enum    {AUTONOMOUS, STREAM}    state_t;
@@ -55,8 +56,9 @@ state_t         state = AUTONOMOUS;
 
 TaskHandle_t  xHandle_handle_ir,
               xHandle_blink_led,
-              xHandle_send_ir;
+              xHandle_send_ir,
+              xHandle_handle_bt;
               
-
+BluetoothSerial bt;
 HardwareSerial ir(2); //rx_pin=16, tx_pin=17
 HardwareSerial usb(0); // rx_pin=3, tx_pin=1

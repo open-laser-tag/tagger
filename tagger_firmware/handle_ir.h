@@ -1,4 +1,4 @@
-void handle_ir( void * parameter) {
+void handle_ir(void * parameter) {
   int             ir_data = 0;   // for incoming serial data from ir
   
   while(true) {
