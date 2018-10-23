@@ -4,11 +4,12 @@
 #include "handle_bt.h"
 
 void setup() {
-
+  
   usb.begin(115200);   
   ir.begin(9600); 
-  if(bt.begin("ESP32")) usb.println("BT successfully");
-  else usb.println("An error occurred initializing Bluetooth");
+
+  //if(bt.begin("ESP32")) usb.println("BT successfully");
+  //else usb.println("An error occurred initializing Bluetooth");
   
   pinMode(ONBOARDLED_PIN, OUTPUT);
   pinMode(PIN_TRIGGER, INPUT_PULLUP);
@@ -16,7 +17,8 @@ void setup() {
 
   uint8_t set_ir_baudrate_9600[5]={0xA1, 0xF3, 0x02, 0x00, 0x00};
   ir.write(set_ir_baudrate_9600,sizeof(set_ir_baudrate_9600));
-
+  
+  init_ble();
 
   xTaskCreate(
     handle_ir,            /* Task function. */
@@ -45,14 +47,14 @@ void setup() {
     &xHandle_send_ir      /* Task handle to keep track of created task */
   );
 
-  xTaskCreate(
-    handle_bt,              /* Task function. */
-    "handle_bt",            /* name of task. */
-    10000,                 /* Stack size of task */
-    NULL,                 /* parameter of the task */
-    1,                    /* priority of the task */
-    &xHandle_handle_bt      /* Task handle to keep track of created task */
-  );
+//  xTaskCreate(
+//    handle_bt,              /* Task function. */
+//    "handle_bt",            /* name of task. */
+//    10000,                 /* Stack size of task */
+//    NULL,                 /* parameter of the task */
+//    1,                    /* priority of the task */
+//    &xHandle_handle_bt      /* Task handle to keep track of created task */
+//  );
 }
 
 void loop() {  vTaskDelay(portMAX_DELAY); /*wait as much as posible ... */ }

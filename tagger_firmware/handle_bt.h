@@ -1,17 +1,64 @@
-void handle_bt(void * parameter) {
-  int bt_data = 0;   // for incoming serial data from ir
-  
-  while(true) {
-    while (bt.available() > 0) {
-        bt_data = bt.read();
-        usb.print("Incoming BT: ");
-        usb.print(bt_data); //TODO: is this correct?
-        usb.print("\n");
+
+class MyCallbacks: public BLECharacteristicCallbacks {
+    void onWrite(BLECharacteristic *pCharacteristic) {
+      std::string value = pCharacteristic->getValue();
+
+      if (value.length() > 0) {
+        usb.println("*********");
+        usb.print("New value: ");
+        for (int i = 0; i < value.length(); i++)
+          usb.print(value[i]);
+
+        usb.println();
+        usb.println("*********");
+      }
     }
-    bt.println("Hi, I'm BT");
-    vTaskDelay(500 / portTICK_PERIOD_MS); //Block for 500ms.
-  }
+};
+
+void init_ble() {
+  /*
+    Based on Neil Kolban example for IDF: https://github.com/nkolban/esp32-snippets/blob/master/cpp_utils/tests/BLE%20Tests/SampleServer.cpp
+    Ported to Arduino ESP32 by Evandro Copercini
+  */
+  usb.println("Starting BLE work!");
+
+  BLEDevice::init("ESP32");
+  BLEServer *pServer = BLEDevice::createServer();
+
+  BLEService *pService = pServer->createService(SERVICE_UUID);
+
+  BLECharacteristic *pCharacteristic = pService->createCharacteristic(
+                                         CHARACTERISTIC_UUID,
+                                         BLECharacteristic::PROPERTY_READ |
+                                         BLECharacteristic::PROPERTY_WRITE
+                                       );
+
+  pCharacteristic->setCallbacks(new MyCallbacks());
+
+  pCharacteristic->setValue("Hello World");
+  pService->start();
+
+  BLEAdvertising *pAdvertising = pServer->getAdvertising();
+  pAdvertising->start();
+  
+  usb.println("Characteristic defined! Now you can read it in your phone!");
 }
+
+
+//void handle_bt(void * parameter) {
+//  int bt_data = 0;   // for incoming serial data from ir
+//  
+//  while(true) {
+//    while (ble.available() > 0) {
+//        bt_data = ble.read();
+//        usb.print("Incoming BT: ");
+//        usb.print(bt_data); //TODO: is this correct?
+//        usb.print("\n");
+//    }
+//    ble.println("Hi, I'm BT");
+//    vTaskDelay(500 / portTICK_PERIOD_MS); //Block for 500ms.
+//  }
+//}
 
 //void bt_to_config() {
 //

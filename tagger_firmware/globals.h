@@ -1,5 +1,6 @@
-#include "BluetoothSerial.h"
-
+#include <BLEDevice.h>
+#include <BLEUtils.h>
+#include <BLEServer.h>
 #define ONBOARDLED_PIN            2
 #define DATA_BYTES_POS 2 //0 command byte, 1 address byte, 2 data bytes
 #define DATA_BYTES_LENGHT 4 //sizeof unsinged long
@@ -25,6 +26,11 @@
 #define SHOOT_MODE_MANUAL 0x00000001
 #define SHOOT_MODE_AUTO 0x00000002
 //#define TIMING_RESOLUTION_IN_MS 10
+
+// See the following for generating UUIDs:
+// https://www.uuidgenerator.net/
+#define SERVICE_UUID        "08dbb28a-ce2c-467a-9f12-4f15d574a220"
+#define CHARACTERISTIC_UUID "756ad6a4-2007-4dc4-9173-72dc7d6b2627"
 
 //struct for configuration of ir behaviour when in autonomous mode
 typedef struct Shoot_config {
@@ -59,6 +65,6 @@ TaskHandle_t  xHandle_handle_ir,
               xHandle_send_ir,
               xHandle_handle_bt;
               
-BluetoothSerial bt;
+//BluetoothSerial bt;
 HardwareSerial ir(2); //rx_pin=16, tx_pin=17
 HardwareSerial usb(0); // rx_pin=3, tx_pin=1
