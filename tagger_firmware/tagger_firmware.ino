@@ -1,7 +1,8 @@
 #include "globals.h"
-#include "send_ir.h"
 #include "handle_ir.h"
 #include "handle_bt.h"
+#include "send_ir.h"
+
 
 void setup() {
   
@@ -39,22 +40,13 @@ void setup() {
   );
 
   xTaskCreate(
-    send_ir,              /* Task function. */
-    "send_ir",            /* name of task. */
+    do_shoot_logic,              /* Task function. */
+    "do_shoot_logic",            /* name of task. */
     10000,                 /* Stack size of task */
     NULL,                 /* parameter of the task */
     1,                    /* priority of the task */
     &xHandle_send_ir      /* Task handle to keep track of created task */
   );
-
-//  xTaskCreate(
-//    handle_bt,              /* Task function. */
-//    "handle_bt",            /* name of task. */
-//    10000,                 /* Stack size of task */
-//    NULL,                 /* parameter of the task */
-//    1,                    /* priority of the task */
-//    &xHandle_handle_bt      /* Task handle to keep track of created task */
-//  );
 }
 
 void loop() {  vTaskDelay(portMAX_DELAY); /*wait as much as posible ... */ }

@@ -1,10 +1,9 @@
 #include <BLEDevice.h>
 #include <BLEUtils.h>
 #include <BLEServer.h>
-#define ONBOARDLED_PIN            2
-#define DATA_BYTES_POS 2 //0 command byte, 1 address byte, 2 data bytes
+
+#define ONBOARDLED_PIN 2
 #define DATA_BYTES_LENGHT 4 //sizeof unsinged long
-#define BT_MESSAGE_LENGHT 6
 #define COMMAND_WRITE 0x01
 #define COMMAND_STREAM 0x02
 #define COMMAND_READ 0x03 //TODO not used yet
@@ -37,7 +36,7 @@ typedef struct Shoot_config {
   //unsigned long = 4 bytes
   unsigned long send_bytes = 0x00FFFFFF, //standard value without bt connection
                 cooldown_in_ms = 3000, //min 1000 ms break after end of shot
-                trigger_delay_in_ms = 0,  //0 ms delay after triggershoot
+                trigger_delay_in_ms = 1000,  //0 ms delay after triggershoot
                 duration_min_in_ms = 1000, //shot duration 100 ms
                 duration_max_in_ms = 6000,
                 smode = SHOOT_MODE_MANUAL,
@@ -50,7 +49,8 @@ typedef struct Shoot_config {
 Shoot_config    shootconf;
 
 unsigned long shoot_timestamp = 0,
-              burst_counter=0;
+              burst_counter=0,
+              latenz_timestamp=0;
 
 volatile bool   trigger_pressed=false;
 
@@ -68,3 +68,6 @@ TaskHandle_t  xHandle_handle_ir,
 //BluetoothSerial bt;
 HardwareSerial ir(2); //rx_pin=16, tx_pin=17
 HardwareSerial usb(0); // rx_pin=3, tx_pin=1
+
+bool deviceConnected = false;
+BLECharacteristic *pCharacteristic;

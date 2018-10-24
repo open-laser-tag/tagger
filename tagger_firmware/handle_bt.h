@@ -1,5 +1,60 @@
+void handle_bt_data(std::string bt_data) {
+
+  //check size of message
+  if (bt_data.size() != 2+DATA_BYTES_LENGHT) {
+    usb.println("Error: Wrong message size (allowed only 6): ");
+    usb.print(bt_data.size()+'\n');
+    return;
+  }
+
+  //interprete bt data
+  unsigned char ctrl_byte = bt_data.at(0);
+  unsigned char addr_byte = bt_data.at(1);
+  std::string bt_data_subset = bt_data.substr(2, 2+DATA_BYTES_LENGHT);
+  unsigned long data_bytes = *bt_data_subset.c_str(); //TODO: is this right?
+  usb.println(bt_data_subset.c_str());
+  
+  //when command byte == COMMAND_STREAM go directly to stream mode
+  if(ctrl_byte == COMMAND_STREAM) {
+    usb.println("changing state to stream mode");
+    state = STREAM;
+    return;
+  }
+  
+  else if(ctrl_byte == COMMAND_WRITE) {
+
+    usb.println("writing to config");
+  
+    //check address byte and write to conf
+    if(addr_byte == ADDR_SEND_BYTES) shootconf.send_bytes = data_bytes;
+    else if(addr_byte == ADDR_SHOOT_COOLDOWN) shootconf.cooldown_in_ms = data_bytes;
+    else if(addr_byte == ADDR_SHOOT_DELAY) shootconf.trigger_delay_in_ms = data_bytes;
+    else if(addr_byte == ADDR_SHOOT_DURATION_MIN) shootconf.duration_min_in_ms = data_bytes;
+    else if(addr_byte == ADDR_SHOOT_DURATION_MAX) shootconf.duration_max_in_ms = data_bytes;
+    else if(addr_byte == ADDR_SHOOT_MODE) shootconf.smode = data_bytes;
+    else if(addr_byte == ADDR_BURST_AMOUNT_MIN) shootconf.burst_amount_min = data_bytes;
+    else if(addr_byte == ADDR_BURST_AMOUNT_MAX) shootconf.burst_amount_max = data_bytes;
+    else if(addr_byte == ADDR_BURST_COOLDOWN) shootconf.burst_cooldown_in_ms = data_bytes;
+    else if(addr_byte == ADDR_MAGAZINE_SIZE) shootconf.magazine_size = data_bytes;        
+    else usb.println("unknown address");
+  }
+
+  else if (ctrl_byte == COMMAND_READ) {
+      //TODO send config via bt
+  
+  }
+
+  else usb.println("unknown command");
+}
 
 class MyCallbacks: public BLECharacteristicCallbacks {
+      void onConnect(BLEServer* pServer) {
+      deviceConnected = true;
+    };
+
+    void onDisconnect(BLEServer* pServer) {
+      deviceConnected = false;
+    }
     void onWrite(BLECharacteristic *pCharacteristic) {
       std::string value = pCharacteristic->getValue();
 
@@ -8,9 +63,20 @@ class MyCallbacks: public BLECharacteristicCallbacks {
         usb.print("New value: ");
         for (int i = 0; i < value.length(); i++)
           usb.print(value[i]);
-
         usb.println();
         usb.println("*********");
+
+        switch(state) {
+          case STREAM: {
+            ir.write((const unsigned char*)value.c_str(),value.length()); //TODO: is this right?
+            unsigned long latenz = millis() - latenz_timestamp;
+            usb.println(latenz);
+          } break;
+
+          case AUTONOMOUS: {
+            handle_bt_data(value);
+          } break;
+        }
       }
     }
 };
@@ -27,7 +93,7 @@ void init_ble() {
 
   BLEService *pService = pServer->createService(SERVICE_UUID);
 
-  BLECharacteristic *pCharacteristic = pService->createCharacteristic(
+  pCharacteristic = pService->createCharacteristic(
                                          CHARACTERISTIC_UUID,
                                          BLECharacteristic::PROPERTY_READ |
                                          BLECharacteristic::PROPERTY_WRITE
@@ -43,79 +109,3 @@ void init_ble() {
   
   usb.println("Characteristic defined! Now you can read it in your phone!");
 }
-
-
-//void handle_bt(void * parameter) {
-//  int bt_data = 0;   // for incoming serial data from ir
-//  
-//  while(true) {
-//    while (ble.available() > 0) {
-//        bt_data = ble.read();
-//        usb.print("Incoming BT: ");
-//        usb.print(bt_data); //TODO: is this correct?
-//        usb.print("\n");
-//    }
-//    ble.println("Hi, I'm BT");
-//    vTaskDelay(500 / portTICK_PERIOD_MS); //Block for 500ms.
-//  }
-//}
-
-//void bt_to_config() {
-//
-//  unsigned char bt_data[BT_MESSAGE_LENGHT];
-//  uint8_t byte_counter=0; 
-//  
-//  while(true) {
-//
-//    if (bt.available() > 0) {
-//      bt_data[byte_counter]=bt.read();
-//      byte_counter++;
-//      
-//      //when command byte == COMMAND_STREAM go directly to stream mode
-//      if(bt_data[0] == COMMAND_STREAM) {
-//        state = STREAM;
-//        return;
-//      }
-//      
-//      //receive BT_MESSAGE_LENGHT bytes then handle message
-//      else if(byte_counter >= BT_MESSAGE_LENGHT) {
-//        //check command byte
-//        if(bt_data[0] == COMMAND_WRITE) {
-//      
-//          //check address byte and write to conf
-//          if(bt_data[1] == ADDR_SEND_BYTES) write_to_config(bt_data, &shootconf.send_bytes);
-//          else if(bt_data[1] == ADDR_SHOOT_COOLDOWN) write_to_config(bt_data, &shootconf.cooldown_in_ms);
-//          else if(bt_data[1] == ADDR_SHOOT_DELAY) write_to_config(bt_data, &shootconf.trigger_delay_in_ms);
-//          else if(bt_data[1] == ADDR_SHOOT_DURATION_MIN) write_to_config(bt_data, &shootconf.duration_min_in_ms);
-//          else if(bt_data[1] == ADDR_SHOOT_DURATION_MAX) write_to_config(bt_data, &shootconf.duration_max_in_ms);
-//          else if(bt_data[1] == ADDR_SHOOT_MODE) write_to_config(bt_data, &shootconf.smode);
-//          else if(bt_data[1] == ADDR_BURST_AMOUNT_MIN) write_to_config(bt_data, &shootconf.burst_amount_min);
-//          else if(bt_data[1] == ADDR_BURST_AMOUNT_MAX) write_to_config(bt_data, &shootconf.burst_amount_max);
-//          else if(bt_data[1] == ADDR_BURST_COOLDOWN) write_to_config(bt_data, &shootconf.burst_cooldown_in_ms);
-//          else if(bt_data[1] == ADDR_MAGAZINE_SIZE) write_to_config(bt_data, &shootconf.magazine_size);        
-//      
-//          //TODO else error when unknown address
-//        }
-//      
-//        else if (bt_data[0] == COMMAND_READ) {
-//            //TODO send config via bt
-//        
-//          //error when unknown command byte
-//          // TODO else error
-//          memset(bt_data,0,BT_MESSAGE_LENGHT*sizeof(unsigned char));
-//          byte_counter = 0;
-//        }
-//      }
-//    }
-//  }
-//}
-//
-//void write_to_config(unsigned char bt_data[BT_MESSAGE_LENGHT], unsigned long *conf) {
-//
-//  *conf = 0;
-//  
-//  for (int i=0; i<DATA_BYTES_LENGHT-1; i++) {
-//      shootconf.send_bytes <<= sizeof(unsigned char);
-//      *conf |= (unsigned long)(bt_data[DATA_BYTES_POS+i]);
-//  }
-//}
