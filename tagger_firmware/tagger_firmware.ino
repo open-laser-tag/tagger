@@ -9,8 +9,9 @@ void setup() {
   usb.begin(115200);   
   ir.begin(9600); 
 
-  //if(bt.begin("ESP32")) usb.println("BT successfully");
-  //else usb.println("An error occurred initializing Bluetooth");
+  usb.println("starting in stream mode");
+  usb.println("data received by BT is directly sent to ir module");
+  usb.println("send ir with A1F1XXXXXX");
   
   pinMode(ONBOARDLED_PIN, OUTPUT);
   pinMode(PIN_TRIGGER, INPUT_PULLUP);
@@ -46,6 +47,15 @@ void setup() {
     NULL,                 /* parameter of the task */
     1,                    /* priority of the task */
     &xHandle_send_ir      /* Task handle to keep track of created task */
+  );
+  
+  xTaskCreate(
+    send_bt,              /* Task function. */
+    "send_bt",            /* name of task. */
+    10000,                 /* Stack size of task */
+    NULL,                 /* parameter of the task */
+    1,                    /* priority of the task */
+    &xHandle_send_bt      /* Task handle to keep track of created task */
   );
 }
 

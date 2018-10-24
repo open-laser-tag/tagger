@@ -1,3 +1,12 @@
+void send_bt(void * parameter) {
+  while(true) {
+    usb.println("sending via bt");
+    pCharacteristic->setValue((int&)trigger_pressed);
+    pCharacteristic->notify();
+    vTaskSuspend(NULL); //suspend task until reactivated by handle_trigger()
+  }
+}
+
 void handle_bt_data(std::string bt_data) {
 
   //check size of message
@@ -48,29 +57,24 @@ void handle_bt_data(std::string bt_data) {
 }
 
 class MyCallbacks: public BLECharacteristicCallbacks {
-      void onConnect(BLEServer* pServer) {
-      deviceConnected = true;
-    };
 
-    void onDisconnect(BLEServer* pServer) {
-      deviceConnected = false;
-    }
     void onWrite(BLECharacteristic *pCharacteristic) {
       std::string value = pCharacteristic->getValue();
 
       if (value.length() > 0) {
-        usb.println("*********");
-        usb.print("New value: ");
+        usb.print("bt incoming: ");
         for (int i = 0; i < value.length(); i++)
           usb.print(value[i]);
         usb.println();
-        usb.println("*********");
 
         switch(state) {
           case STREAM: {
             ir.write((const unsigned char*)value.c_str(),value.length()); //TODO: is this right?
             unsigned long latenz = millis() - latenz_timestamp;
+            usb.println("latency value: ");
             usb.println(latenz);
+            usb.println("sent to ir module: ");
+            usb.println(value.c_str());
           } break;
 
           case AUTONOMOUS: {
@@ -81,31 +85,50 @@ class MyCallbacks: public BLECharacteristicCallbacks {
     }
 };
 
+class MyServerCallbacks: public BLEServerCallbacks {
+    void onConnect(BLEServer* pServer) {
+
+      usb.println("device connected");
+      deviceConnected = true;
+    };
+
+    void onDisconnect(BLEServer* pServer) {
+      usb.println("device disconnected");
+      deviceConnected = false;
+    }
+};
+
 void init_ble() {
   /*
     Based on Neil Kolban example for IDF: https://github.com/nkolban/esp32-snippets/blob/master/cpp_utils/tests/BLE%20Tests/SampleServer.cpp
     Ported to Arduino ESP32 by Evandro Copercini
   */
-  usb.println("Starting BLE work!");
 
-  BLEDevice::init("ESP32");
+    // Create the BLE Device
+  BLEDevice::init("ESP32"); // Give it a name
+
+  // Create the BLE Server
   BLEServer *pServer = BLEDevice::createServer();
+  pServer->setCallbacks(new MyServerCallbacks());
 
+  // Create the BLE Service
   BLEService *pService = pServer->createService(SERVICE_UUID);
 
+  // Create a BLE Characteristic
   pCharacteristic = pService->createCharacteristic(
-                                         CHARACTERISTIC_UUID,
-                                         BLECharacteristic::PROPERTY_READ |
-                                         BLECharacteristic::PROPERTY_WRITE
-                                       );
+                     CHARACTERISTIC_UUID,
+                     BLECharacteristic::PROPERTY_NOTIFY |
+                     BLECharacteristic::PROPERTY_WRITE
+                   );
 
+  pCharacteristic->addDescriptor(new BLE2902());
   pCharacteristic->setCallbacks(new MyCallbacks());
 
-  pCharacteristic->setValue("Hello World");
+  // Start the service
   pService->start();
 
+  // Start advertising
   BLEAdvertising *pAdvertising = pServer->getAdvertising();
   pAdvertising->start();
-  
-  usb.println("Characteristic defined! Now you can read it in your phone!");
+  Serial.println("Waiting a client connection to notify...");
 }

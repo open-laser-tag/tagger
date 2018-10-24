@@ -1,6 +1,7 @@
 #include <BLEDevice.h>
-#include <BLEUtils.h>
 #include <BLEServer.h>
+#include <BLEUtils.h>
+#include <BLE2902.h>
 
 #define ONBOARDLED_PIN 2
 #define DATA_BYTES_LENGHT 4 //sizeof unsinged long
@@ -58,12 +59,14 @@ typedef enum {READY, DELAY, SHOOTING , COOLDOWN/*, BURST_COOLDOWN*/} shoot_statu
 shoot_status shoot_phase = READY;
 
 typedef enum    {AUTONOMOUS, STREAM}    state_t;
-state_t         state = AUTONOMOUS;
+state_t         state = STREAM;
 
 TaskHandle_t  xHandle_handle_ir,
               xHandle_blink_led,
               xHandle_send_ir,
-              xHandle_handle_bt;
+              xHandle_handle_bt,
+              xHandle_send_bt;
+
               
 //BluetoothSerial bt;
 HardwareSerial ir(2); //rx_pin=16, tx_pin=17

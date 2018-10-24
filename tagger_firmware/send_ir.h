@@ -1,15 +1,11 @@
 void handle_trigger() {
-  
+  //TODO but everything outside ISR -> ISR starts task
   trigger_pressed = !trigger_pressed;
-  usb.println("trigger pressed");
+  usb.print("trigger pressed, status: ");
+  usb.println(trigger_pressed);
+  usb.print("device status: ");
+  usb.println(deviceConnected);
 
-  char value = 'A';
-  //pCharacteristic->setValue(&value);
-  //pCharacteristic->notify();
-  usb.println("sent via bt: "+value);
-  latenz_timestamp=millis();
-  
-  
   if (shoot_phase == READY && trigger_pressed) {
 
     if (state == AUTONOMOUS) {
@@ -19,6 +15,8 @@ void handle_trigger() {
     }
   }
   
+  if(deviceConnected) vTaskResume(xHandle_send_bt);
+  delay(1);
   return;
 }
 
