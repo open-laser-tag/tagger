@@ -1,23 +1,34 @@
 void handle_trigger() {
-  //TODO but everything outside ISR -> ISR starts task
-  trigger_pressed = !trigger_pressed;
-  usb.print("trigger pressed, status: ");
-  usb.println(trigger_pressed);
-  usb.print("device status: ");
-  usb.println(deviceConnected);
+  vTaskResume(xHandle_refresh_trigger_status);
+  return;
+}
 
-  if (shoot_phase == READY && trigger_pressed) {
+void refresh_trigger_status(void * parameter) {
 
-    if (state == AUTONOMOUS) {
+  unsigned long last_time_refreshed = 0;
+  
+  while(true) {
+
+    if (millis() - last_time_refreshed > DEBOUNCING_TIME_IN_MS) {
+      trigger_pressed = !digitalRead(PIN_TRIGGER); // TODO read input
+      usb.print("trigger pressed, status: ");
+      usb.println(trigger_pressed);
+      latenz_timestamp = millis();
+      usb.print("device status: ");
+      usb.println(deviceConnected);
+      if(deviceConnected) vTaskResume(xHandle_send_bt);
+      last_time_refreshed = millis();
+    }
+
+    if (shoot_phase == READY && trigger_pressed && state == AUTONOMOUS) {
+      usb.print("start shooting ");
+      usb.println(millis());
       shoot_timestamp = millis();
       shoot_phase = DELAY;
       vTaskResume (xHandle_send_ir);
     }
+    vTaskSuspend(NULL); //suspend task until reactivated by handle_trigger()
   }
-  
-  if(deviceConnected) vTaskResume(xHandle_send_bt);
-  delay(1);
-  return;
 }
 
 //TODO: magazine size, stream mode
@@ -35,6 +46,8 @@ void do_shoot_logic(void * parameter) {
         switch(shoot_phase) {
           //ready to receive trigger signal
           case READY: {
+            usb.print("shoot phase ready (going to sleep) ");
+            usb.println(millis());
             vTaskSuspend(NULL); //suspend task until reactivated by handle_trigger()
           } break;
             
@@ -42,6 +55,8 @@ void do_shoot_logic(void * parameter) {
           case DELAY: {
             unsigned long delayed_time = millis() - shoot_timestamp;
             if (delayed_time >= shootconf.trigger_delay_in_ms) {
+              usb.print("shoot phase shooting ");
+              usb.println(millis());
               shoot_timestamp = millis();
               shoot_phase = SHOOTING;
             }
@@ -53,6 +68,8 @@ void do_shoot_logic(void * parameter) {
             //trigger pressed: long shot / long burst
             if (trigger_pressed) {
               if (millis() - shoot_timestamp >= shootconf.duration_max_in_ms) {
+                usb.print("shoot phase cooldown (long shot) ");
+                usb.println(millis());
                 shoot_timestamp = millis();
                 burst_counter++;
                 shoot_phase = COOLDOWN;
@@ -67,6 +84,8 @@ void do_shoot_logic(void * parameter) {
             //trigger released: short shot / short burst
             else { 
               if (millis() - shoot_timestamp >= shootconf.duration_min_in_ms) {
+                usb.print("shoot phase cooldown (short shot) ");
+                usb.println(millis());
                 shoot_timestamp = millis();
                 burst_counter++;
                 shoot_phase = COOLDOWN;
@@ -97,6 +116,8 @@ void do_shoot_logic(void * parameter) {
     
             unsigned long delayed_time = millis() - shoot_timestamp;
             if (delayed_time >= shootconf.cooldown_in_ms) {
+              usb.print("shoot phase ready ");
+              usb.println(millis());
               shoot_phase = READY;
               //leave cooldown in manual mode only when trigger released
               //if (shootconf.smode == SHOOT_MODE_MANUAL && !trigger_pressed) shoot_phase = READY;

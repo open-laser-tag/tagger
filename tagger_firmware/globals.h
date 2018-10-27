@@ -1,6 +1,4 @@
 #include <BLEDevice.h>
-#include <BLEServer.h>
-#include <BLEUtils.h>
 #include <BLE2902.h>
 
 #define ONBOARDLED_PIN 2
@@ -25,6 +23,12 @@
 #define CHECK_INTERVAL_IR_IN_MS 100 //not used
 #define SHOOT_MODE_MANUAL 0x00000001
 #define SHOOT_MODE_AUTO 0x00000002
+#define DEBOUNCING_TIME_IN_MS 100
+#define BAUD_RATE_IR 57600
+#define BAUD_RATE_IR_4800_CODE 01
+#define BAUD_RATE_IR_9600_CODE 02
+#define BAUD_RATE_IR_19200_CODE 03
+#define BAUD_RATE_IR_57600_CODE 04
 //#define TIMING_RESOLUTION_IN_MS 10
 
 // See the following for generating UUIDs:
@@ -59,13 +63,14 @@ typedef enum {READY, DELAY, SHOOTING , COOLDOWN/*, BURST_COOLDOWN*/} shoot_statu
 shoot_status shoot_phase = READY;
 
 typedef enum    {AUTONOMOUS, STREAM}    state_t;
-state_t         state = STREAM;
+state_t         state = AUTONOMOUS;
 
 TaskHandle_t  xHandle_handle_ir,
               xHandle_blink_led,
               xHandle_send_ir,
               xHandle_handle_bt,
-              xHandle_send_bt;
+              xHandle_send_bt,
+              xHandle_refresh_trigger_status;
 
               
 //BluetoothSerial bt;

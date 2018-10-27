@@ -9,17 +9,19 @@ void setup() {
   usb.begin(115200);   
   ir.begin(9600); 
 
-  usb.println("starting in stream mode");
-  usb.println("data received by BT is directly sent to ir module");
-  usb.println("send ir with A1F1XXXXXX");
+  //usb.println("starting in stream mode");
+  //usb.println("data received by BT is directly sent to ir module");
+  //usb.println("send ir with A1F1XXXXXX");
   
   pinMode(ONBOARDLED_PIN, OUTPUT);
   pinMode(PIN_TRIGGER, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(PIN_TRIGGER), handle_trigger, FALLING); //LOW, CHANGE, RISING, FALLING
+  attachInterrupt(digitalPinToInterrupt(PIN_TRIGGER), handle_trigger, CHANGE); //LOW, CHANGE, RISING, FALLING
 
-  uint8_t set_ir_baudrate_9600[5]={0xA1, 0xF3, 0x02, 0x00, 0x00};
-  ir.write(set_ir_baudrate_9600,sizeof(set_ir_baudrate_9600));
-  
+  uint8_t set_ir_baudrate[5]={0xA1, 0xF3, BAUD_RATE_IR_57600_CODE, 0x00, 0x00};
+  ir.write(set_ir_baudrate,sizeof(set_ir_baudrate));
+  ir.end();
+  ir.begin(BAUD_RATE_IR); 
+
   init_ble();
 
   xTaskCreate(
@@ -56,6 +58,15 @@ void setup() {
     NULL,                 /* parameter of the task */
     1,                    /* priority of the task */
     &xHandle_send_bt      /* Task handle to keep track of created task */
+  );
+
+  xTaskCreate(
+    refresh_trigger_status,              /* Task function. */
+    "refresh_trigger_status",            /* name of task. */
+    10000,                 /* Stack size of task */
+    NULL,                 /* parameter of the task */
+    1,                    /* priority of the task */
+    &xHandle_refresh_trigger_status      /* Task handle to keep track of created task */
   );
 }
 

@@ -1,8 +1,10 @@
 void send_bt(void * parameter) {
   while(true) {
-    usb.println("sending via bt");
-    pCharacteristic->setValue((int&)trigger_pressed);
-    pCharacteristic->notify();
+    if(deviceConnected) {
+      usb.println("sending via bt");
+      pCharacteristic->setValue((int&)trigger_pressed);
+      pCharacteristic->notify();
+    }
     vTaskSuspend(NULL); //suspend task until reactivated by handle_trigger()
   }
 }
@@ -131,4 +133,10 @@ void init_ble() {
   BLEAdvertising *pAdvertising = pServer->getAdvertising();
   pAdvertising->start();
   Serial.println("Waiting a client connection to notify...");
+
+  BLEAddress mac_address = BLEDevice::getAddress();
+  std::string mac_str = mac_address.toString();
+  usb.print("MAC address: ");
+  usb.write((const unsigned char*)mac_str.c_str(),mac_str.length());
+  usb.println();
 }
