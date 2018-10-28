@@ -63,7 +63,7 @@ typedef enum {READY, DELAY, SHOOTING , COOLDOWN/*, BURST_COOLDOWN*/} shoot_statu
 shoot_status shoot_phase = READY;
 
 typedef enum    {AUTONOMOUS, STREAM}    state_t;
-state_t         state = AUTONOMOUS;
+state_t         state = STREAM;
 
 TaskHandle_t  xHandle_handle_ir,
               xHandle_blink_led,
