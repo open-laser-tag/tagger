@@ -1,29 +1,36 @@
 #include "globals.h"
-#include "handle_ir.h"
-#include "handle_bt.h"
-#include "send_ir.h"
 
+/*    SETUP   */
 
 void setup() {
   
   usb.begin(115200);   
-  ir.begin(9600); 
-
-  //usb.println("starting in stream mode");
-  //usb.println("data received by BT is directly sent to ir module");
-  //usb.println("send ir with A1F1XXXXXX");
-  
-  pinMode(ONBOARDLED_PIN, OUTPUT);
+  //pinMode(ONBOARDLED_PIN, OUTPUT);
   pinMode(PIN_TRIGGER, INPUT_PULLUP);
+  //trigger pin to interrupt
   attachInterrupt(digitalPinToInterrupt(PIN_TRIGGER), handle_trigger, CHANGE); //LOW, CHANGE, RISING, FALLING
-
+  //init ir with default baud rate
+  ir.begin(9600); 
+  //set custom baud rate
   uint8_t set_ir_baudrate[5]={0xA1, 0xF3, BAUD_RATE_IR_57600_CODE, 0x00, 0x00};
   ir.write(set_ir_baudrate,sizeof(set_ir_baudrate));
   ir.end();
   ir.begin(BAUD_RATE_IR); 
 
+  //init bluetooth low energy server and services
   init_ble();
+  //init trigger and ir handling
+  create_tasks();
+  usb.println("blink led for finishing setup");
+  //blink for telling that setup is done
+  led.blinks();
+}
 
+/*    LOOP    */
+//loop is not used, freeRTOS tasks are used instead
+void loop() {  vTaskDelay(portMAX_DELAY); /*wait as much as posible ... */ }
+
+void create_tasks() {
   xTaskCreate(
     handle_ir,            /* Task function. */
     "handle_ir",          /* name of task. */
@@ -33,33 +40,7 @@ void setup() {
     &xHandle_handle_ir    /* Task handle to keep track of created task */
   );
 
-  xTaskCreate(
-    blink_led,            /* Task function. */
-    "blink_led",          /* name of task. */
-    10000,                 /* Stack size of task */
-    NULL,                 /* parameter of the task */
-    1,                    /* priority of the task */
-    &xHandle_blink_led    /* Task handle to keep track of created task */
-  );
-
-  xTaskCreate(
-    do_shoot_logic,              /* Task function. */
-    "do_shoot_logic",            /* name of task. */
-    10000,                 /* Stack size of task */
-    NULL,                 /* parameter of the task */
-    1,                    /* priority of the task */
-    &xHandle_send_ir      /* Task handle to keep track of created task */
-  );
   
-  xTaskCreate(
-    send_bt,              /* Task function. */
-    "send_bt",            /* name of task. */
-    10000,                 /* Stack size of task */
-    NULL,                 /* parameter of the task */
-    1,                    /* priority of the task */
-    &xHandle_send_bt      /* Task handle to keep track of created task */
-  );
-
   xTaskCreate(
     refresh_trigger_status,              /* Task function. */
     "refresh_trigger_status",            /* name of task. */
@@ -68,15 +49,4 @@ void setup() {
     1,                    /* priority of the task */
     &xHandle_refresh_trigger_status      /* Task handle to keep track of created task */
   );
-}
-
-void loop() {  vTaskDelay(portMAX_DELAY); /*wait as much as posible ... */ }
-
-bool  led_status = true;
-void blink_led(void * parameter) {
-  while(true) {
-    led_status = !led_status;
-    digitalWrite(ONBOARDLED_PIN, led_status);
-    vTaskDelay(1000 / portTICK_PERIOD_MS); //Block for 1000ms.
-  }
 }
