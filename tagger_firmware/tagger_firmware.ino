@@ -5,18 +5,9 @@
 void setup() {
   
   usb.begin(115200);   
-  //pinMode(ONBOARDLED_PIN, OUTPUT);
-  pinMode(PIN_TRIGGER, INPUT_PULLUP);
   //trigger pin to interrupt
-  attachInterrupt(digitalPinToInterrupt(PIN_TRIGGER), handle_trigger, CHANGE); //LOW, CHANGE, RISING, FALLING
-  //init ir with default baud rate
-  ir.begin(9600); 
-  //set custom baud rate
-  uint8_t set_ir_baudrate[5]={0xA1, 0xF3, BAUD_RATE_IR_57600_CODE, 0x00, 0x00};
-  ir.write(set_ir_baudrate,sizeof(set_ir_baudrate));
-  ir.end();
-  ir.begin(BAUD_RATE_IR); 
-
+  //pinMode(PIN_TRIGGER, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(PIN_TRIGGER), handle_trigger, CHANGE); //LOW, CHANGE, RISING, FALLINGd
   //init bluetooth low energy server and services
   init_ble();
   //init trigger and ir handling
