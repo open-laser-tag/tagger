@@ -11,9 +11,9 @@ class Ir_send_callbacks: public BLECharacteristicCallbacks {
 
       ir.write((const unsigned char*)value.c_str(),value.length()); //TODO: is this right?
       unsigned long latenz = millis() - latenz_timestamp;
-      usb.println("latency value: ");
+      usb.print("latency value: ");
       usb.println(latenz);
-      usb.println("sent to ir module: ");
+      usb.print("sent to ir module: ");
       usb.println(value.c_str());
     }
   }

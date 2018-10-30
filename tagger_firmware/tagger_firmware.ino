@@ -6,7 +6,6 @@ void setup() {
   
   usb.begin(115200);   
   //trigger pin to interrupt
-  //pinMode(PIN_TRIGGER, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(PIN_TRIGGER), handle_trigger, CHANGE); //LOW, CHANGE, RISING, FALLINGd
   //init bluetooth low energy server and services
   init_ble();
