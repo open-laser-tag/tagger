@@ -19,6 +19,7 @@
 #define CHARACTERISTIC_TRIGGER_UUID     "756ad6a4-2007-4dc4-9173-72dc7d6b2627"
 #define CHARACTERISTIC_IR_RECEIVE_UUID  "a95980fb-4f18-4b2e-a258-81bf77575117"
 #define CHARACTERISTIC_IR_SEND_UUID     "8b91a0d2-5f7f-49cb-8939-4455d3d24b81"
+#define CHARACTERISTIC_LATENCY_UUID     "60e44cef-5a43-407b-8d1a-bce02377dcfd"
 
 unsigned long latenz_timestamp=0;
 
@@ -28,7 +29,8 @@ Ir_YS_IRTM          ir(HARDWARE_SERIAL2, BAUD_RATE_IR);
 HardwareSerial      usb(HARDWARE_SERIAL0);
 BLECharacteristic   *trigger_char,
                     *ir_receive_char,
-                    *ir_send_char;
+                    *ir_send_char,
+                    *latency_char;
 Led                 led(ONBOARDLED_PIN);
 Button              trigger(PIN_TRIGGER);
 

@@ -15,6 +15,10 @@ class Ir_send_callbacks: public BLECharacteristicCallbacks {
       usb.println(latenz);
       usb.print("sent to ir module: ");
       usb.println(value.c_str());
+
+      //send latency via BT to app
+      latency_char->setValue((int&)latenz);
+      latency_char->notify();
     }
   }
 };
@@ -69,6 +73,13 @@ void init_ble() {
                     );
   ir_send_char     ->addDescriptor(new BLE2902());
   ir_send_char     ->setCallbacks(new Ir_send_callbacks());
+  
+  usb.println("create BLE latency characteristic");
+  latency_char     = pService->createCharacteristic(
+                      CHARACTERISTIC_LATENCY_UUID,
+                      BLECharacteristic::PROPERTY_NOTIFY
+                    );
+  latency_char     ->addDescriptor(new BLE2902());
   
   usb.println("start BLE service");
   pService->start();
