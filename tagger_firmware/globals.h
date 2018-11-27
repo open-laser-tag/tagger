@@ -5,7 +5,9 @@
 #include <BLE2902.h>
 #include "misc.h"
 #include "Ir_YS_IRTM.h"
+#include "IRremote.h"
 
+#define IR_RX_PIN 
 #define ONBOARDLED_PIN 2
 #define PIN_TRIGGER 21
 #define DEBOUNCING_TIME_IN_MS 100
@@ -21,10 +23,12 @@
 #define CHARACTERISTIC_IR_SEND_UUID     "8b91a0d2-5f7f-49cb-8939-4455d3d24b81"
 #define CHARACTERISTIC_LATENCY_UUID     "60e44cef-5a43-407b-8d1a-bce02377dcfd"
 
-unsigned long latenz_timestamp=0;
+unsigned long   latenz_timestamp=0,
+                latenz=0;
 
 TaskHandle_t        xHandle_handle_ir,
-                    xHandle_refresh_trigger_status;
+                    xHandle_refresh_trigger_status,
+                    xHandle_send_latency;
 Ir_YS_IRTM          ir(HARDWARE_SERIAL2, BAUD_RATE_IR);
 HardwareSerial      usb(HARDWARE_SERIAL0);
 BLECharacteristic   *trigger_char,
@@ -33,5 +37,5 @@ BLECharacteristic   *trigger_char,
                     *latency_char;
 Led                 led(ONBOARDLED_PIN);
 Button              trigger(PIN_TRIGGER);
-
+IRrecv              irrecv(IR_PIN);
 #endif

@@ -10,15 +10,15 @@ class Ir_send_callbacks: public BLECharacteristicCallbacks {
       usb.println();
 
       ir.write((const unsigned char*)value.c_str(),value.length()); //TODO: is this right?
-      unsigned long latenz = millis() - latenz_timestamp;
+      latenz = millis() - latenz_timestamp;
       usb.print("latency value: ");
       usb.println(latenz);
+      //send latency via BT to app
+      vTaskResume(xHandle_send_latency);
       usb.print("sent to ir module: ");
       usb.println(value.c_str());
 
-      //send latency via BT to app
-      latency_char->setValue((int&)latenz);
-      latency_char->notify();
+
     }
   }
 };

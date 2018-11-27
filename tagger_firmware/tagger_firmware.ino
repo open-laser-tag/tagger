@@ -39,4 +39,24 @@ void create_tasks() {
     1,                    /* priority of the task */
     &xHandle_refresh_trigger_status      /* Task handle to keep track of created task */
   );
+
+  xTaskCreate(
+    send_latency,              /* Task function. */
+    "send_latency",            /* name of task. */
+    10000,                 /* Stack size of task */
+    NULL,                 /* parameter of the task */
+    1,                    /* priority of the task */
+    &xHandle_send_latency      /* Task handle to keep track of created task */
+  );
+}
+
+void send_latency (void * parameter) {
+  while(true) {
+    //suspend until reactivated by onWrite of Ir_send_callbacks
+    vTaskSuspend(NULL);
+    //send latency via BT to app
+    latency_char->setValue((int&)latenz);
+    latency_char->notify();
+    usb.println("latency sent via  bt");
+  }
 }

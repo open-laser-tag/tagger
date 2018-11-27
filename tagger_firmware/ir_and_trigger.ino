@@ -14,28 +14,31 @@ void handle_ir(void * parameter) {
 }
 
 void handle_trigger() {
-  vTaskResume(xHandle_refresh_trigger_status);
+  //vTaskResume(xHandle_refresh_trigger_status);
   return;
 }
 
 void refresh_trigger_status(void * parameter) {
 
   unsigned long last_time_refreshed = 0;
+  bool testdata=false;
   
   while(true) {
-    vTaskSuspend(NULL); //suspend task until reactivated by handle_trigger()
+    //vTaskSuspend(NULL); //suspend task until reactivated by handle_trigger()
+    vTaskDelay(5000 / portTICK_PERIOD_MS); //Block for 500ms.
 
 
-    if (millis() - last_time_refreshed > DEBOUNCING_TIME_IN_MS) {
-      trigger.read_pin();
-      usb.print("trigger status: ");
-      usb.println(trigger.pressed);
+//    if (millis() - last_time_refreshed > DEBOUNCING_TIME_IN_MS) {
+//      trigger.read_pin();
+//      usb.print("trigger status: ");
+//      usb.println(trigger.pressed);
       latenz_timestamp = millis();
 
-      usb.println("sending via bt");
-      trigger_char->setValue((int&)trigger.pressed);
+      usb.println("sending trigger status via bt");
+      testdata = !testdata;
+      trigger_char->setValue((int&)testdata);
       trigger_char->notify();
-      last_time_refreshed = millis();
-    }
+//      last_time_refreshed = millis();
+//    }
   }
 }
