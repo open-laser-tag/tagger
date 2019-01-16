@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 #include "globals.h"
 
 /*    SETUP   */

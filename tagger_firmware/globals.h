@@ -5,13 +5,11 @@
 #include <BLE2902.h>
 #include "misc.h"
 #include "Ir_YS_IRTM.h"
-#include "IRremote.h"
 
-#define IR_RX_PIN 
 #define ONBOARDLED_PIN 2
 #define PIN_TRIGGER 21
 #define DEBOUNCING_TIME_IN_MS 100
-#define BAUD_RATE_IR 57600 //allowed values: 4800, 9600, 19200, 57600
+#define BAUD_RATE_IR 9600 //allowed values: 4800, 9600, 19200, 57600
 #define HARDWARE_SERIAL0 0 // rx_pin=3, tx_pin=1 (usb)
 #define HARDWARE_SERIAL1 1 // don't use this one
 #define HARDWARE_SERIAL2 2 //rx_pin=16, tx_pin=17
@@ -37,5 +35,4 @@ BLECharacteristic   *trigger_char,
                     *latency_char;
 Led                 led(ONBOARDLED_PIN);
 Button              trigger(PIN_TRIGGER);
-IRrecv              irrecv(IR_PIN);
 #endif
