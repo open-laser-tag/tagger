@@ -14,20 +14,41 @@ void handle_ir(void * parameter) {
 }
 
 void handle_trigger() {
+
+  last_bounce_time = xTaskGetTickCount();
+
+  portENTER_CRITICAL_ISR(&mux);
+  count_trigger_interrupts++;
+  portEXIT_CRITICAL_ISR(&mux);
+  
   vTaskResume(xHandle_refresh_trigger_status);
+
   return;
 }
 
 void refresh_trigger_status(void * parameter) {
 
-  unsigned long last_time_refreshed = 0;
+  //unsigned long last_time_refreshed = 0;
+  uint32_t last_bounce_time_save;
+  bool curr_trigger_state,
+       trigger_state;
+  int count_trigger_interrupts_save;
+  //bool testdata=false;
+
   
   while(true) {
     vTaskSuspend(NULL); //suspend task until reactivated by handle_trigger()
 
+    //wait until the last bounce is longer ago than DEBOUNCETIME
+    while (xTaskGetTickCount() - last_bounce_time < DEBOUNCETIME ) vTaskDelay(10);
 
-  if (millis() - last_time_refreshed > DEBOUNCING_TIME_IN_MS) {
+    //refresh trigger.pressed
     trigger.read_pin();
+
+    usb.print("Button Interrupt Triggered times: ");
+    usb.println(count_trigger_interrupts);
+    usb.print("time since last trigger: ");
+    usb.println(xTaskGetTickCount() - last_bounce_time);
     usb.print("trigger status: ");
     usb.println(trigger.pressed);
     latenz_timestamp = millis();
@@ -35,7 +56,9 @@ void refresh_trigger_status(void * parameter) {
     usb.println("sending trigger status via bt");
     trigger_char->setValue((int&)trigger.pressed);
     trigger_char->notify();
-    last_time_refreshed = millis();
-   }
+
+    portENTER_CRITICAL_ISR(&mux);
+    count_trigger_interrupts = 0;
+    portEXIT_CRITICAL_ISR(&mux);
   }
 }

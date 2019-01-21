@@ -8,7 +8,7 @@
 
 #define ONBOARDLED_PIN 2
 #define PIN_TRIGGER 21
-#define DEBOUNCING_TIME_IN_MS 100
+#define DEBOUNCETIME 10
 #define BAUD_RATE_IR 9600 //allowed values: 4800, 9600, 19200, 57600
 #define HARDWARE_SERIAL0 0 // rx_pin=3, tx_pin=1 (usb)
 #define HARDWARE_SERIAL1 1 // don't use this one
@@ -23,6 +23,12 @@
 
 unsigned long   latenz_timestamp=0,
                 latenz=0;
+                
+int count_trigger_interrupts=0;
+
+uint32_t last_bounce_time = 0;
+
+portMUX_TYPE        mux = portMUX_INITIALIZER_UNLOCKED;
 
 TaskHandle_t        xHandle_handle_ir,
                     xHandle_refresh_trigger_status,
