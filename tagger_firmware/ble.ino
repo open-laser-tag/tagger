@@ -80,6 +80,16 @@ void init_ble() {
                       BLECharacteristic::PROPERTY_NOTIFY
                     );
   latency_char     ->addDescriptor(new BLE2902());
+
+  /*
+   * TODO: not used yet
+   */
+  usb.println("create BLE version characteristic");
+  version_char     = pService->createCharacteristic(
+                      CHARACTERISTIC_VERSION_UUID,
+                      BLECharacteristic::PROPERTY_READ
+                    );
+  version_char     ->addDescriptor(new BLE2902());
   
   usb.println("start BLE service");
   pService->start();
