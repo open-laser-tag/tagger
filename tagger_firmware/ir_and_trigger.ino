@@ -21,7 +21,6 @@ void handle_trigger() {
 void refresh_trigger_status(void * parameter) {
 
   unsigned long last_time_refreshed = 0;
-  bool testdata=false;
   
   while(true) {
     vTaskSuspend(NULL); //suspend task until reactivated by handle_trigger()
@@ -34,8 +33,7 @@ void refresh_trigger_status(void * parameter) {
     latenz_timestamp = millis();
 
     usb.println("sending trigger status via bt");
-    testdata = !testdata;
-    trigger_char->setValue((int&)testdata);
+    trigger_char->setValue((int&)trigger.pressed);
     trigger_char->notify();
     last_time_refreshed = millis();
    }
