@@ -27,14 +27,6 @@ void handle_trigger() {
 }
 
 void refresh_trigger_status(void * parameter) {
-
-  //unsigned long last_time_refreshed = 0;
-  uint32_t last_bounce_time_save;
-  bool curr_trigger_state,
-       trigger_state;
-  int count_trigger_interrupts_save;
-  //bool testdata=false;
-
   
   while(true) {
     vTaskSuspend(NULL); //suspend task until reactivated by handle_trigger()
