@@ -14,10 +14,11 @@ void handle_ir(void * parameter) {
 }
 
 void handle_trigger() {
+
+  last_bounce_time = xTaskGetTickCount();
+
   portENTER_CRITICAL_ISR(&mux);
   count_trigger_interrupts++;
-  trigger.read_pin();
-  debounce_timeout = xTaskGetTickCount();
   portEXIT_CRITICAL_ISR(&mux);
   
   vTaskResume(xHandle_refresh_trigger_status);
@@ -25,14 +26,10 @@ void handle_trigger() {
   return;
 }
 
-/*
- * tried new debounce, source: https://www.switchdoc.com/2018/04/esp32-tutorial-debouncing-a-button-press-using-interrupts/
- */
-
 void refresh_trigger_status(void * parameter) {
 
-  unsigned long last_time_refreshed = 0;
-  uint32_t debounce_timeout_save;
+  //unsigned long last_time_refreshed = 0;
+  uint32_t last_bounce_time_save;
   bool curr_trigger_state,
        trigger_state;
   int count_trigger_interrupts_save;
@@ -42,40 +39,26 @@ void refresh_trigger_status(void * parameter) {
   while(true) {
     vTaskSuspend(NULL); //suspend task until reactivated by handle_trigger()
 
-    portENTER_CRITICAL_ISR(&mux);
-    count_trigger_interrupts_save  = count_trigger_interrupts;
-    debounce_timeout_save = debounce_timeout;
-    trigger_state  = trigger.pressed;
-    portEXIT_CRITICAL_ISR(&mux);
+    //wait until the last bounce is longer ago than DEBOUNCETIME
+    while (xTaskGetTickCount() - last_bounce_time < DEBOUNCETIME ) vTaskDelay(10);
 
+    //refresh trigger.pressed
     trigger.read_pin();
-    curr_trigger_state = trigger.pressed;
 
-    if ((debounce_timeout_save != 0) //interrupt has triggered
-        && (curr_trigger_state == trigger.pressed) // pin is still in the same state as when intr triggered
-        && (millis() - debounce_timeout_save > DEBOUNCETIME )) {
-    //if (millis() - last_time_refreshed > DEBOUNCETIME) {
-      //wait for 10 ms for debouncing
-      //vTaskDelay(100);
-      
-      //trigger.read_pin();
-      usb.print("Button Interrupt Triggered times");
-      usb.println(count_trigger_interrupts_save);
-      usb.print("time since last trigger");
-      usb.println(millis() - debounce_timeout_save);
-      usb.print("trigger status: ");
-      usb.println(trigger.pressed);
-      latenz_timestamp = millis();
-  
-      usb.println("sending trigger status via bt");
-      //testdata = !testdata;
-      trigger_char->setValue((int&)trigger.pressed);
-      trigger_char->notify();
-      last_time_refreshed = millis();
+    usb.print("Button Interrupt Triggered times: ");
+    usb.println(count_trigger_interrupts);
+    usb.print("time since last trigger: ");
+    usb.println(xTaskGetTickCount() - last_bounce_time);
+    usb.print("trigger status: ");
+    usb.println(trigger.pressed);
+    latenz_timestamp = millis();
 
-     portENTER_CRITICAL_ISR(&mux); // can't change it unless, atomic - Critical section
-      count_trigger_interrupts = 0; // acknowledge keypress and reset interrupt counter
-      portEXIT_CRITICAL_ISR(&mux);
-    }
+    usb.println("sending trigger status via bt");
+    trigger_char->setValue((int&)trigger.pressed);
+    trigger_char->notify();
+
+    portENTER_CRITICAL_ISR(&mux);
+    count_trigger_interrupts = 0;
+    portEXIT_CRITICAL_ISR(&mux);
   }
 }
