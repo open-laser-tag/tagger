@@ -13,9 +13,7 @@ void setup() {
   init_ble();
   //init trigger and ir handling
   create_tasks();
-  usb.print("version (git commit hash): ");
-  usb.println(GIT_COMMIT);
-  usb.print("latest git tag: ");
+  usb.print("firmware version: ");
   usb.println(GIT_TAG);
   usb.println("blink led for finishing setup");
   //blink for telling that setup is done
