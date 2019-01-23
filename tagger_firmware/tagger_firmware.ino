@@ -1,7 +1,20 @@
+/**
+ * @file tagger_firmware.ino
+ * @author gldhnchn (gldhnchn@posteo.de)
+ * @brief main arduino sketch file
+ * @date 2019-01-23
+ * 
+ * 
+ */
+
 #include "globals.h"
 
-/*    SETUP   */
-
+/**
+ * @brief arduino setup
+ * This is the arduino setup funciton. It is run once at startup.
+ * Inits are done here and RTOS tasks are started here.
+ * 
+ */
 void setup() {
   
   usb.begin(115200);   
@@ -16,10 +29,18 @@ void setup() {
   led.blinks();
 }
 
-/*    LOOP    */
-//loop is not used, freeRTOS tasks are used instead
+/**
+ * @brief arduino loop
+ * This is the arduino loop function. It is not used, instead RTOS tasks are used.
+ * That's why the loop task is delayed max.
+ * 
+ */
 void loop() {  vTaskDelay(portMAX_DELAY); /*wait as much as posible ... */ }
 
+/**
+ * @brief Create all tasks object
+ * This function creates all RTOS tasks. 
+ */
 void create_tasks() {
   xTaskCreate(
     handle_ir,            /* Task function. */

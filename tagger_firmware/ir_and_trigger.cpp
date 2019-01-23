@@ -1,3 +1,11 @@
+/**
+ * @file ir_and_trigger.cpp
+ * @author gldhnchn (gldhnchn@posteo.de)
+ * @brief infrared stuff and trigger handler
+ * @date 2019-01-23
+ *  
+ */
+
 #include "ir_and_trigger.h"
 
 void handle_ir(void * parameter) {

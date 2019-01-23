@@ -1,3 +1,12 @@
+/**
+ * @file Ir_YS_IRTM.cpp
+ * @author gldhnchn (gldhnchn@posteo.de)
+ * @brief class for IS_IRTM infrared transmitter module
+ * @date 2019-01-23
+ * 
+ * 
+ */
+
 #include "Arduino.h"
 #include "Ir_YS_IRTM.h"
 

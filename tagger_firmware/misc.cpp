@@ -1,3 +1,10 @@
+/**
+ * @file misc.cpp
+ * @author gldhnchn (gldhnchn@posteo.de)
+ * @brief small classes for tagger firmware
+ * 
+ */
+
 #include "Arduino.h"
 #include "misc.h"
 

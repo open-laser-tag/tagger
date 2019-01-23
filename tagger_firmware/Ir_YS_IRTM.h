@@ -1,3 +1,11 @@
+/**
+ * @file Ir_YS_IRTM.h
+ * @author gldhnchn (gldhnchn@posteo.de)
+ * @brief class for IS_IRTM infrared transmitter module
+ * @date 2019-01-23
+ * 
+ */
+
 #ifndef ir_stuff_h
 #define ir_stuff_h
 

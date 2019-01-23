@@ -1,3 +1,12 @@
+/**
+ * @file globals.h
+ * @author gldhnchn (gldhnchn@posteo.de)
+ * @brief global variables
+ * @date 2019-01-23
+ * 
+ * 
+ */
+
 #ifndef globals_h
 #define globals_h
 
@@ -33,14 +42,18 @@
 #define CHARACTERISTIC_LATENCY_UUID     "60e44cef-5a43-407b-8d1a-bce02377dcfd"
 #define CHARACTERISTIC_VERSION_UUID     "563c139f-3eda-4c88-9fc3-be987038fa6a"
 
-extern unsigned long        latenz_timestamp,
-                            latenz;
-extern int                  count_trigger_interrupts;
-extern uint32_t             last_bounce_time;
+extern uint32_t             latenz_timestamp,
+                            latenz,
+                            last_bounce_time;
+
+extern uint16_t             count_trigger_interrupts;
+
 extern portMUX_TYPE         mux;
+
 extern TaskHandle_t         xHandle_handle_ir,
                             xHandle_refresh_trigger_status,
                             xHandle_send_latency;
+
 extern BLECharacteristic    *trigger_char,
                             *ir_receive_char,
                             *ir_send_char,

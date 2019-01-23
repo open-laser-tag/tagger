@@ -1,17 +1,31 @@
+/**
+ * @file ble.cpp
+ * @author gldhnchn (gldhnchn@posteo.de)
+ * @brief bluetooth low energy functions
+ * @date 2019-01-23
+ * 
+ * 
+ */
+
 #include "ble.h"
 
 class Ir_send_callbacks: public BLECharacteristicCallbacks {
   
+  /**
+   * @brief handles ble input data
+   * This method is called when data is written to ir_send_char characteristic.
+   * It hands over incoming data to infrared module.
+   * @param ir_send_char 
+   */
   void onWrite(BLECharacteristic *ir_send_char) {
     std::string value = ir_send_char->getValue();
 
     if (value.length() > 0) {
       usb.print("bt incoming: ");
-      for (int i = 0; i < value.length(); i++)
-        usb.print(value[i]);
+      for (int i = 0; i < value.length(); i++) usb.print(value[i]);
       usb.println();
 
-      ir.write((const unsigned char*)value.c_str(),value.length()); //TODO: is this right?
+      ir.write((const unsigned char*)value.c_str(),value.length());
       latenz = millis() - latenz_timestamp;
       usb.print("latency value: ");
       usb.println(latenz);
@@ -26,18 +40,36 @@ class Ir_send_callbacks: public BLECharacteristicCallbacks {
 };
 
 class MyServerCallbacks: public BLEServerCallbacks {
-    void onConnect(BLEServer* pServer) {
-      usb.println("device connected");
-      led.light_on();
-      return;
-    }
-    void onDisconnect(BLEServer* pServer) {
-      usb.println("device disconnected");
-      led.light_off();
-      return;
-    }
+  /**
+   * @brief turn led on connect on
+   * This method is called when a device connects to tagger via ble.
+   * The blue LED is turned on.
+   * @param pServer 
+   */
+  void onConnect(BLEServer* pServer) {
+    usb.println("device connected");
+    led.light_on();
+    return;
+  }
+
+  /**
+   * @brief turn led on disconnect off
+   * This method is called when a via ble connected device disconnects.
+   * The blue LED is turned off.
+   * @param pServer 
+   */
+  void onDisconnect(BLEServer* pServer) {
+    usb.println("device disconnected");
+    led.light_off();
+    return;
+  }
 };
 
+/**
+ * @brief call once for init of ble
+ * This method initializes bluetooth low energy.
+ * Device, server, service, and characteristics are created.
+ */
 void init_ble() {
   /*
     Based on Neil Kolban example for IDF: https://github.com/nkolban/esp32-snippets/blob/master/cpp_utils/tests/BLE%20Tests/SampleServer.cpp

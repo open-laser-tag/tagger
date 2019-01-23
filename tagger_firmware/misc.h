@@ -1,3 +1,11 @@
+/**
+ * @file misc.h
+ * @author gldhnchn (gldhnchn@posteo.de)
+ * @brief small classes for tagger firmware
+ * @date 2019-01-23
+ *  
+ */
+
 #ifndef misc_h
 #define misc_h
 
