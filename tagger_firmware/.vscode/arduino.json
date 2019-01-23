@@ -3,5 +3,6 @@
     "board": "esp32:esp32:nodemcu-32s",
     "configuration": "FlashFreq=80,UploadSpeed=921600",
     "programmer": "ArduinoISP",
-    "sketch": "tagger_firmware.ino"
+    "sketch": "tagger_firmware.ino",
+    "output": "../ArduinoOutput"
 }

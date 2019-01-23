@@ -1,3 +1,5 @@
+#include "ir_and_trigger.h"
+
 void handle_ir(void * parameter) {
   int             ir_data = 0;   // for incoming serial data from ir
   

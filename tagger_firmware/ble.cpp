@@ -1,3 +1,5 @@
+#include "ble.h"
+
 class Ir_send_callbacks: public BLECharacteristicCallbacks {
   
   void onWrite(BLECharacteristic *ir_send_char) {

@@ -1,5 +1,3 @@
-#include <Arduino.h>
-
 #include "globals.h"
 
 /*    SETUP   */
@@ -13,8 +11,6 @@ void setup() {
   init_ble();
   //init trigger and ir handling
   create_tasks();
-  usb.print("firmware version: ");
-  usb.println(GIT_TAG);
   usb.println("blink led for finishing setup");
   //blink for telling that setup is done
   led.blinks();
