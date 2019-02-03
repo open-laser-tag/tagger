@@ -18,7 +18,7 @@
 void setup() {
   
   usb.begin(115200);
-  usb.println("Hello, this is OpenLT Tagger");
+  usb.println("Hello, this is OpenLT Tagger.");
   usb.print("Tagger Firmware version: ");
   usb.println(GIT_TAG);
   //trigger pin to interrupt
@@ -79,7 +79,7 @@ void send_latency (void * parameter) {
     //suspend until reactivated by onWrite of Ir_send_callbacks
     vTaskSuspend(NULL);
     //send latency via BT to app
-    latency_char->setValue((int&)latenz);
+    latency_char->setValue(latenz);
     ble_notify(latency_char);
     usb.println("latency sent via  bt");
   }
