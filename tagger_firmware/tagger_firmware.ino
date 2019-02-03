@@ -17,7 +17,10 @@
  */
 void setup() {
   
-  usb.begin(115200);   
+  usb.begin(115200);
+  usb.println("Hello, this is OpenLT Tagger");
+  usb.print("Tagger Firmware version: ");
+  usb.println(GIT_TAG);
   //trigger pin to interrupt
   attachInterrupt(digitalPinToInterrupt(PIN_TRIGGER), handle_trigger, CHANGE); //LOW, CHANGE, RISING, FALLINGd
   //init bluetooth low energy server and services
