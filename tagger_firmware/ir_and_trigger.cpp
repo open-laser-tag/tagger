@@ -8,19 +8,25 @@
 
 #include "ir_and_trigger.h"
 
+/**
+ * @brief handle incoming infrared
+ * This funciton reads the incoming infrared data and sends it via bluetooth. 
+ * @param parameter just a dummy parameter
+ */
 void handle_ir(void * parameter) {
   int             ir_data = 0;   // for incoming serial data from ir
   
   while(true) {
     while (ir.available() > 0) {
-        ir_data = ir.read();
-        usb.print("Incoming IR: ");
-        usb.println(ir_data); //TODO: is this correct?
-        ir_receive_char->setValue((int&)ir_data);
-        ir_receive_char->notify();
+      ir_data = ir.read();
+      usb.print("Incoming IR: ");
+      usb.println(ir_data); //TODO: is this correct?
+      ir_receive_char->setValue((int&)ir_data);
+      ble_notify(ir_receive_char);
     }
     vTaskDelay(500 / portTICK_PERIOD_MS); //Block for 500ms.
   }
+  return;
 }
 
 void handle_trigger() {
@@ -57,7 +63,7 @@ void refresh_trigger_status(void * parameter) {
 
     usb.println("sending trigger status via bt");
     trigger_char->setValue((int&)trigger.pressed);
-    trigger_char->notify();
+    ble_notify(trigger_char);
 
     portENTER_CRITICAL_ISR(&mux);
     count_trigger_interrupts = 0;

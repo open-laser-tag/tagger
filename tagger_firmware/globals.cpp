@@ -21,6 +21,12 @@ TaskHandle_t        xHandle_handle_ir,
                     xHandle_send_latency;
 
 /**
+ * @brief bluetooth mutex
+ * This mutex is used to lock/unlock the bluetooth send communication.
+ */
+SemaphoreHandle_t    xMutex_BT;
+
+/**
  * @brief send trigger status
  * Trigger characteristic is used to send trigger status.
  */

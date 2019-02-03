@@ -12,5 +12,6 @@
 #include "globals.h"
 
 void init_ble();
+void ble_notify(BLECharacteristic *characteristic);
 
 #endif

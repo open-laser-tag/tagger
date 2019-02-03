@@ -77,7 +77,7 @@ void init_ble() {
   */
 
   usb.println("create BLE device");
-  BLEDevice::init("ESP32"); // Give it a name
+  BLEDevice::init("OpenLT Tagger"); // Give it a name
 
   usb.println("create BLE server");
   BLEServer *pServer = BLEDevice::createServer();
@@ -137,5 +137,40 @@ void init_ble() {
   usb.print("MAC address: ");
   usb.write((const unsigned char*)mac_str.c_str(),mac_str.length());
   usb.println();
+
+  /* Create a mutex type semaphore. */
+   xMutex_BT = xSemaphoreCreateMutex();
+
+  usb.println("Create BT Mutex");
+  if( xMutex_BT != NULL ) usb.println("BT Mutex successfully created.");
+  else usb.println("Error while creating BT Mutex");
+  
+  return;
+}
+
+/**
+ * @brief ble send data
+ * Activates bluetooth low energy notify, with semaphore handlers.
+ */
+void ble_notify(BLECharacteristic *characteristic) {
+
+  usb.println("Sending BT...");
+  //check if Mutex was successfully created
+  if( xMutex_BT != NULL ) {
+    /* See if we can obtain the semaphore.  If the semaphore is not
+    available wait 10 ms to see if it becomes free. */
+    if( xSemaphoreTake( xMutex_BT, 10 / portTICK_PERIOD_MS ) == pdTRUE ) {
+        /* We were able to obtain the semaphore and can now access the
+        shared resource. */
+        characteristic->notify();
+        /* We have finished accessing the shared resource.  Release the
+        semaphore. */
+        xSemaphoreGive( xMutex_BT );
+        usb.println("BT successfully sent");
+    }
+    else usb.println("Error: BT Mutex locked for over 10ms, message possibly dropped");
+  }
+  else usb.println("Error: BT Mutex not available.");
+
   return;
 }

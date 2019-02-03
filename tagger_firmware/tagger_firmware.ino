@@ -77,7 +77,7 @@ void send_latency (void * parameter) {
     vTaskSuspend(NULL);
     //send latency via BT to app
     latency_char->setValue((int&)latenz);
-    latency_char->notify();
+    ble_notify(latency_char);
     usb.println("latency sent via  bt");
   }
 }
