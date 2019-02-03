@@ -54,7 +54,6 @@ void create_tasks() {
     &xHandle_handle_ir    /* Task handle to keep track of created task */
   );
 
-  
   xTaskCreate(
     refresh_trigger_status,              /* Task function. */
     "refresh_trigger_status",            /* name of task. */
