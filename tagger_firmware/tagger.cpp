@@ -1,12 +1,12 @@
 /**
- * @file globals.cpp
+ * @file tagger.cpp
  * @author gldhnchn (gldhnchn@posteo.de)
  * @brief global variables
  * @date 2019-01-23
  *  
  */
 
-#include "globals.h"
+#include "tagger.h"
 
 uint32_t            latenz_timestamp=0,
                     latenz=0,

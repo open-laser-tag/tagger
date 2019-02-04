@@ -14,22 +14,38 @@
  * @param parameter just a dummy parameter
  */
 void handle_ir(void * parameter) {
-  uint32_t ir_data = 0;   // for incoming serial data from ir
+
   decode_results results;
 
   while(true) {
-    while (ir.available() > 0) {
-      ir_data = ir.read();
+
+    //ir modul YS-IRTM
+    if (ir.available() > 0) {
+      uint8_t ir_receiver_id = 0;
+      uint8_t ir_data[ir.available() + 1];
+      ir_data[0] = ir_receiver_id;
+      int i=1;
+    
+      while(ir.available() > 0) {
+        ir_data[i] = ir.read();
+        i++;
+      }
+
+      ir_receive_char->setValue(ir_data, i);
       usb.print("Incoming IR: ");
-      usb.println(ir_data); //TODO: is this correct?
-      ir_receive_char->setValue(ir_data);
+      usb.write(ir_data, i);
       ble_notify(ir_receive_char);
     }
 
+    //ir receiver TSOP
     if (irrecv.decode(&results)) {
+      usb.print("Incoming IR: ");
       usb.println(results.value, HEX);
+      ir_receive_char->setValue((uint32_t&)results.value);
+      ble_notify(ir_receive_char);
       irrecv.resume(); // Receive the next value
     }
+
 
     vTaskDelay(500 / portTICK_PERIOD_MS); //Block for 500ms.
   }

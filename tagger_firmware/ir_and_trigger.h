@@ -9,7 +9,7 @@
 #ifndef ir_and_trigger_h
 #define ir_and_trigger_h
 
-#include "globals.h"
+#include "tagger.h"
 
 void handle_ir(void * parameter);
 void handle_trigger();
