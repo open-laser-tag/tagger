@@ -19,21 +19,14 @@ void handle_ir(void * parameter) {
 
   while(true) {
 
-    //ir modul YS-IRTM
-    if (ir.available() > 0) {
-      uint8_t ir_receiver_id = 0;
-      uint8_t ir_data[ir.available() + 1];
-      ir_data[0] = ir_receiver_id;
-      int i=1;
-    
-      while(ir.available() > 0) {
-        ir_data[i] = ir.read();
-        i++;
-      }
+    uint32_t ir_data=0;
 
-      ir_receive_char->setValue(ir_data, i);
+    //ir modul YS-IRTM
+    while(ir.available() > 0) {
+      ir_data = ir.read();
+      ir_receive_char->setValue(ir_data);
       usb.print("Incoming IR: ");
-      usb.write(ir_data, i);
+      usb.println(ir_data);
       ble_notify(ir_receive_char);
     }
 
