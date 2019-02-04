@@ -29,6 +29,9 @@ void setup() {
   create_tasks();
   usb.println("blink led for finishing setup");
   //blink for telling that setup is done
+  usb.println("Enabling IRin");
+  irrecv.enableIRIn(); // Start the receiver
+  usb.println("Enabled IRin");
   led.blinks();
 }
 

@@ -15,7 +15,8 @@
  */
 void handle_ir(void * parameter) {
   uint32_t ir_data = 0;   // for incoming serial data from ir
-  
+  decode_results results;
+
   while(true) {
     while (ir.available() > 0) {
       ir_data = ir.read();
@@ -24,6 +25,12 @@ void handle_ir(void * parameter) {
       ir_receive_char->setValue(ir_data);
       ble_notify(ir_receive_char);
     }
+
+    if (irrecv.decode(&results)) {
+      usb.println(results.value, HEX);
+      irrecv.resume(); // Receive the next value
+    }
+
     vTaskDelay(500 / portTICK_PERIOD_MS); //Block for 500ms.
   }
   return;
