@@ -1,12 +1,12 @@
 /**
- * @file globals.cpp
+ * @file tagger.cpp
  * @author gldhnchn (gldhnchn@posteo.de)
  * @brief global variables
  * @date 2019-01-23
  *  
  */
 
-#include "globals.h"
+#include "tagger.h"
 
 uint32_t            latenz_timestamp=0,
                     latenz=0,
@@ -62,3 +62,4 @@ Led                 led(ONBOARDLED_PIN);
 Button              trigger(PIN_TRIGGER);
 Ir_YS_IRTM          ir(HARDWARE_SERIAL2, BAUD_RATE_IR);
 HardwareSerial      usb(HARDWARE_SERIAL0);
+IRrecv              irrecv(IR_RECV_PIN);
