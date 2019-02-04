@@ -51,7 +51,7 @@ void create_tasks() {
   xTaskCreate(
     handle_ir,            /* Task function. */
     "handle_ir",          /* name of task. */
-    10000,                 /* Stack size of task */
+    10000,                /* Stack size of task */
     NULL,                 /* parameter of the task */
     1,                    /* priority of the task */
     &xHandle_handle_ir    /* Task handle to keep track of created task */
