@@ -10,6 +10,7 @@
 #define misc_h
 
 #include "Arduino.h"
+#include <string>
 
 class Led {
   public:
@@ -32,6 +33,16 @@ class Button {
 
   private:
     int           _pin;
+};
+
+class Logger: public HardwareSerial {
+public:
+  Logger          (
+                  int hardware_serial_nr // 0 for usb (rx_pin=3, tx_pin=1)
+                  ); 
+  void            log_error(std::string msg),
+                  log_warning(std::string msg),
+                  log_debug(std::string msg);
 };
 
 #endif

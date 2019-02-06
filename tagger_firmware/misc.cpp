@@ -7,6 +7,7 @@
 
 #include "Arduino.h"
 #include "misc.h"
+#include <string>
 
 Led::Led(int pin) {
   pinMode(pin, OUTPUT);
@@ -37,5 +38,23 @@ Button::Button(int pin) {
 
 void Button::read_pin() {
   pressed = !digitalRead(_pin);
+  return;
+}
+
+void Logger::log_error(std::string msg) {
+  print("ERROR: ");
+  println(msg.c_str());
+  return;
+}
+
+void Logger::log_warning(std::string msg) {
+  print("WARNING: ");
+  println(msg.c_str());
+  return;
+}
+
+void Logger::log_debug(std::string msg) {
+  print("DEBUG: ");
+  println(msg.c_str());
   return;
 }
