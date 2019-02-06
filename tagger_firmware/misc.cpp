@@ -41,19 +41,19 @@ void Button::read_pin() {
   return;
 }
 
-void Logger::log_error(std::string msg) {
+void Logger::error(std::string msg) {
   print("ERROR: ");
   println(msg.c_str());
   return;
 }
 
-void Logger::log_warning(std::string msg) {
+void Logger::warning(std::string msg) {
   print("WARNING: ");
   println(msg.c_str());
   return;
 }
 
-void Logger::log_debug(std::string msg) {
+void Logger::debug(std::string msg) {
   print("DEBUG: ");
   println(msg.c_str());
   return;
