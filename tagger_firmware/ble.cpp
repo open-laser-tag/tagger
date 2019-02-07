@@ -21,20 +21,16 @@ class Ir_send_callbacks: public BLECharacteristicCallbacks {
     std::string value = ir_send_char->getValue();
 
     if (value.length() > 0) {
-      usb.print("bt incoming: ");
-      for (int i = 0; i < value.length(); i++) usb.print(value[i]);
-      usb.println();
+      log.info("bt incoming: ");
+      for (int i = 0; i < value.length(); i++) log.print(value[i]);
+      log.println();
 
       ir.write((const unsigned char*)value.c_str(),value.length());
       latenz = millis() - latenz_timestamp;
-      usb.print("latency value: ");
-      usb.println(latenz);
+      log.info("latency value: "+std::to_string(latenz));
       //send latency via BT to app
       vTaskResume(xHandle_send_latency);
-      usb.print("sent to ir module: ");
-      usb.println(value.c_str());
-
-
+      log.info("sent to ir module: "+value);
     }
   }
 };
@@ -47,7 +43,7 @@ class MyServerCallbacks: public BLEServerCallbacks {
    * @param pServer 
    */
   void onConnect(BLEServer* pServer) {
-    usb.println("device connected");
+    log.info("device connected");
     led.light_on();
     return;
   }
@@ -59,7 +55,7 @@ class MyServerCallbacks: public BLEServerCallbacks {
    * @param pServer 
    */
   void onDisconnect(BLEServer* pServer) {
-    usb.println("device disconnected");
+    log.info("device disconnected");
     led.light_off();
     return;
   }
@@ -76,31 +72,31 @@ void init_ble() {
     Ported to Arduino ESP32 by Evandro Copercini
   */
 
-  usb.println("create BLE device");
+  log.debug("creating BLE device...");
   BLEDevice::init("OpenLT Tagger"); // Give it a name
 
-  usb.println("create BLE server");
+  log.debug("creating BLE server...");
   BLEServer *pServer = BLEDevice::createServer();
   pServer->setCallbacks(new MyServerCallbacks());
 
-  usb.println("create BLE service");
+  log.debug("creating BLE service...");
   BLEService *pService = pServer->createService(SERVICE_UUID);
 
-  usb.println("create BLE trigger characteristic");
+  log.debug("creating BLE trigger characteristic...");
   trigger_char     = pService->createCharacteristic(
                       CHARACTERISTIC_TRIGGER_UUID,
                       BLECharacteristic::PROPERTY_NOTIFY
                     );
   trigger_char     ->addDescriptor(new BLE2902());
 
-  usb.println("create BLE ir receive characteristic");
+  log.debug("creating BLE ir receive characteristic...");
   ir_receive_char  = pService->createCharacteristic(
                       CHARACTERISTIC_IR_RECEIVE_UUID,
                       BLECharacteristic::PROPERTY_NOTIFY
                     );
   ir_receive_char  ->addDescriptor(new BLE2902());
 
-  usb.println("create BLE ir send characteristic");
+  log.debug("creating BLE ir send characteristic...");
   ir_send_char     = pService->createCharacteristic(
                       CHARACTERISTIC_IR_SEND_UUID,
                       BLECharacteristic::PROPERTY_WRITE
@@ -108,14 +104,14 @@ void init_ble() {
   ir_send_char     ->addDescriptor(new BLE2902());
   ir_send_char     ->setCallbacks(new Ir_send_callbacks());
   
-  usb.println("create BLE latency characteristic");
+  log.debug("creating BLE latency characteristic...");
   latency_char     = pService->createCharacteristic(
                       CHARACTERISTIC_LATENCY_UUID,
                       BLECharacteristic::PROPERTY_NOTIFY
                     );
   latency_char     ->addDescriptor(new BLE2902());
 
-  usb.println("create BLE version characteristic");
+  log.debug("creating BLE version characteristic...");
   version_char     = pService->createCharacteristic(
                       CHARACTERISTIC_VERSION_UUID,
                       BLECharacteristic::PROPERTY_READ
@@ -123,26 +119,23 @@ void init_ble() {
   version_char     ->addDescriptor(new BLE2902());
   version_char     ->setValue(GIT_TAG);
 
-  usb.println("start BLE service");
+  log.debug("starting BLE service...");
   pService->start();
 
-  usb.println("start advertising");
+  log.debug("starting advertising...");
   BLEAdvertising *pAdvertising = pServer->getAdvertising();
   pAdvertising->start();
 
+  /* Create a mutex type semaphore. */
+  log.debug("creating BT mutex...");
+  xMutex_BT = xSemaphoreCreateMutex();
+
+  if( xMutex_BT != NULL ) log.debug("BT Mutex successfully created.");
+  else log.error("Could not create BT Mutex");
+  
   BLEAddress mac_address = BLEDevice::getAddress();
   std::string mac_str = mac_address.toString();
-  usb.print("MAC address: ");
-  usb.write((const unsigned char*)mac_str.c_str(),mac_str.length());
-  usb.println();
-
-  /* Create a mutex type semaphore. */
-   xMutex_BT = xSemaphoreCreateMutex();
-
-  usb.println("Create BT Mutex");
-  if( xMutex_BT != NULL ) usb.println("BT Mutex successfully created.");
-  else usb.println("Error while creating BT Mutex");
-  
+  log.info("MAC address: "+mac_str);
   return;
 }
 
@@ -152,7 +145,7 @@ void init_ble() {
  */
 void ble_notify(BLECharacteristic *characteristic) {
 
-  usb.println("Sending BT...");
+  log.debug("Sending BT...");
   //check if Mutex was successfully created
   if( xMutex_BT != NULL ) {
     /* See if we can obtain the semaphore.  If the semaphore is not
@@ -164,11 +157,11 @@ void ble_notify(BLECharacteristic *characteristic) {
         /* We have finished accessing the shared resource.  Release the
         semaphore. */
         xSemaphoreGive( xMutex_BT );
-        usb.println("BT successfully sent");
+        log.debug("BT successfully sent");
     }
-    else usb.println("Error: BT Mutex locked for over 10ms, message possibly dropped");
+    else log.error("BT Mutex locked for over 10ms, message possibly dropped");
   }
-  else usb.println("Error: BT Mutex not available.");
+  else log.error("BT Mutex not available.");
 
   return;
 }

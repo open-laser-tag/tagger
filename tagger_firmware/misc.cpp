@@ -53,6 +53,13 @@ void Logger::warning(std::string msg) {
   return;
 }
 
+void Logger::info(std::string msg) {
+  print("INFO: ");
+  println(msg.c_str());
+  return;
+}
+
+
 void Logger::debug(std::string msg) {
   print("DEBUG: ");
   println(msg.c_str());

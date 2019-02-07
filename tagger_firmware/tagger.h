@@ -77,8 +77,8 @@ extern BLECharacteristic    *trigger_char,
 extern Ir_YS_IRTM           ir; 
 extern Led                  led;
 extern Button               trigger;
-extern HardwareSerial       usb;
 extern IRrecv               irrecv;
+extern Logger               log;
 
 
 #endif // tagger_h

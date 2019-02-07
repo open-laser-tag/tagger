@@ -25,15 +25,14 @@ void handle_ir(void * parameter) {
     while(ir.available() > 0) {
       ir_data = ir.read();
       ir_receive_char->setValue(ir_data);
-      usb.print("Incoming IR: ");
-      usb.println(ir_data);
+      log.info("Incoming IR: "+std::to_string(ir_data));
       ble_notify(ir_receive_char);
     }
 
     //ir receiver TSOP
     if (irrecv.decode(&results)) {
-      usb.print("Incoming IR: ");
-      usb.println(results.value, HEX);
+      log.info("Incoming IR: ");
+      log.println(results.value, HEX);
       ir_receive_char->setValue((uint32_t&)results.value);
       ble_notify(ir_receive_char);
       irrecv.resume(); // Receive the next value
@@ -69,15 +68,12 @@ void refresh_trigger_status(void * parameter) {
     //refresh trigger.pressed
     trigger.read_pin();
 
-    usb.print("Button Interrupt Triggered times: ");
-    usb.println(count_trigger_interrupts);
-    usb.print("time since last trigger: ");
-    usb.println(xTaskGetTickCount() - last_bounce_time);
-    usb.print("trigger status: ");
-    usb.println(trigger.pressed);
+    log.info("Button Interrupt Triggered times: "+std::to_string(count_trigger_interrupts));
+    log.info("time since last trigger: "+std::to_string(xTaskGetTickCount() - last_bounce_time));
+    log.info("trigger status: "+std::to_string(trigger.pressed));
     latenz_timestamp = millis();
 
-    usb.println("sending trigger status via bt");
+    log.debug("sending trigger status via bt");
     trigger_char->setValue((int&)trigger.pressed);
     ble_notify(trigger_char);
 

@@ -42,6 +42,7 @@ public:
                   ); 
   void            error(std::string msg),
                   warning(std::string msg),
+                  info(std::string msg),
                   debug(std::string msg);
 };
 

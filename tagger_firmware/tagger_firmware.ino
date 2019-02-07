@@ -17,21 +17,24 @@
  */
 void setup() {
   
-  usb.begin(115200);
-  usb.println("Hello, this is OpenLT Tagger.");
-  usb.print("Tagger Firmware version: ");
-  usb.println(GIT_TAG);
+  log.begin(115200);
+  log.println("Hello, this is OpenLT Tagger.");
+  log.print("Tagger Firmware version: ");
+  log.println(GIT_TAG);
+
+  log.debug("Starting init...");
   //trigger pin to interrupt
   attachInterrupt(digitalPinToInterrupt(PIN_TRIGGER), handle_trigger, CHANGE); //LOW, CHANGE, RISING, FALLINGd
   //init bluetooth low energy server and services
   init_ble();
   //init trigger and ir handling
   create_tasks();
-  usb.println("blink led for finishing setup");
   //blink for telling that setup is done
-  usb.println("Enabling IRin");
+  log.debug("Enabling IRin...");
   irrecv.enableIRIn(); // Start the receiver
-  usb.println("Enabled IRin");
+  log.debug("Enabled IRin");
+
+  log.debug("Init finished: blink LED");
   led.blinks();
 }
 
@@ -83,6 +86,6 @@ void send_latency (void * parameter) {
     //send latency via BT to app
     latency_char->setValue(latenz);
     ble_notify(latency_char);
-    usb.println("latency sent via  bt");
+    log.debug("latency sent via bt");
   }
 }
