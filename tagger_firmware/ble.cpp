@@ -21,16 +21,18 @@ class Ir_send_callbacks: public BLECharacteristicCallbacks {
     std::string value = ir_send_char->getValue();
 
     if (value.length() > 0) {
-      log.info("bt incoming: ");
-      for (int i = 0; i < value.length(); i++) log.print(value[i]);
-      log.println();
+      usblog.info("bt incoming: ");
+      for (int i = 0; i < value.length(); i++) usblog.print(value[i]);
+      usblog.println();
 
       ir.write((const unsigned char*)value.c_str(),value.length());
       latenz = millis() - latenz_timestamp;
-      log.info("latency value: "+std::to_string(latenz));
+      usblog.info("latency value: ");
+      usblog.println(String(latenz));
       //send latency via BT to app
       vTaskResume(xHandle_send_latency);
-      log.info("sent to ir module: "+value);
+      usblog.info("sent to ir module: ");
+      usblog.println(value);
     }
   }
 };
@@ -43,7 +45,7 @@ class MyServerCallbacks: public BLEServerCallbacks {
    * @param pServer 
    */
   void onConnect(BLEServer* pServer) {
-    log.info("device connected");
+    usblog.infoln("device connected");
     led.light_on();
     return;
   }
@@ -55,7 +57,7 @@ class MyServerCallbacks: public BLEServerCallbacks {
    * @param pServer 
    */
   void onDisconnect(BLEServer* pServer) {
-    log.info("device disconnected");
+    usblog.infoln("device disconnected");
     led.light_off();
     return;
   }
@@ -72,31 +74,31 @@ void init_ble() {
     Ported to Arduino ESP32 by Evandro Copercini
   */
 
-  log.debug("creating BLE device...");
+  usblog.debugln("creating BLE device...");
   BLEDevice::init("OpenLT Tagger"); // Give it a name
 
-  log.debug("creating BLE server...");
+  usblog.debugln("creating BLE server...");
   BLEServer *pServer = BLEDevice::createServer();
   pServer->setCallbacks(new MyServerCallbacks());
 
-  log.debug("creating BLE service...");
+  usblog.debugln("creating BLE service...");
   BLEService *pService = pServer->createService(SERVICE_UUID);
 
-  log.debug("creating BLE trigger characteristic...");
+  usblog.debugln("creating BLE trigger characteristic...");
   trigger_char     = pService->createCharacteristic(
                       CHARACTERISTIC_TRIGGER_UUID,
                       BLECharacteristic::PROPERTY_NOTIFY
                     );
   trigger_char     ->addDescriptor(new BLE2902());
 
-  log.debug("creating BLE ir receive characteristic...");
+  usblog.debugln("creating BLE ir receive characteristic...");
   ir_receive_char  = pService->createCharacteristic(
                       CHARACTERISTIC_IR_RECEIVE_UUID,
                       BLECharacteristic::PROPERTY_NOTIFY
                     );
   ir_receive_char  ->addDescriptor(new BLE2902());
 
-  log.debug("creating BLE ir send characteristic...");
+  usblog.debugln("creating BLE ir send characteristic...");
   ir_send_char     = pService->createCharacteristic(
                       CHARACTERISTIC_IR_SEND_UUID,
                       BLECharacteristic::PROPERTY_WRITE
@@ -104,14 +106,14 @@ void init_ble() {
   ir_send_char     ->addDescriptor(new BLE2902());
   ir_send_char     ->setCallbacks(new Ir_send_callbacks());
   
-  log.debug("creating BLE latency characteristic...");
+  usblog.debugln("creating BLE latency characteristic...");
   latency_char     = pService->createCharacteristic(
                       CHARACTERISTIC_LATENCY_UUID,
                       BLECharacteristic::PROPERTY_NOTIFY
                     );
   latency_char     ->addDescriptor(new BLE2902());
 
-  log.debug("creating BLE version characteristic...");
+  usblog.debugln("creating BLE version characteristic...");
   version_char     = pService->createCharacteristic(
                       CHARACTERISTIC_VERSION_UUID,
                       BLECharacteristic::PROPERTY_READ
@@ -119,23 +121,23 @@ void init_ble() {
   version_char     ->addDescriptor(new BLE2902());
   version_char     ->setValue(GIT_TAG);
 
-  log.debug("starting BLE service...");
+  usblog.debugln("starting BLE service...");
   pService->start();
 
-  log.debug("starting advertising...");
+  usblog.debugln("starting advertising...");
   BLEAdvertising *pAdvertising = pServer->getAdvertising();
   pAdvertising->start();
 
   /* Create a mutex type semaphore. */
-  log.debug("creating BT mutex...");
+  usblog.debugln("creating BT mutex...");
   xMutex_BT = xSemaphoreCreateMutex();
 
-  if( xMutex_BT != NULL ) log.debug("BT Mutex successfully created.");
-  else log.error("Could not create BT Mutex");
+  if( xMutex_BT != NULL ) usblog.debugln("BT Mutex successfully created.");
+  else usblog.errorln("Could not create BT Mutex");
   
   BLEAddress mac_address = BLEDevice::getAddress();
   std::string mac_str = mac_address.toString();
-  log.info("MAC address: "+mac_str);
+  usblog.infoln("MAC address: "+mac_str);
   return;
 }
 
@@ -145,7 +147,7 @@ void init_ble() {
  */
 void ble_notify(BLECharacteristic *characteristic) {
 
-  log.debug("Sending BT...");
+  usblog.debugln("Sending BT...");
   //check if Mutex was successfully created
   if( xMutex_BT != NULL ) {
     /* See if we can obtain the semaphore.  If the semaphore is not
@@ -157,11 +159,11 @@ void ble_notify(BLECharacteristic *characteristic) {
         /* We have finished accessing the shared resource.  Release the
         semaphore. */
         xSemaphoreGive( xMutex_BT );
-        log.debug("BT successfully sent");
+        usblog.debugln("BT successfully sent");
     }
-    else log.error("BT Mutex locked for over 10ms, message possibly dropped");
+    else usblog.errorln("BT Mutex locked for over 10ms, message possibly dropped");
   }
-  else log.error("BT Mutex not available.");
+  else usblog.errorln("BT Mutex not available.");
 
   return;
 }

@@ -78,7 +78,7 @@ extern Ir_YS_IRTM           ir;
 extern Led                  led;
 extern Button               trigger;
 extern IRrecv               irrecv;
-extern Logger               log;
+extern Logger               usblog;
 
 
 #endif // tagger_h

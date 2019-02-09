@@ -7,6 +7,7 @@
  */
 
 #include "ir_and_trigger.h"
+#include "strings.h"
 
 /**
  * @brief handle incoming infrared
@@ -25,14 +26,15 @@ void handle_ir(void * parameter) {
     while(ir.available() > 0) {
       ir_data = ir.read();
       ir_receive_char->setValue(ir_data);
-      log.info("Incoming IR: "+std::to_string(ir_data));
+      usblog.info("Incoming IR: ");
+      usblog.println(String(ir_data ,HEX));
       ble_notify(ir_receive_char);
     }
 
     //ir receiver TSOP
     if (irrecv.decode(&results)) {
-      log.info("Incoming IR: ");
-      log.println(results.value, HEX);
+      usblog.info("Incoming IR: ");
+      usblog.println(results.value, HEX);
       ir_receive_char->setValue((uint32_t&)results.value);
       ble_notify(ir_receive_char);
       irrecv.resume(); // Receive the next value
@@ -68,12 +70,15 @@ void refresh_trigger_status(void * parameter) {
     //refresh trigger.pressed
     trigger.read_pin();
 
-    log.info("Button Interrupt Triggered times: "+std::to_string(count_trigger_interrupts));
-    log.info("time since last trigger: "+std::to_string(xTaskGetTickCount() - last_bounce_time));
-    log.info("trigger status: "+std::to_string(trigger.pressed));
+    usblog.info("Button Interrupt Triggered times: ");
+    usblog.println(String(count_trigger_interrupts));
+    usblog.info("time in ms since last trigger: ");
+    usblog.println(String(xTaskGetTickCount() - last_bounce_time));
+    usblog.info("trigger status: ");
+    usblog.println(String(trigger.pressed));
     latenz_timestamp = millis();
 
-    log.debug("sending trigger status via bt");
+    usblog.debugln("sending trigger status via bt");
     trigger_char->setValue((int&)trigger.pressed);
     ble_notify(trigger_char);
 

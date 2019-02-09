@@ -43,7 +43,11 @@ public:
   void            error(std::string msg),
                   warning(std::string msg),
                   info(std::string msg),
-                  debug(std::string msg);
+                  debug(std::string msg),
+                  errorln(std::string msg),
+                  warningln(std::string msg),
+                  infoln(std::string msg),
+                  debugln(std::string msg);
 };
 
 #endif

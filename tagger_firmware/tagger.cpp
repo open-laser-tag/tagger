@@ -62,4 +62,4 @@ Led                 led(ONBOARDLED_PIN);
 Button              trigger(PIN_TRIGGER);
 Ir_YS_IRTM          ir(HARDWARE_SERIAL2, BAUD_RATE_IR);
 IRrecv              irrecv(IR_RECV_PIN);
-Logger              log(HARDWARE_SERIAL0);
+Logger              usblog(HARDWARE_SERIAL0);
