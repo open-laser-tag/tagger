@@ -70,11 +70,11 @@ void refresh_trigger_status(void * parameter) {
     //refresh trigger.pressed
     trigger.read_pin();
 
-    usblog.info("Button Interrupt Triggered times: ");
+    usblog.infoln("Button Interrupt Triggered times: ");
     usblog.println(String(count_trigger_interrupts));
-    usblog.info("time in ms since last trigger: ");
+    usblog.infoln("time in ms since last trigger: ");
     usblog.println(String(xTaskGetTickCount() - last_bounce_time));
-    usblog.info("trigger status: ");
+    usblog.infoln("trigger status: ");
     usblog.println(String(trigger.pressed));
     latenz_timestamp = millis();
 

@@ -31,8 +31,7 @@ class Ir_send_callbacks: public BLECharacteristicCallbacks {
       usblog.println(String(latenz));
       //send latency via BT to app
       vTaskResume(xHandle_send_latency);
-      usblog.info("sent to ir module: ");
-      usblog.println(value);
+      usblog.infoln("sent to ir module: "+value);
     }
   }
 };
