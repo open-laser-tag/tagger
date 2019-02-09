@@ -41,6 +41,11 @@ void Button::read_pin() {
   return;
 }
 
+//TODO correct this syntax
+Logger::Logger(int hardware_serial_nr)
+HardwareSerial(hardware_serial_nr)
+{ }
+
 void Logger::error(std::string msg) {
   print("ERROR: ");
   print(msg.c_str());
