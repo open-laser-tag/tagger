@@ -9,6 +9,8 @@
 
 #include "ble.h"
 
+bool device_connected = false;
+
 class Ir_send_callbacks: public BLECharacteristicCallbacks {
   
   /**
@@ -21,20 +23,17 @@ class Ir_send_callbacks: public BLECharacteristicCallbacks {
     std::string value = ir_send_char->getValue();
 
     if (value.length() > 0) {
-      usb.print("bt incoming: ");
-      for (int i = 0; i < value.length(); i++) usb.print(value[i]);
-      usb.println();
+      usblog.info("bt incoming: ");
+      for (int i = 0; i < value.length(); i++) usblog.print(value[i]);
+      usblog.println();
 
       ir.write((const unsigned char*)value.c_str(),value.length());
       latenz = millis() - latenz_timestamp;
-      usb.print("latency value: ");
-      usb.println(latenz);
+      usblog.info("time in ms since last trigger: ");
+      usblog.println(String(latenz));
       //send latency via BT to app
       vTaskResume(xHandle_send_latency);
-      usb.print("sent to ir module: ");
-      usb.println(value.c_str());
-
-
+      usblog.infoln("sent to ir module: "+value);
     }
   }
 };
@@ -47,8 +46,9 @@ class MyServerCallbacks: public BLEServerCallbacks {
    * @param pServer 
    */
   void onConnect(BLEServer* pServer) {
-    usb.println("device connected");
+    usblog.infoln("device connected");
     led.light_on();
+    device_connected = true;
     return;
   }
 
@@ -59,8 +59,9 @@ class MyServerCallbacks: public BLEServerCallbacks {
    * @param pServer 
    */
   void onDisconnect(BLEServer* pServer) {
-    usb.println("device disconnected");
+    usblog.infoln("device disconnected");
     led.light_off();
+    device_connected = false;
     return;
   }
 };
@@ -76,31 +77,31 @@ void init_ble() {
     Ported to Arduino ESP32 by Evandro Copercini
   */
 
-  usb.println("create BLE device");
+  usblog.debugln("creating BLE device...");
   BLEDevice::init("OpenLT Tagger"); // Give it a name
 
-  usb.println("create BLE server");
+  usblog.debugln("creating BLE server...");
   BLEServer *pServer = BLEDevice::createServer();
   pServer->setCallbacks(new MyServerCallbacks());
 
-  usb.println("create BLE service");
+  usblog.debugln("creating BLE service...");
   BLEService *pService = pServer->createService(SERVICE_UUID);
 
-  usb.println("create BLE trigger characteristic");
+  usblog.debugln("creating BLE trigger characteristic...");
   trigger_char     = pService->createCharacteristic(
                       CHARACTERISTIC_TRIGGER_UUID,
                       BLECharacteristic::PROPERTY_NOTIFY
                     );
   trigger_char     ->addDescriptor(new BLE2902());
 
-  usb.println("create BLE ir receive characteristic");
+  usblog.debugln("creating BLE ir receive characteristic...");
   ir_receive_char  = pService->createCharacteristic(
                       CHARACTERISTIC_IR_RECEIVE_UUID,
                       BLECharacteristic::PROPERTY_NOTIFY
                     );
   ir_receive_char  ->addDescriptor(new BLE2902());
 
-  usb.println("create BLE ir send characteristic");
+  usblog.debugln("creating BLE ir send characteristic...");
   ir_send_char     = pService->createCharacteristic(
                       CHARACTERISTIC_IR_SEND_UUID,
                       BLECharacteristic::PROPERTY_WRITE
@@ -108,14 +109,14 @@ void init_ble() {
   ir_send_char     ->addDescriptor(new BLE2902());
   ir_send_char     ->setCallbacks(new Ir_send_callbacks());
   
-  usb.println("create BLE latency characteristic");
+  usblog.debugln("creating BLE latency characteristic...");
   latency_char     = pService->createCharacteristic(
                       CHARACTERISTIC_LATENCY_UUID,
                       BLECharacteristic::PROPERTY_NOTIFY
                     );
   latency_char     ->addDescriptor(new BLE2902());
 
-  usb.println("create BLE version characteristic");
+  usblog.debugln("creating BLE version characteristic...");
   version_char     = pService->createCharacteristic(
                       CHARACTERISTIC_VERSION_UUID,
                       BLECharacteristic::PROPERTY_READ
@@ -123,26 +124,18 @@ void init_ble() {
   version_char     ->addDescriptor(new BLE2902());
   version_char     ->setValue(GIT_TAG);
 
-  usb.println("start BLE service");
+  usblog.debugln("starting BLE service...");
   pService->start();
 
-  usb.println("start advertising");
+  usblog.debugln("starting advertising...");
   BLEAdvertising *pAdvertising = pServer->getAdvertising();
   pAdvertising->start();
 
+ 
+  /* MAC address */
   BLEAddress mac_address = BLEDevice::getAddress();
   std::string mac_str = mac_address.toString();
-  usb.print("MAC address: ");
-  usb.write((const unsigned char*)mac_str.c_str(),mac_str.length());
-  usb.println();
-
-  /* Create a mutex type semaphore. */
-   xMutex_BT = xSemaphoreCreateMutex();
-
-  usb.println("Create BT Mutex");
-  if( xMutex_BT != NULL ) usb.println("BT Mutex successfully created.");
-  else usb.println("Error while creating BT Mutex");
-  
+  usblog.infoln("MAC address: "+mac_str);
   return;
 }
 
@@ -152,23 +145,28 @@ void init_ble() {
  */
 void ble_notify(BLECharacteristic *characteristic) {
 
-  usb.println("Sending BT...");
-  //check if Mutex was successfully created
-  if( xMutex_BT != NULL ) {
-    /* See if we can obtain the semaphore.  If the semaphore is not
-    available wait 10 ms to see if it becomes free. */
-    if( xSemaphoreTake( xMutex_BT, 10 / portTICK_PERIOD_MS ) == pdTRUE ) {
-        /* We were able to obtain the semaphore and can now access the
-        shared resource. */
-        characteristic->notify();
-        /* We have finished accessing the shared resource.  Release the
-        semaphore. */
-        xSemaphoreGive( xMutex_BT );
-        usb.println("BT successfully sent");
+  if (device_connected) {
+    usblog.debugln("Sending BT...");
+    //check if Mutex was successfully created
+    if( xMutex_BT != NULL ) {
+      /* See if we can obtain the semaphore.  If the semaphore is not
+      available wait 10 ms to see if it becomes free. */
+      if( xSemaphoreTake( xMutex_BT, 10 / portTICK_PERIOD_MS ) == pdTRUE ) {
+          /* We were able to obtain the semaphore and can now access the
+          shared resource. */
+          characteristic->notify();
+          /* We have finished accessing the shared resource.  Release the
+          semaphore. */
+          xSemaphoreGive( xMutex_BT );
+          usblog.debugln("BT successfully sent");
+      }
+      else usblog.errorln("BT Mutex locked for over 10ms, message possibly dropped");
     }
-    else usb.println("Error: BT Mutex locked for over 10ms, message possibly dropped");
+    else usblog.errorln("BT Mutex not available.");
   }
-  else usb.println("Error: BT Mutex not available.");
+  else {
+    usblog.warningln("No device connected, no message sent.");
+  }
 
   return;
 }

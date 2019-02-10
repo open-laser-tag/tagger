@@ -7,6 +7,7 @@
  */
 
 #include "ir_and_trigger.h"
+#include "strings.h"
 
 /**
  * @brief handle incoming infrared
@@ -16,6 +17,7 @@
 void handle_ir(void * parameter) {
 
   decode_results results;
+  usblog.debugln("handle IR task started");
 
   while(true) {
 
@@ -25,15 +27,15 @@ void handle_ir(void * parameter) {
     while(ir.available() > 0) {
       ir_data = ir.read();
       ir_receive_char->setValue(ir_data);
-      usb.print("Incoming IR: ");
-      usb.println(ir_data);
+      usblog.info("Incoming IR: ");
+      usblog.println(String(ir_data ,HEX));
       ble_notify(ir_receive_char);
     }
 
     //ir receiver TSOP
     if (irrecv.decode(&results)) {
-      usb.print("Incoming IR: ");
-      usb.println(results.value, HEX);
+      usblog.info("Incoming IR: ");
+      usblog.println(results.value, HEX);
       ir_receive_char->setValue((uint32_t&)results.value);
       ble_notify(ir_receive_char);
       irrecv.resume(); // Receive the next value
@@ -59,6 +61,8 @@ void handle_trigger() {
 }
 
 void refresh_trigger_status(void * parameter) {
+
+  usblog.debugln("refresh trigger status task started");
   
   while(true) {
     vTaskSuspend(NULL); //suspend task until reactivated by handle_trigger()
@@ -69,15 +73,15 @@ void refresh_trigger_status(void * parameter) {
     //refresh trigger.pressed
     trigger.read_pin();
 
-    usb.print("Button Interrupt Triggered times: ");
-    usb.println(count_trigger_interrupts);
-    usb.print("time since last trigger: ");
-    usb.println(xTaskGetTickCount() - last_bounce_time);
-    usb.print("trigger status: ");
-    usb.println(trigger.pressed);
+    usblog.info("Button Interrupt Triggered times: ");
+    usblog.println(String(count_trigger_interrupts));
+    usblog.info("time in ms since last trigger: ");
+    usblog.println(String(xTaskGetTickCount() - last_bounce_time));
+    usblog.info("trigger status: ");
+    usblog.println(String(trigger.pressed));
     latenz_timestamp = millis();
 
-    usb.println("sending trigger status via bt");
+    usblog.debugln("sending trigger status via bt");
     trigger_char->setValue((int&)trigger.pressed);
     ble_notify(trigger_char);
 

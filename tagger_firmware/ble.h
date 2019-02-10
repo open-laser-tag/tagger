@@ -13,5 +13,6 @@
 
 void init_ble();
 void ble_notify(BLECharacteristic *characteristic);
+extern bool device_connected;
 
 #endif

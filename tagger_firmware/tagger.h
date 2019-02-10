@@ -66,7 +66,8 @@ extern TaskHandle_t         xHandle_handle_ir,
                             xHandle_refresh_trigger_status,
                             xHandle_send_latency;
 
-extern SemaphoreHandle_t    xMutex_BT;
+extern SemaphoreHandle_t    xMutex_BT,
+                            xMutex_USB;
 
 extern BLECharacteristic    *trigger_char,
                             *ir_receive_char,
@@ -77,8 +78,8 @@ extern BLECharacteristic    *trigger_char,
 extern Ir_YS_IRTM           ir; 
 extern Led                  led;
 extern Button               trigger;
-extern HardwareSerial       usb;
 extern IRrecv               irrecv;
+extern Logger               usblog;
 
 
 #endif // tagger_h

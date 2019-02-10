@@ -17,21 +17,31 @@
  */
 void setup() {
   
-  usb.begin(115200);
-  usb.println("Hello, this is OpenLT Tagger.");
-  usb.print("Tagger Firmware version: ");
-  usb.println(GIT_TAG);
+  usblog.begin(115200);
+  usblog.println();
+  usblog.println("*******************************************");
+  usblog.println("Hello, this is OpenLT Tagger.");
+  usblog.print("Tagger Firmware version: ");
+  usblog.println(GIT_TAG);
+  usblog.println("*******************************************");
+  usblog.println();
+
+
+  usblog.println("DEBUG: Starting init...");
+  //create semaphores
+  init_mutex();
   //trigger pin to interrupt
-  attachInterrupt(digitalPinToInterrupt(PIN_TRIGGER), handle_trigger, CHANGE); //LOW, CHANGE, RISING, FALLINGd
-  //init bluetooth low energy server and services
+  attachInterrupt(digitalPinToInterrupt(PIN_TRIGGER), handle_trigger, CHANGE); //LOW, CHANGE, RISING, FALLING
+  //init bluetooth low energy server, services, characteristics
   init_ble();
   //init trigger and ir handling
   create_tasks();
-  usb.println("blink led for finishing setup");
   //blink for telling that setup is done
-  usb.println("Enabling IRin");
+  usblog.debugln("Enabling IRin...");
   irrecv.enableIRIn(); // Start the receiver
-  usb.println("Enabled IRin");
+  usblog.debugln("Enabled IRin");
+
+  usblog.debugln("Init finished: blink LED");
   led.blinks();
 }
 
@@ -77,12 +87,34 @@ void create_tasks() {
 }
 
 void send_latency (void * parameter) {
+
+  usblog.debugln("send latency task started");
+
   while(true) {
     //suspend until reactivated by onWrite of Ir_send_callbacks
     vTaskSuspend(NULL);
     //send latency via BT to app
     latency_char->setValue(latenz);
     ble_notify(latency_char);
-    usb.println("latency sent via  bt");
+    usblog.debugln("latency sent via bt");
   }
+}
+
+/**
+ * @brief create semaphores
+ * Create mutex type semaphore for USB and BT communication.
+ * Call this before using ble_notify or debug logger outputs.
+ */
+void init_mutex() {
+  usblog.println("DEBUG: creating USB mutex...");
+  xMutex_USB = xSemaphoreCreateMutex();
+  if( xMutex_USB != NULL ) usblog.debugln("USB Mutex successfully created.");
+  else usblog.println("Error: Could not create USB Mutex");
+
+  usblog.debugln("creating BT mutex...");
+  xMutex_BT = xSemaphoreCreateMutex();
+  if( xMutex_BT != NULL ) usblog.debugln("BT Mutex successfully created.");
+  else usblog.errorln("Could not create BT Mutex");
+
+
 }
