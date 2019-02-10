@@ -22,9 +22,15 @@ TaskHandle_t        xHandle_handle_ir,
 
 /**
  * @brief bluetooth mutex
- * This mutex is used to lock/unlock the bluetooth send communication.
+ * This mutex is used to lock/unlock the bluetooth communication.
  */
 SemaphoreHandle_t    xMutex_BT;
+
+/**
+ * @brief USB mutex
+ * This mutex is used to lock/unlock the USB communication.
+ */
+SemaphoreHandle_t    xMutex_USB;
 
 /**
  * @brief send trigger status
@@ -62,4 +68,4 @@ Led                 led(ONBOARDLED_PIN);
 Button              trigger(PIN_TRIGGER);
 Ir_YS_IRTM          ir(HARDWARE_SERIAL2, BAUD_RATE_IR);
 IRrecv              irrecv(IR_RECV_PIN);
-Logger              usblog(HARDWARE_SERIAL0);
+Logger              usblog(HARDWARE_SERIAL0, &xMutex_USB);

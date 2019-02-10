@@ -17,6 +17,7 @@
 void handle_ir(void * parameter) {
 
   decode_results results;
+  usblog.debugln("handle IR task started");
 
   while(true) {
 
@@ -60,6 +61,8 @@ void handle_trigger() {
 }
 
 void refresh_trigger_status(void * parameter) {
+
+  usblog.debugln("refresh trigger status task started");
   
   while(true) {
     vTaskSuspend(NULL); //suspend task until reactivated by handle_trigger()
@@ -70,11 +73,11 @@ void refresh_trigger_status(void * parameter) {
     //refresh trigger.pressed
     trigger.read_pin();
 
-    usblog.infoln("Button Interrupt Triggered times: ");
+    usblog.info("Button Interrupt Triggered times: ");
     usblog.println(String(count_trigger_interrupts));
-    usblog.infoln("time in ms since last trigger: ");
+    usblog.info("time in ms since last trigger: ");
     usblog.println(String(xTaskGetTickCount() - last_bounce_time));
-    usblog.infoln("trigger status: ");
+    usblog.info("trigger status: ");
     usblog.println(String(trigger.pressed));
     latenz_timestamp = millis();
 

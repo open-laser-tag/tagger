@@ -127,13 +127,8 @@ void init_ble() {
   BLEAdvertising *pAdvertising = pServer->getAdvertising();
   pAdvertising->start();
 
-  /* Create a mutex type semaphore. */
-  usblog.debugln("creating BT mutex...");
-  xMutex_BT = xSemaphoreCreateMutex();
-
-  if( xMutex_BT != NULL ) usblog.debugln("BT Mutex successfully created.");
-  else usblog.errorln("Could not create BT Mutex");
-  
+ 
+  /* MAC address */
   BLEAddress mac_address = BLEDevice::getAddress();
   std::string mac_str = mac_address.toString();
   usblog.infoln("MAC address: "+mac_str);
