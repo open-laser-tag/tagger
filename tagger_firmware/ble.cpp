@@ -9,6 +9,8 @@
 
 #include "ble.h"
 
+bool device_connected = false;
+
 class Ir_send_callbacks: public BLECharacteristicCallbacks {
   
   /**
@@ -27,7 +29,7 @@ class Ir_send_callbacks: public BLECharacteristicCallbacks {
 
       ir.write((const unsigned char*)value.c_str(),value.length());
       latenz = millis() - latenz_timestamp;
-      usblog.info("latency value: ");
+      usblog.info("time in ms since last trigger: ");
       usblog.println(String(latenz));
       //send latency via BT to app
       vTaskResume(xHandle_send_latency);
@@ -46,6 +48,7 @@ class MyServerCallbacks: public BLEServerCallbacks {
   void onConnect(BLEServer* pServer) {
     usblog.infoln("device connected");
     led.light_on();
+    device_connected = true;
     return;
   }
 
@@ -58,6 +61,7 @@ class MyServerCallbacks: public BLEServerCallbacks {
   void onDisconnect(BLEServer* pServer) {
     usblog.infoln("device disconnected");
     led.light_off();
+    device_connected = false;
     return;
   }
 };
@@ -141,23 +145,28 @@ void init_ble() {
  */
 void ble_notify(BLECharacteristic *characteristic) {
 
-  usblog.debugln("Sending BT...");
-  //check if Mutex was successfully created
-  if( xMutex_BT != NULL ) {
-    /* See if we can obtain the semaphore.  If the semaphore is not
-    available wait 10 ms to see if it becomes free. */
-    if( xSemaphoreTake( xMutex_BT, 10 / portTICK_PERIOD_MS ) == pdTRUE ) {
-        /* We were able to obtain the semaphore and can now access the
-        shared resource. */
-        characteristic->notify();
-        /* We have finished accessing the shared resource.  Release the
-        semaphore. */
-        xSemaphoreGive( xMutex_BT );
-        usblog.debugln("BT successfully sent");
+  if (device_connected) {
+    usblog.debugln("Sending BT...");
+    //check if Mutex was successfully created
+    if( xMutex_BT != NULL ) {
+      /* See if we can obtain the semaphore.  If the semaphore is not
+      available wait 10 ms to see if it becomes free. */
+      if( xSemaphoreTake( xMutex_BT, 10 / portTICK_PERIOD_MS ) == pdTRUE ) {
+          /* We were able to obtain the semaphore and can now access the
+          shared resource. */
+          characteristic->notify();
+          /* We have finished accessing the shared resource.  Release the
+          semaphore. */
+          xSemaphoreGive( xMutex_BT );
+          usblog.debugln("BT successfully sent");
+      }
+      else usblog.errorln("BT Mutex locked for over 10ms, message possibly dropped");
     }
-    else usblog.errorln("BT Mutex locked for over 10ms, message possibly dropped");
+    else usblog.errorln("BT Mutex not available.");
   }
-  else usblog.errorln("BT Mutex not available.");
+  else {
+    usblog.warningln("No device connected, no message sent.");
+  }
 
   return;
 }
