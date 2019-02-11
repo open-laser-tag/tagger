@@ -9,6 +9,45 @@
 #include "misc.h"
 #include <string>
 
+/**
+ * @brief reverse bit order of  byte
+ * Reverses the bit order of one byte. Inspired by sth: https://stackoverflow.com/a/2602885/10114417
+ * @param b one byte to reverse
+ * @return unsigned char reversed byte
+ */
+unsigned char reverse_bit_order(unsigned char b) {
+  //First the left four bits are swapped with the right four bits.
+  b = (b & 0xF0) >> 4 | (b & 0x0F) << 4;
+  //Then all adjacent pairs are swapped
+  b = (b & 0xCC) >> 2 | (b & 0x33) << 2;
+  //and then all adjacent single bits.
+  b = (b & 0xAA) >> 1 | (b & 0x55) << 1;
+  return b;
+}
+
+/**
+ * @brief reverse bit order of unsinged long
+ * Reverses the bit order of each byte of an unsigned long. Don't changes the order of the bytes.
+ * @param ul one unsinged long (4 bytes) to reverse
+ * @return unsigned long reversed unsinged long
+ */
+unsigned long reverse_bit_order(unsigned long ul) {
+  
+  unsigned char b;
+  unsigned long ul_new;
+
+  //4 is for 4 bytes in unsinged long
+  for(int i=0;i<4;i++) {
+    //use byte 0,1,2,3 of unsigned long
+    b = ul >> i*8; //8 is for 8 bits in one byte
+    //reverse byte
+    b = reverse_bit_order(b);
+    //put reversed byte at old place in new unsigned long
+    ul_new |= b << i*8;
+  }
+  return ul_new;
+}
+
 Led::Led(int pin) {
   pinMode(pin, OUTPUT);
   _pin = pin;

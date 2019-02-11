@@ -34,9 +34,11 @@ void handle_ir(void * parameter) {
 
     //ir receiver TSOP
     if (irrecv.decode(&results)) {
+      //the bits order changed after transmission, so it is reversed here
+      unsigned long ir_recv_data = reverse_bit_order(results.value);
       usblog.info("Incoming IR: ");
-      usblog.println(results.value, HEX);
-      ir_receive_char->setValue((uint32_t&)results.value);
+      usblog.println(ir_recv_data, HEX);
+      ir_receive_char->setValue((uint32_t&)ir_recv_data);
       ble_notify(ir_receive_char);
       irrecv.resume(); // Receive the next value
     }
