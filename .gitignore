@@ -6,3 +6,5 @@
 !LICENSE
 !README.md
 !tagger_firmware
+!update_git_hash.sh
+!Makefile
