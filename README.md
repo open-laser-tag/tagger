@@ -1,6 +1,6 @@
 <img src="docs/images/open-lasertag-logo.svg" alt="Open Lasertag Logo" width="100"/>
 
-# Open Lasertag
+# Open Laser Tag
 > because Laz00rs!
 
 An cheap and DIY open Source Lasertag build on the ESP-32 and Android. With an simple and expandable achitecture.
