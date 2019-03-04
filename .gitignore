@@ -8,3 +8,4 @@
 !tagger_firmware
 !update_git_hash.sh
 !Makefile
+!CHANGELOG.md
