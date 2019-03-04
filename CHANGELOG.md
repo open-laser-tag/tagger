@@ -1,10 +1,10 @@
-#v0.0.2
+# v0.0.2
 * tagger firmware version readable via bluetooth
 * new additional ir receiver with irremote.h lib
 * add semaphores for handling communication rescources
 * improve usb debug output
 
-#v0.0.1
+# v0.0.1
 * first version of tagger firmware with trigger, infrared and bluetooth
 * esp32
 * freertos
