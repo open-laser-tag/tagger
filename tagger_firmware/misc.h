@@ -17,31 +17,31 @@ uint32_t reverse_bit_order(uint32_t);
 
 class Led {
   public:
-    Led           (int pin);
+    Led           (uint8_t pin);
     void          light_on(),
                   light_off(),
-                  blinks(int n=3, int duration_in_ms=150);
+                  blinks(uint8_t n=3, uint16_t duration_in_ms=150);
     
   private:
-    int           _pin;
+    uint8_t       _pin;
 };
 
 
 
 class Button {
   public:
-    Button        (int pin);
+    Button        (uint8_t pin);
     void          read_pin();
     bool          pressed = false;
 
   private:
-    int           _pin;
+    uint8_t       _pin;
 };
 
 class Logger: public HardwareSerial {
 public:
   Logger          (
-                  int hardware_serial_nr, // 0 for usb (rx_pin=3, tx_pin=1)
+                  uint8_t hardware_serial_nr, // 0 for usb (rx_pin=3, tx_pin=1)
                   SemaphoreHandle_t *xSemaphore
                   ); 
   void            error(std::string msg),
