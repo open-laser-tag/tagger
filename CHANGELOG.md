@@ -1,3 +1,6 @@
+# v0.0.3
+* fixed bit order in received data from tsop ir reciever
+
 # v0.0.2
 * tagger firmware version readable via bluetooth
 * new additional ir receiver with irremote.h lib
