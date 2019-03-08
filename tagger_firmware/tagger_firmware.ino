@@ -57,30 +57,30 @@ void loop() {  vTaskDelay(portMAX_DELAY); /*wait as much as posible ... */ }
  */
 void create_tasks() {
   xTaskCreate(
-    handle_ir,            /* Task function. */
-    "handle_ir",          /* name of task. */
-    10000,                /* Stack size of task */
-    NULL,                 /* parameter of the task */
-    1,                    /* priority of the task */
-    &xHandle_handle_ir    /* Task handle to keep track of created task */
+    handle_ir,                        /* Task function. */
+    "handle_ir",                      /* name of task. */
+    10000,                            /* Stack size of task */
+    NULL,                             /* parameter of the task */
+    1,                                /* priority of the task */
+    &xHandle_handle_ir                /* Task handle to keep track of created task */
   );
 
   xTaskCreate(
-    refresh_trigger_status,              /* Task function. */
-    "refresh_trigger_status",            /* name of task. */
-    10000,                 /* Stack size of task */
-    NULL,                 /* parameter of the task */
-    1,                    /* priority of the task */
-    &xHandle_refresh_trigger_status      /* Task handle to keep track of created task */
+    refresh_trigger_status,           /* Task function. */
+    "refresh_trigger_status",         /* name of task. */
+    10000,                            /* Stack size of task */
+    NULL,                             /* parameter of the task */
+    1,                                /* priority of the task */
+    &xHandle_refresh_trigger_status   /* Task handle to keep track of created task */
   );
 
   xTaskCreate(
-    send_latency,              /* Task function. */
-    "send_latency",            /* name of task. */
-    10000,                 /* Stack size of task */
-    NULL,                 /* parameter of the task */
-    1,                    /* priority of the task */
-    &xHandle_send_latency      /* Task handle to keep track of created task */
+    send_latency,                     /* Task function. */
+    "send_latency",                   /* name of task. */
+    10000,                            /* Stack size of task */
+    NULL,                             /* parameter of the task */
+    1,                                /* priority of the task */
+    &xHandle_send_latency             /* Task handle to keep track of created task */
   );
 }
 
