@@ -15,7 +15,7 @@
  * @param b one byte to reverse
  * @return unsigned char reversed byte
  */
-unsigned char reverse_bit_order(unsigned char b) {
+uint8_t reverse_bit_order(uint8_t b) {
   //First the left four bits are swapped with the right four bits.
   b = (b & 0xF0) >> 4 | (b & 0x0F) << 4;
   //Then all adjacent pairs are swapped
@@ -31,19 +31,18 @@ unsigned char reverse_bit_order(unsigned char b) {
  * @param ul one unsinged long (4 bytes) to reverse
  * @return unsigned long reversed unsinged long
  */
-unsigned long reverse_bit_order(unsigned long ul) {
+uint32_t reverse_bit_order(uint32_t ul) {
   
-  unsigned char b;
-  unsigned long ul_new;
+  uint8_t b=0;
+  uint32_t ul_new=0;
 
-  //4 is for 4 bytes in unsinged long
-  for(int i=0;i<4;i++) {
+  for(int i=0;i<4 /*sizeof(uint32_t)/sizeof(uint8_t)*/;i++) {
     //use byte 0,1,2,3 of unsigned long
-    b = ul >> i*8; //8 is for 8 bits in one byte
+    b = ul >> i*8 /*sizeof(uint8_t)*/; //8 is for 8 bits in one byte
     //reverse byte
     b = reverse_bit_order(b);
     //put reversed byte at old place in new unsigned long
-    ul_new |= b << i*8;
+    ul_new |= b << i*8 /*sizeof(uint8_t)*/;
   }
   return ul_new;
 }

@@ -23,8 +23,8 @@ class Ir_send_callbacks: public BLECharacteristicCallbacks {
     std::string value = ir_send_char->getValue();
 
     if (value.length() > 0) {
-      usblog.info("bt incoming: ");
-      for (int i = 0; i < value.length(); i++) usblog.print(value[i]);
+      usblog.info("BT incoming, sending via IR: ");
+      for (int i = 0; i < value.length(); i++) usblog.print(value[i],HEX);
       usblog.println();
 
       ir.write((const unsigned char*)value.c_str(),value.length());
@@ -33,7 +33,6 @@ class Ir_send_callbacks: public BLECharacteristicCallbacks {
       usblog.println(String(latenz));
       //send latency via BT to app
       vTaskResume(xHandle_send_latency);
-      usblog.infoln("sent to ir module: "+value);
     }
   }
 };

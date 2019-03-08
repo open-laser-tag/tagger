@@ -3,7 +3,7 @@
  * @author gldhnchn (gldhnchn@posteo.de)
  * @brief infrared stuff and trigger handler
  * @date 2019-01-23
- *  
+ *
  */
 
 #include "ir_and_trigger.h"
@@ -35,7 +35,7 @@ void handle_ir(void * parameter) {
     //ir receiver TSOP
     if (irrecv.decode(&results)) {
       //the bits order changed after transmission, so it is reversed here
-      unsigned long ir_recv_data = reverse_bit_order(results.value);
+      uint32_t ir_recv_data = reverse_bit_order((uint32_t)results.value);
       usblog.info("Incoming IR: ");
       usblog.println(ir_recv_data, HEX);
       ir_receive_char->setValue((uint32_t&)ir_recv_data);

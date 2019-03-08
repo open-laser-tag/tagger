@@ -3,8 +3,6 @@
  * @author gldhnchn (gldhnchn@posteo.de)
  * @brief main arduino sketch file
  * @date 2019-01-23
- * 
- * 
  */
 
 #include "tagger.h"
@@ -13,14 +11,13 @@
  * @brief arduino setup
  * This is the arduino setup funciton. It is run once at startup.
  * Inits are done here and RTOS tasks are started here.
- * 
  */
 void setup() {
   
   usblog.begin(115200);
   usblog.println();
   usblog.println("*******************************************");
-  usblog.println("Hello, this is OpenLT Tagger.");
+  usblog.println("Hello, this is Open Laser Tag Tagger.");
   usblog.print("Tagger Firmware version: ");
   usblog.println(GIT_TAG);
   usblog.println("*******************************************");

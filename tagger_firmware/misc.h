@@ -12,8 +12,8 @@
 #include "Arduino.h"
 #include <string>
 
-unsigned char reverse_bit_order(unsigned char);
-unsigned long reverse_bit_order(unsigned long);
+uint8_t reverse_bit_order(uint8_t);
+uint32_t reverse_bit_order(uint32_t);
 
 class Led {
   public:
