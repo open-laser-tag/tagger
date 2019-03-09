@@ -1,11 +1,18 @@
 # Ignore everything
 *
 
-# Do inculde these
-!documentation/
+# Do include these
+!docs/*
 !LICENSE
 !README.md
-!tagger_firmware
+!tagger_firmware/*
 !update_git_hash.sh
 !Makefile
 !CHANGELOG.md
+!.gitignore
+
+# even when they are in subdirectories
+!*/
+
+# Ignore this
+tagger_firmware/git_info.h
