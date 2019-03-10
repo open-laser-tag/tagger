@@ -1,3 +1,5 @@
+# v0.0.4
+
 # v0.0.3
 * fixed bit order in received data from tsop ir reciever
 
