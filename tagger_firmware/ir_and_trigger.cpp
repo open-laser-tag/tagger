@@ -88,7 +88,7 @@ void refresh_trigger_status(void * parameter) {
     ble_notify(trigger_char);
     if (!device_connected) {
       uint8_t err_msg[5] = ERROR_MSG;
-      usblog.info("Device not conntected. Sending error message 0xFFFFFF via IR");
+      usblog.infoln("Device not conntected. Sending error message 0xFFFFFF via IR");
       ir.write((const unsigned char*)err_msg, sizeof(err_msg));
     }
 
