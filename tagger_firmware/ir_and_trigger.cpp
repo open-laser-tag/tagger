@@ -94,7 +94,7 @@ void refresh_trigger_status(void * parameter) {
     usblog.debugln("sending trigger status via bt");
     trigger_char->setValue((int&)trigger.pressed);
     ble_notify(trigger_char);
-    if (!device_connected) {
+    if (!device_connected && trigger.pressed) {
       uint8_t err_msg[5] = ERROR_MSG;
       usblog.infoln("Device not conntected. Sending error message 0xFFFFFF via IR");
       ir.write((const unsigned char*)err_msg, sizeof(err_msg));
