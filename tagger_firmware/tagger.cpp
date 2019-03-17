@@ -67,5 +67,7 @@ BLECharacteristic   *version_char;
 Led                 led(ONBOARDLED_PIN);
 Button              trigger(PIN_TRIGGER);
 Ir_YS_IRTM          ir(HARDWARE_SERIAL2, BAUD_RATE_IR);
-IRrecv              irrecv(IR_RECV_PIN);
+IRrecv              irrecv_front(IR_RECV_FRONT_PIN),
+                    irrecv_right(IR_RECV_RIGHT_PIN),
+                    irrecv_left(IR_RECV_LEFT_PIN);
 Logger              usblog(HARDWARE_SERIAL0, &xMutex_USB);

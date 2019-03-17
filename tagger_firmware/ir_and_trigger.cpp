@@ -8,6 +8,7 @@
 
 #include "ir_and_trigger.h"
 #include "strings.h"
+#include <IRremote.h>
 
 /**
  * @brief handle incoming infrared
@@ -32,19 +33,26 @@ void handle_ir(void * parameter) {
       ble_notify(ir_receive_char);
     }
 
-    //ir receiver TSOP
-    if (irrecv.decode(&results)) {
-      //the bits order changed after transmission, so it is reversed here
-      uint32_t ir_recv_data = reverse_bit_order((uint32_t)results.value);
-      usblog.info("Incoming IR: ");
-      usblog.println(ir_recv_data, HEX);
-      ir_receive_char->setValue((uint32_t&)ir_recv_data);
-      ble_notify(ir_receive_char);
-      irrecv.resume(); // Receive the next value
-    }
-
+    irrecv_decode(irrecv_front);
+    irrecv_decode(irrecv_right);
+    irrecv_decode(irrecv_left);
 
     vTaskDelay(500 / portTICK_PERIOD_MS); //Block for 500ms.
+  }
+  return;
+}
+
+void irrecv_decode(IRrecv& irrecv) {
+  decode_results results;
+
+  if (irrecv.decode(&results)) {
+    //the bits order changed after transmission, so it is reversed here
+    uint32_t ir_recv_data = reverse_bit_order((uint32_t)results.value);
+    usblog.info("Incoming IR: ");
+    usblog.println(ir_recv_data, HEX);
+    ir_receive_char->setValue((uint32_t&)ir_recv_data);
+    ble_notify(ir_receive_char);
+    irrecv.resume(); // Receive the next value
   }
   return;
 }
