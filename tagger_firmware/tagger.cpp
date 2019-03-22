@@ -71,3 +71,4 @@ IRrecv              irrecv_front(IR_RECV_FRONT_PIN),
                     irrecv_right(IR_RECV_RIGHT_PIN),
                     irrecv_left(IR_RECV_LEFT_PIN);
 Logger              usblog(HARDWARE_SERIAL0, &xMutex_USB);
+CRGB                leds[NUM_LEDS];

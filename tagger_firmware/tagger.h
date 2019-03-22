@@ -21,12 +21,12 @@
 #include "ir_and_trigger.h"
 #include "ble.h"
 #include <IRremote.h>
-//#include <FastLED.h>
+#include <FastLED.h>
 #include "git_info.h" //if this file is missing, type make
 
 //for FastLED.h
-// #define NUM_LEDS 1
-// #define DATA_PIN 3
+#define NUM_LEDS 1
+#define DATA_PIN 13
 
 #define IR_RECV_FRONT_PIN 27
 #define IR_RECV_RIGHT_PIN 26
@@ -76,5 +76,5 @@ extern IRrecv               irrecv_front,
                             irrecv_left;
 extern Logger               usblog;
 
-
+extern CRGB                 leds[NUM_LEDS];
 #endif // tagger_h

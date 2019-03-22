@@ -41,6 +41,11 @@ void setup() {
   irrecv_left.enableIRIn(); // Start the receiver
   usblog.debugln("Enabled IRin");
 
+  //init fast LED strip
+  FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);
+  leds[0] = CRGB::Blue; 
+  FastLED.show(); 
+
   //blink for telling that setup is done
   usblog.debugln("Init finished: blink LED");
   led.blinks();
