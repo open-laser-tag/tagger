@@ -43,7 +43,7 @@ void setup() {
 
   //init fast LED strip
   FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);
-  leds[0] = CRGB::Blue; 
+  leds[0].setRGB( 10, 10, 10);
   FastLED.show(); 
 
   //blink for telling that setup is done

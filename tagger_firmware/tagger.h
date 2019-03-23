@@ -46,6 +46,9 @@
 #define CHARACTERISTIC_IR_SEND_UUID     "8b91a0d2-5f7f-49cb-8939-4455d3d24b81"
 #define CHARACTERISTIC_LATENCY_UUID     "60e44cef-5a43-407b-8d1a-bce02377dcfd"
 #define CHARACTERISTIC_VERSION_UUID     "563c139f-3eda-4c88-9fc3-be987038fa6a"
+#define CHARACTERISTIC_LED_UUID         "7a4821c2-80f0-4eba-8070-d659d31e43de"
+
+
 
 extern uint32_t             latenz_timestamp,
                             latenz,
@@ -66,7 +69,8 @@ extern BLECharacteristic    *trigger_char,
                             *ir_receive_char,
                             *ir_send_char,
                             *latency_char,
-                            *version_char;
+                            *version_char,
+                            *led_char;
 
 extern Ir_YS_IRTM           ir; 
 extern Led                  led;
