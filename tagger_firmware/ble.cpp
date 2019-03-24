@@ -41,8 +41,15 @@ class Led_callbacks: public BLECharacteristicCallbacks {
 
   void onWrite(BLECharacteristic *ir_send_char) {
     std::string value = ir_send_char->getValue();
-    leds[0].setRGB( 0, 0, 10);
-    //leds[0] = (uint32_t) std::stoi( value );
+
+    for (int i=0; i<value.length()/4 && i/4<NUM_LEDS; i=i+4) {
+      uint8_t led = value.at(i);
+      uint8_t r = value.at(i+1);
+      uint8_t g = value.at(i+2);
+      uint8_t b = value.at(i+3);
+      leds[led].setRGB(r,g,b);
+    }
+
     FastLED.show();
     }
 };
