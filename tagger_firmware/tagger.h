@@ -28,9 +28,9 @@
 // #define NUM_LEDS 1
 // #define DATA_PIN 3
 
-#define IR_RECV_FRONT_PIN 27
-#define IR_RECV_RIGHT_PIN 26
-#define IR_RECV_LEFT_PIN 25
+#define IR_RECV_PIN 27 //front
+//#define IR_RECV_PIN 26 //right
+//#define IR_RECV_PIN 25 //left
 #define PIN_TRIGGER 21
 #define ONBOARDLED_PIN 2
 #define DEBOUNCETIME 10
@@ -71,9 +71,7 @@ extern BLECharacteristic    *trigger_char,
 extern Ir_YS_IRTM           ir; 
 extern Led                  led;
 extern Button               trigger;
-extern IRrecv               irrecv_front,
-                            irrecv_right,
-                            irrecv_left;
+extern IRrecv               irrecv;
 extern Logger               usblog;
 
 

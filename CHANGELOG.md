@@ -1,6 +1,5 @@
 # v0.0.4
 * add sending error message 0xFFFFFF via IR when no BT connected
-* add support for two more ir receiver
 
 # v0.0.3
 * fixed bit order in received data from tsop ir reciever

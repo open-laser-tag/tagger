@@ -36,9 +36,7 @@ void setup() {
   create_tasks();
   //blink for telling that setup is done
   usblog.debugln("Enabling IRin...");
-  irrecv_front.enableIRIn(); // Start the receiver
-  irrecv_right.enableIRIn(); // Start the receiver
-  irrecv_left.enableIRIn(); // Start the receiver
+  irrecv.enableIRIn(); // Start the receiver
   usblog.debugln("Enabled IRin");
 
   usblog.debugln("Init finished: blink LED");
