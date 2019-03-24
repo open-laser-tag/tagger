@@ -4,12 +4,12 @@
  * @brief infrared stuff and trigger handler
  * @date 2019-01-23
  * 
+ * 
  */
 #ifndef ir_and_trigger_h
 #define ir_and_trigger_h
 
 #include "tagger.h"
-#define ERROR_MSG {0xA1, 0xF1, 0xFF, 0xFF, 0xFF}
 
 void handle_ir(void * parameter);
 void handle_trigger();
