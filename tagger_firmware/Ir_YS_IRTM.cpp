@@ -11,7 +11,7 @@
 #include "Ir_YS_IRTM.h"
 
 
-Ir_YS_IRTM::Ir_YS_IRTM(uint8_t hardware_serial_nr, uint16_t baud_rate)
+Ir_YS_IRTM::Ir_YS_IRTM(int hardware_serial_nr, int baud_rate)
 : HardwareSerial(hardware_serial_nr)
 {
   //init ir with default baud rate
@@ -24,7 +24,7 @@ void Ir_YS_IRTM::send_ir(uint8_t data[]) {
   uint8_t ir_msg[5] = {0xA1, 0xF3, 0x00, 0x00, 0x00};
 
   //put three data bytes into ir message
-  for (uint8_t i=0; i++; i<=4) ir_msg[i+2] = data[i];
+  for (int i=0; i++; i<=4) ir_msg[i+2] = data[i];
 
   //send ir message to ir module
   write(ir_msg,sizeof(ir_msg));  
@@ -53,7 +53,7 @@ void Ir_YS_IRTM::set_baud_rate_level(uint8_t baud_rate_level) {
   return;
 }
 
-void Ir_YS_IRTM::set_baud_rate(uint16_t baud_rate) {
+void Ir_YS_IRTM::set_baud_rate(int baud_rate) {
   if (baud_rate == 4800) set_baud_rate_level(1);
   else if (baud_rate == 9600) set_baud_rate_level(2);
   else if (baud_rate == 19200) set_baud_rate_level(3);
@@ -62,4 +62,4 @@ void Ir_YS_IRTM::set_baud_rate(uint16_t baud_rate) {
   return;
 }
 
-uint16_t Ir_YS_IRTM::get_baud_rate() { return _baud_rate; }
+int Ir_YS_IRTM::get_baud_rate() { return _baud_rate; }

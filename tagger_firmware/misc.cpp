@@ -47,7 +47,7 @@ uint32_t reverse_bit_order(uint32_t ul) {
   return ul_new;
 }
 
-Led::Led(uint8_t pin) {
+Led::Led(int pin) {
   pinMode(pin, OUTPUT);
   _pin = pin;
 }
@@ -60,7 +60,7 @@ void Led::light_off() {
   digitalWrite(_pin, 0);
 }
 
-void Led::blinks(uint8_t n, uint16_t duration_in_ms) {
+void Led::blinks(int n, int duration_in_ms) {
   for (int i=1; i<=n; i++) {
     light_on();
     delay(duration_in_ms);
@@ -69,7 +69,7 @@ void Led::blinks(uint8_t n, uint16_t duration_in_ms) {
   }
 }
 
-Button::Button(uint8_t pin) {
+Button::Button(int pin) {
   pinMode(pin, INPUT_PULLUP);
   _pin = pin;
 }
@@ -79,7 +79,7 @@ void Button::read_pin() {
   return;
 }
 
-Logger::Logger(uint8_t hardware_serial_nr, SemaphoreHandle_t *xSemaphore)
+Logger::Logger(int hardware_serial_nr, SemaphoreHandle_t *xSemaphore)
 : HardwareSerial(hardware_serial_nr)
 {
   _xSemaphore = xSemaphore;

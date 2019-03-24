@@ -3,7 +3,6 @@
  * @author gldhnchn (gldhnchn@posteo.de)
  * @brief main arduino sketch file
  * @date 2019-01-23
- * 
  */
 
 #include "tagger.h"
