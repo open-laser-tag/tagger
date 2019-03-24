@@ -64,8 +64,6 @@ BLECharacteristic   *latency_char;
  */
 BLECharacteristic   *version_char;
 
-BLECharacteristic   *led_char;
-
 Led                 led(ONBOARDLED_PIN);
 Button              trigger(PIN_TRIGGER);
 Ir_YS_IRTM          ir(HARDWARE_SERIAL2, BAUD_RATE_IR);

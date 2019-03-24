@@ -37,16 +37,6 @@ class Ir_send_callbacks: public BLECharacteristicCallbacks {
   }
 };
 
-class Led_callbacks: public BLECharacteristicCallbacks {
-
-  void onWrite(BLECharacteristic *ir_send_char) {
-    std::string value = ir_send_char->getValue();
-    leds[0].setRGB( 0, 0, 10);
-    //leds[0] = (uint32_t) std::stoi( value );
-    FastLED.show();
-    }
-};
-
 class MyServerCallbacks: public BLEServerCallbacks {
   /**
    * @brief turn led on connect on
@@ -87,7 +77,7 @@ void init_ble() {
   */
 
   usblog.debugln("creating BLE device...");
-  BLEDevice::init("Open Laser Tag Tagger"); // Give it a name
+  BLEDevice::init("OpenLT Tagger"); // Give it a name
 
   usblog.debugln("creating BLE server...");
   BLEServer *pServer = BLEDevice::createServer();
@@ -95,14 +85,6 @@ void init_ble() {
 
   usblog.debugln("creating BLE service...");
   BLEService *pService = pServer->createService(SERVICE_UUID);
-
-  usblog.debugln("creating BLE led characteristic...");
-  led_char         = pService->createCharacteristic(
-                      CHARACTERISTIC_LED_UUID,
-                      BLECharacteristic::PROPERTY_WRITE
-                    );
-  led_char         ->addDescriptor(new BLE2902());
-  led_char         ->setCallbacks(new Led_callbacks());
 
   usblog.debugln("creating BLE trigger characteristic...");
   trigger_char     = pService->createCharacteristic(
