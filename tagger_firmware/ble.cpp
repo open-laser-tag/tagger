@@ -108,7 +108,7 @@ void init_ble() {
                       CHARACTERISTIC_LED_UUID,
                       BLECharacteristic::PROPERTY_WRITE
                     );
-  led_char         ->addDescriptor(new BLE2902());
+  // led_char         ->addDescriptor(new BLE2902());
   led_char         ->setCallbacks(new Led_callbacks());
 
   usblog.debugln("creating BLE trigger characteristic...");
@@ -130,7 +130,7 @@ void init_ble() {
                       CHARACTERISTIC_IR_SEND_UUID,
                       BLECharacteristic::PROPERTY_WRITE
                     );
-  ir_send_char     ->addDescriptor(new BLE2902());
+  // ir_send_char     ->addDescriptor(new BLE2902());
   ir_send_char     ->setCallbacks(new Ir_send_callbacks());
   
   usblog.debugln("creating BLE latency characteristic...");
@@ -145,7 +145,7 @@ void init_ble() {
                       CHARACTERISTIC_VERSION_UUID,
                       BLECharacteristic::PROPERTY_READ
                     );
-  version_char     ->addDescriptor(new BLE2902());
+  // version_char     ->addDescriptor(new BLE2902());
   version_char     ->setValue(GIT_TAG);
 
   usblog.debugln("starting BLE service...");
