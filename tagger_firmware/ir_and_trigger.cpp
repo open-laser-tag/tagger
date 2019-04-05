@@ -50,11 +50,26 @@ void irrecv_decode(IRrecv& irrecv) {
     uint32_t ir_recv_data = reverse_bit_order((uint32_t)results.value);
     usblog.info("Incoming IR: ");
     usblog.println(ir_recv_data, HEX);
-    ir_receive_char->setValue((uint32_t&)ir_recv_data);
-    ble_notify(ir_receive_char);
+    if (check_msg(ir_recv_data)) {
+      usblog.infoln("message valid");
+      ir_receive_char->setValue((uint32_t&)ir_recv_data);
+      ble_notify(ir_receive_char);
+    }
+    else usblog.warningln("message not valid");
     irrecv.resume(); // Receive the next value
   }
   return;
+}
+
+/**
+ * @brief check IR msg with inverted last byte
+ * Checks whether the 4th byte is the 3rd byte inverted. Returns true when thats the case.
+ */
+bool check_msg(uint32_t ir_recv_data) {
+  uint8_t third_byte = ir_recv_data >> 8,
+          forth_byte = ir_recv_data;
+  if (third_byte == ~forth_byte) return true;
+  else return false;
 }
 
 void handle_trigger() {
