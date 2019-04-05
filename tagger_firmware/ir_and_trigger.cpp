@@ -68,8 +68,6 @@ void irrecv_decode(IRrecv& irrecv) {
 bool check_msg(uint32_t ir_recv_data) {
   uint8_t third_byte = ir_recv_data >> 8,
           forth_byte = ~ir_recv_data;
-  usblog.println(third_byte, HEX);
-  usblog.println(forth_byte, HEX);
 
   if (third_byte == forth_byte) return true;
   else return false;
