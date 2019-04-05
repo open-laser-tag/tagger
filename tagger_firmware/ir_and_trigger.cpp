@@ -25,13 +25,13 @@ void handle_ir(void * parameter) {
     uint32_t ir_data=0;
 
     //ir modul YS-IRTM
-    while(ir.available() > 0) {
-      ir_data = ir.read();
-      ir_receive_char->setValue(ir_data);
-      usblog.info("Incoming IR: ");
-      usblog.println(String(ir_data ,HEX));
-      ble_notify(ir_receive_char);
-    }
+    // while(ir.available() > 0) {
+    //   ir_data = ir.read();
+    //   ir_receive_char->setValue(ir_data);
+    //   usblog.info("Incoming IR: ");
+    //   usblog.println(String(ir_data ,HEX));
+    //   ble_notify(ir_receive_char);
+    // }
 
     irrecv_decode(irrecv_front);
     irrecv_decode(irrecv_right);
@@ -67,8 +67,11 @@ void irrecv_decode(IRrecv& irrecv) {
  */
 bool check_msg(uint32_t ir_recv_data) {
   uint8_t third_byte = ir_recv_data >> 8,
-          forth_byte = ir_recv_data;
-  if (third_byte == ~forth_byte) return true;
+          forth_byte = ~ir_recv_data;
+  usblog.println(third_byte, HEX);
+  usblog.println(forth_byte, HEX);
+
+  if (third_byte == forth_byte) return true;
   else return false;
 }
 
