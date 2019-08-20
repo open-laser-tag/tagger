@@ -12,7 +12,8 @@ uint32_t            latenz_timestamp=0,
                     latenz=0,
                     last_bounce_time = 0;
 
-uint16_t            count_trigger_interrupts=0;
+uint16_t            count_trigger_interrupts=0,
+                    msg_nr=0;
 
 portMUX_TYPE        mux = portMUX_INITIALIZER_UNLOCKED;
 

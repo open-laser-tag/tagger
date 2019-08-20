@@ -50,6 +50,9 @@ void irrecv_decode(IRrecv& irrecv) {
     uint32_t ir_recv_data = reverse_bit_order((uint32_t)results.value);
     usblog.info("Incoming IR: ");
     usblog.println(ir_recv_data, HEX);
+    msg_nr++;
+    usblog.info("message nr: ");
+    usblog.println(msg_nr);
     //TODO: move check und lookup to android app
     if (check_msg(ir_recv_data)) {
       usblog.infoln("message valid");

@@ -54,7 +54,8 @@ extern uint32_t             latenz_timestamp,
                             latenz,
                             last_bounce_time;
 
-extern uint16_t             count_trigger_interrupts;
+extern uint16_t             count_trigger_interrupts,
+                            msg_nr;
 
 extern portMUX_TYPE         mux;
 
