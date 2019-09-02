@@ -1,6 +1,6 @@
 #!/bin/sh
 
-FILE="./tagger_firmware/git_info.h"
+FILE="./src/git_info.h"
 
 COMMIT=`git rev-parse HEAD`
 TAG=`git describe --tags`

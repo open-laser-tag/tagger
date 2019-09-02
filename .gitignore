@@ -1,1 +1,2 @@
-tagger_firmware/git_info.h
+src/git_info.h
+.pio/
