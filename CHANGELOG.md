@@ -1,5 +1,6 @@
 # v0.0.5
 * add check whether message received via IR is valid (with last inverted byte)
+* add plattformIO support
 
 # v0.0.4
 * add sending error message 0xFFFFFF via IR when no BT connected

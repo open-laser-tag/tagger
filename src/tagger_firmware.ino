@@ -10,7 +10,7 @@
 
 /**
  * @brief arduino setup
- * This is the arduino setup funciton. It is run once at startup.
+ * This is the arduino setup function. It is run once at startup.
  * Inits are done here and RTOS tasks are started here.
  */
 void setup() {
@@ -57,7 +57,7 @@ void setup() {
  * That's why the loop task is delayed max.
  * 
  */
-void loop() {  vTaskDelay(portMAX_DELAY); /*wait as much as posible ... */ }
+void loop() {  vTaskDelay(portMAX_DELAY); /*wait as much as possible ... */ }
 
 /**
  * @brief Create all tasks object

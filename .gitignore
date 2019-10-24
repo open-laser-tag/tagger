@@ -1,2 +1,4 @@
 src/git_info.h
 .pio/
+.vscode/
+build/
