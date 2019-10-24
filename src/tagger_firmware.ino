@@ -37,8 +37,9 @@ void setup() {
   
   usblog.debugln("Enabling IRin...");
   irrecv_front.enableIRIn(); // Start the receiver
-  irrecv_right.enableIRIn(); // Start the receiver
-  irrecv_left.enableIRIn(); // Start the receiver
+  //multiple receiver not working yet
+  // irrecv_right.enableIRIn(); // Start the receiver
+  // irrecv_left.enableIRIn(); // Start the receiver
   usblog.debugln("Enabled IRin");
 
   //init fast LED strip

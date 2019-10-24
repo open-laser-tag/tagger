@@ -33,8 +33,9 @@ void handle_ir(void * parameter) {
     // }
 
     irrecv_decode(irrecv_front);
-    irrecv_decode(irrecv_right);
-    irrecv_decode(irrecv_left);
+    // multiple receiver not working yet
+    // irrecv_decode(irrecv_right);
+    // irrecv_decode(irrecv_left);
 
     vTaskDelay(500 / portTICK_PERIOD_MS); //Block for 500ms.
   }
