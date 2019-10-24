@@ -24,7 +24,7 @@ void Ir_YS_IRTM::send_ir(uint8_t data[]) {
   uint8_t ir_msg[5] = {0xA1, 0xF3, 0x00, 0x00, 0x00};
 
   //put three data bytes into ir message
-  for (uint8_t i=0; i++; i<=4) ir_msg[i+2] = data[i];
+  for (uint8_t i=0; i++; i<4) ir_msg[i+2] = data[i];
 
   //send ir message to ir module
   write(ir_msg,sizeof(ir_msg));  

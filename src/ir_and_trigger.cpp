@@ -12,19 +12,18 @@
 
 /**
  * @brief handle incoming infrared
- * This funciton reads the incoming infrared data and sends it via bluetooth. 
+ * This function reads the incoming infrared data and sends it via bluetooth.
  * @param parameter just a dummy parameter
  */
 void handle_ir(void * parameter) {
 
-  decode_results results;
   usblog.debugln("handle IR task started");
 
   while(true) {
 
     uint32_t ir_data=0;
 
-    //ir modul YS-IRTM
+    //ir module YS-IRTM
     // while(ir.available() > 0) {
     //   ir_data = ir.read();
     //   ir_receive_char->setValue(ir_data);
@@ -87,7 +86,7 @@ bool check_msg(uint32_t ir_recv_data) {
 }
 
 /**
- * @brief look up message whether a wron message is known
+ * @brief look up message whether a wrong message is known
  * This is a workaround function for the problem, that the transmission of a message fails very often and alternates between two values.
  */
 bool lookup_msg(uint32_t *ir_recv_data) {
@@ -138,7 +137,7 @@ void refresh_trigger_status(void * parameter) {
     ble_notify(trigger_char);
     if (!device_connected && trigger.pressed) {
       uint8_t err_msg[5] = ERROR_MSG;
-      usblog.infoln("Device not conntected. Sending error message 0xFFFFFF via IR");
+      usblog.infoln("Device not connected. Sending error message 0xFFFFFF via IR");
       ir.write((const unsigned char*)err_msg, sizeof(err_msg));
     }
 
