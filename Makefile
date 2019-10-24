@@ -1,5 +1,15 @@
-./tagger_firmware/git_info.h:
+.DEFAULT_GOAL := build
+
+update_hash:
 	./update_git_hash.sh
 
+.PHONY: clean
 clean:
-	rm ./tagger_firmware/git_info.h
+	rm ./src/git_info.h
+	platformio run --target clean
+
+build: update_hash
+	platformio run
+
+upload: build
+	platformio run -t upload

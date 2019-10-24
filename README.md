@@ -3,36 +3,40 @@
 # Open Laser Tag
 > because Laz00rs!
 
-An cheap and DIY open Source Lasertag build on the ESP-32 and Android. With an simple and expandable achitecture.
-After breadboarding or soldering your ESP-32 together with an infraread Modul and glue a lense to it. You install the app on your phone and join a Free for all with all your friends.
+An cheap and DIY open source lasertag system, build with an ESP-32 and an Android app. Our goal is a simple and expandable achitecture.
+After breadboarding or soldering your ESP-32 together with an infraread module and gluing a lens to it, you can install the app on your phone and start a game with all your friends.
 
-Of course you can get as fancy as you want, 3D-printing your own case, enhancing the Tagger with LEDs...
+Of course you can get as fancy as you want, and e.g. 3D-printing your own case or enhance the tagger with LEDs. The sky
+is the limit...
 
-This Project consists of thre parts:
-* ESP-32 Firmware (https://github.com/open-lt/tagger-firmware)
-* Android App (https://github.com/open-lt/android-app)
-* node.js Server (https://github.com/open-lt/server)
+This project currently consists of three parts:
+* ESP-32 Firmware (https://github.com/open-laser-tag/tagger-firmware)
+* Android App (https://github.com/open-laser-tag/android-app)
+* node.js Server (https://github.com/open-laser-tag/server)
 
 
 ## Developing
 
-1. A computer with Arduino IDE configured to flash your ESP-32 see how to do this here (https://github.com/espressif/arduino-esp32/)
-2. clone the tagger firmware repository (https://github.com/open-lt/tagger-firmware)
-3. open it in your arduino IDE
-4. flash it to your tagger
+### Arduino IDE
+Prepare your IDE like described [here](https://github.com/espressif/arduino-esp32/) and then open
+`src/tagger_firmware.ino`
+
+### Platformio
+When you have installed PlatformIO on your computer, you can just use the provided Makefile in this repository and run
+`make upload` to download all dependencies, build the code, and upload it to your ESP-32 in one step.
+
 
 ## Features
 
 ![Open lasertag tagger](/docs/images/open-lasertag-tagger-chart.svg)
 
-* relay Data bewen Infra Red and Bluetooth LE
-
 
 ## Request for assistance
-Idears are piling up. Come joine the forces!
+Ideas are piling up. Come join the forces!
 Together we could continue the work with things like:
-- 3D-Model for casing
-- multiple hit zones
+
+- 3D-Model for a case
+- Multiple hit zones
 
 Don't hesitate to send pull request or contact us if you want to get involved.
 
