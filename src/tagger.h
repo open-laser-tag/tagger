@@ -82,4 +82,10 @@ extern IRrecv               irrecv_front,
 extern Logger               usblog;
 
 extern CRGB                 leds[NUM_LEDS];
+
+void setup();
+void loop();
+void create_tasks();
+void send_latency (void * parameter);
+void init_mutex();
 #endif // tagger_h
