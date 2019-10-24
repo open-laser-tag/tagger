@@ -50,8 +50,8 @@
 
 
 
-extern uint32_t             latenz_timestamp,
-                            latenz,
+extern uint32_t             latency_timestamp,
+                            latency,
                             last_bounce_time;
 
 extern uint16_t             count_trigger_interrupts,

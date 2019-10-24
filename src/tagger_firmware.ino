@@ -100,7 +100,7 @@ void send_latency (void * parameter) {
     //suspend until reactivated by onWrite of Ir_send_callbacks
     vTaskSuspend(NULL);
     //send latency via BT to app
-    latency_char->setValue(latenz);
+    latency_char->setValue(latency);
     ble_notify(latency_char);
     usblog.debugln("latency sent via bt");
   }

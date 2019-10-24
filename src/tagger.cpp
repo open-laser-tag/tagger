@@ -8,8 +8,8 @@
 
 #include "tagger.h"
 
-uint32_t            latenz_timestamp=0,
-                    latenz=0,
+uint32_t            latency_timestamp=0,
+                    latency=0,
                     last_bounce_time = 0;
 
 uint16_t            count_trigger_interrupts=0,

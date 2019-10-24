@@ -28,9 +28,9 @@ class Ir_send_callbacks: public BLECharacteristicCallbacks {
       usblog.println();
 
       ir.write((const unsigned char*)value.c_str(),value.length());
-      latenz = millis() - latenz_timestamp;
+      latency = millis() - latency_timestamp;
       usblog.info("time in ms since last trigger: ");
-      usblog.println(String(latenz));
+      usblog.println(String(latency));
       //send latency via BT to app
       vTaskResume(xHandle_send_latency);
     }

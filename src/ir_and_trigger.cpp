@@ -131,7 +131,7 @@ void refresh_trigger_status(void * parameter) {
     usblog.println(String(xTaskGetTickCount() - last_bounce_time));
     usblog.info("trigger status: ");
     usblog.println(String(trigger.pressed));
-    latenz_timestamp = millis();
+    latency_timestamp = millis();
 
     usblog.debugln("sending trigger status via bt");
     trigger_char->setValue((int&)trigger.pressed);
