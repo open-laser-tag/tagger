@@ -7,7 +7,6 @@
  */
 
 #include "tagger.h"
-#include "infrared_nec_example.c"
 
 uint32_t            latency_timestamp=0,
                     latency=0,
@@ -135,8 +134,8 @@ void loop() {  vTaskDelay(portMAX_DELAY); /*wait as much as possible ... */ }
  * This function creates all RTOS tasks. 
  */
 void create_tasks() {
-  xTaskCreate(rmt_example_nec_rx_task, "rmt_nec_rx_task", 2048, NULL, 10, NULL);
-  xTaskCreate(rmt_example_nec_tx_task, "rmt_nec_tx_task", 2048, NULL, 10, NULL);
+  //xTaskCreate(rmt_example_nec_rx_task, "rmt_nec_rx_task", 2048, NULL, 10, NULL);
+  //xTaskCreate(rmt_example_nec_tx_task, "rmt_nec_tx_task", 2048, NULL, 10, NULL);
 
   xTaskCreate(
     handle_ir,                        /* Task function. */

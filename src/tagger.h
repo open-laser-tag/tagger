@@ -29,6 +29,8 @@
 #include <FastLED.h>
 #include "git_info.h" //if this file is missing, type make
 
+#include "infrared_nec_example.c"
+
 /* pins */
 //for FastLED.h
 #define NUM_LEDS 1
