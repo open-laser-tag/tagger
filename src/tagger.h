@@ -12,6 +12,11 @@
 #define ESP32
 //I don't know why this is needed. It is for IRremote.h/IRremoteInt.h 
 #define ARDUINO 101
+//This is defined to tell FASTLED that it should use the built in rmt driver of esp32. Reference for this option in FastLED/platforms/esp/32/clockless_rmt_esp32.h
+// there is an error that causes the esp to crash frequently when turning this on.
+//#define FASTLED_RMT_BUILTIN_DRIVER true
+//Reduce used RMT channels from FASTLED from 8 to 6. 2 Are used by IR (TX, RX). Reference for this option in FastLED/platforms/esp/32/clockless_rmt_esp32.h
+#define FASTLED_RMT_MAX_CHANNELS 1
 
 #include <Arduino.h>
 #include <BLEDevice.h>
@@ -29,7 +34,7 @@
 #define NUM_LEDS 1
 #define DATA_PIN 13
 #define IR_LED_PIN 33 //rmt channels can be mapped to any gpio pin
-#define IR_RECV_FRONT_PIN 27
+#define IR_RECV_FRONT_PIN 28 //previous 27
 #define IR_RECV_RIGHT_PIN 26
 #define IR_RECV_LEFT_PIN 25
 #define PIN_TRIGGER 21

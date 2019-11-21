@@ -3,6 +3,7 @@
    Unless required by applicable law or agreed to in writing, this
    software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
    CONDITIONS OF ANY KIND, either express or implied.
+   https://github.com/espressif/esp-idf/blob/a45e9985344575a80acb1dc9c12e7bec4d8af401/examples/peripherals/rmt_nec_tx_rx/main/infrared_nec_main.c
 */
 #include <stdio.h>
 #include <string.h>
@@ -35,10 +36,10 @@ static const char* NEC_TAG = "NEC";
 #define RMT_TX_CARRIER_EN    1   /*!< Enable carrier for IR transmitter test with IR led */
 #endif
 
-#define RMT_TX_CHANNEL   RMT_CHANNEL_1     /*!< RMT channel for transmitter */
+#define RMT_TX_CHANNEL   RMT_CHANNEL_6     /*!< RMT channel for transmitter */
 #define RMT_TX_GPIO_NUM  GPIO_NUM_18     /*!< GPIO number for transmitter signal */
-#define RMT_RX_CHANNEL    RMT_CHANNEL_0     /*!< RMT channel for receiver */
-#define RMT_RX_GPIO_NUM  GPIO_NUM_19     /*!< GPIO number for receiver */
+#define RMT_RX_CHANNEL    RMT_CHANNEL_7     /*!< RMT channel for receiver */
+#define RMT_RX_GPIO_NUM  GPIO_NUM_27     /*!< GPIO number for receiver */
 #define RMT_CLK_DIV      100    /*!< RMT counter clock divider */
 #define RMT_TICK_10_US    (80000000/RMT_CLK_DIV/100000)   /*!< RMT counter value for 10 us.(Source clock is APB clock) */
 
