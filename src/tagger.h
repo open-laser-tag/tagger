@@ -24,15 +24,17 @@
 #include <FastLED.h>
 #include "git_info.h" //if this file is missing, type make
 
+/* pins */
 //for FastLED.h
 #define NUM_LEDS 1
 #define DATA_PIN 13
-
+#define IR_LED_PIN 33 //rmt channels can be mapped to any gpio pin
 #define IR_RECV_FRONT_PIN 27
 #define IR_RECV_RIGHT_PIN 26
 #define IR_RECV_LEFT_PIN 25
 #define PIN_TRIGGER 21
 #define ONBOARDLED_PIN 2
+
 #define DEBOUNCETIME 10
 #define BAUD_RATE_IR 9600 //allowed values: 4800, 9600, 19200, 57600
 #define HARDWARE_SERIAL0 0 // rx_pin=3, tx_pin=1 (usb)
@@ -80,7 +82,6 @@ extern IRrecv               irrecv_front,
                             irrecv_right,
                             irrecv_left;
 extern Logger               usblog;
-
 extern CRGB                 leds[NUM_LEDS];
 
 void setup();

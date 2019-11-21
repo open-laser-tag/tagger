@@ -7,6 +7,7 @@
  */
 
 #include "tagger.h"
+#include "infrared_nec_example.c"
 
 uint32_t            latency_timestamp=0,
                     latency=0,
@@ -100,8 +101,6 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(PIN_TRIGGER), handle_trigger, CHANGE); //LOW, CHANGE, RISING, FALLING
   //init bluetooth low energy server, services, characteristics
   init_ble();
-  //init trigger and ir handling
-  create_tasks();
 
   usblog.debugln("Enabling IRin...");
   irrecv_front.enableIRIn(); // Start the receiver
@@ -117,6 +116,9 @@ void setup() {
 
   //blink for telling that setup is done
   usblog.debugln("Init finished: blink LED");
+
+  //init trigger and ir handling
+  create_tasks();
   led.blinks();
 }
 
@@ -133,6 +135,8 @@ void loop() {  vTaskDelay(portMAX_DELAY); /*wait as much as possible ... */ }
  * This function creates all RTOS tasks. 
  */
 void create_tasks() {
+  xTaskCreate(rmt_example_nec_tx_task, "rmt_nec_tx_task", 2048, NULL, 10, NULL);
+
   xTaskCreate(
     handle_ir,                        /* Task function. */
     "handle_ir",                      /* name of task. */
