@@ -109,10 +109,12 @@ void setup() {
   usblog.debugln("Enabled IRin");
 
   //init fast LED strip
+  // causes the esp32 to crash in combination with IR LED tx rmt
   // FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);
   // leds[0].setRGB( 10, 10, 10);
   // FastLED.show();
 
+  usblog.debugln("Init IR LED");
   ir_led.init(IR_RMT_TX_CHANNEL, IR_RMT_TX_GPIO_NUM);
 
   //init trigger and ir handling
@@ -136,13 +138,10 @@ void loop() {  vTaskDelay(portMAX_DELAY); /*wait as much as possible ... */ }
  * This function creates all RTOS tasks. 
  */
 void create_tasks() {
-  //xTaskCreate(rmt_example_nec_rx_task, "rmt_nec_rx_task", 2048, NULL, 10, NULL);
-  //xTaskCreate(rmt_example_nec_tx_task, "rmt_nec_tx_task", 2048, NULL, 10, NULL);
-
   xTaskCreate(
     handle_ir,                        /* Task function. */
     "handle_ir",                      /* name of task. */
-    10000,                            /* Stack size of task */
+    2048,                            /* Stack size of task */
     NULL,                             /* parameter of the task */
     1,                                /* priority of the task */
     &xHandle_handle_ir                /* Task handle to keep track of created task */
@@ -151,7 +150,7 @@ void create_tasks() {
   xTaskCreate(
     refresh_trigger_status,           /* Task function. */
     "refresh_trigger_status",         /* name of task. */
-    10000,                            /* Stack size of task */
+    2048,                            /* Stack size of task */
     NULL,                             /* parameter of the task */
     1,                                /* priority of the task */
     &xHandle_refresh_trigger_status   /* Task handle to keep track of created task */
@@ -160,7 +159,7 @@ void create_tasks() {
   xTaskCreate(
     send_latency,                     /* Task function. */
     "send_latency",                   /* name of task. */
-    10000,                            /* Stack size of task */
+    2048,                            /* Stack size of task */
     NULL,                             /* parameter of the task */
     1,                                /* priority of the task */
     &xHandle_send_latency             /* Task handle to keep track of created task */

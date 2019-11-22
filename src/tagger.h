@@ -14,8 +14,8 @@
 #define ARDUINO 101
 //This is defined to tell FASTLED that it should use the built in rmt driver of esp32. Reference for this option in FastLED/platforms/esp/32/clockless_rmt_esp32.h
 // there is an error that causes the esp to crash frequently when turning this on.
-//#define FASTLED_RMT_BUILTIN_DRIVER true
-//Reduce used RMT channels from FASTLED from 8 to 6. 2 Are used by IR (TX, RX). Reference for this option in FastLED/platforms/esp/32/clockless_rmt_esp32.h
+#define FASTLED_RMT_BUILTIN_DRIVER true
+//Reduce used RMT channels from FASTLED. Reference for this option in FastLED/platforms/esp/32/clockless_rmt_esp32.h
 #define FASTLED_RMT_MAX_CHANNELS 1
 
 #include <Arduino.h>
