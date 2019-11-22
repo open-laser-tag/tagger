@@ -43,22 +43,12 @@ void irrecv_decode(IRrecv& irrecv) {
     msg_nr++;
     usblog.info("message nr: ");
     usblog.println(msg_nr);
-    //TODO: move check und lookup to android app
     if (check_msg(ir_recv_data)) {
       usblog.infoln("message valid");
       ir_receive_char->setValue((uint32_t&)ir_recv_data);
       ble_notify(ir_receive_char);
     }
-    else {
-      usblog.infoln("message not valid, looking up if known");
-      if(lookup_msg(&ir_recv_data)) {
-        usblog.info("message known: ");
-        usblog.println(ir_recv_data, HEX);
-        ir_receive_char->setValue((uint32_t&)ir_recv_data);
-        ble_notify(ir_receive_char);
-      }
-      else usblog.warningln("unknown message");
-    }
+    else usblog.warningln("invalid message");
     irrecv.resume(); // Receive the next value
   }
   return;
@@ -74,19 +64,6 @@ bool check_msg(uint32_t ir_recv_data) {
 
   if (third_byte == forth_byte) return true;
   else return false;
-}
-
-/**
- * @brief look up message whether a wrong message is known
- * This is a workaround function for the problem, that the transmission of a message fails very often and alternates between two values.
- */
-bool lookup_msg(uint32_t *ir_recv_data) {
-  //check if invalid message is known
-  if(*ir_recv_data == 0x6DA80EFE) *ir_recv_data = 0xFFFFFF00;
-  //look up wasn't successfull, so return false
-  else return false;
-  //look up was successfull, so return true
-  return true;
 }
 
 void handle_trigger() {

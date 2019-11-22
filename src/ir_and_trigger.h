@@ -20,6 +20,5 @@ void handle_trigger();
 void refresh_trigger_status(void * parameter);
 void irrecv_decode(IRrecv& irrecv);
 bool check_msg(uint32_t ir_recv_data);
-bool lookup_msg(uint32_t *ir_recv_data);
 
 #endif
