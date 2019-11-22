@@ -224,7 +224,6 @@ void Esp32_infrared_nec_rx::init(rmt_channel_t rmt_channel, gpio_num_t gpio_num)
 void Esp32_infrared_nec_rx::rmt_example_nec_rx_task(void *arg)
 {
     rmt_channel_t channel = RMT_RX_CHANNEL;
-    init();
     RingbufHandle_t rb = NULL;
     //get RMT RX ringbuffer
     rmt_get_ringbuf_handle(channel, &rb);
@@ -263,8 +262,6 @@ void Esp32_infrared_nec_rx::rmt_example_nec_rx_task(void *arg)
  */
 void Esp32_infrared_nec_tx::send(uint16_t cmd, uint16_t addr)
 {
-    //esp_log_level_set(NEC_TAG, ESP_LOG_INFO);
-
     int nec_tx_num = RMT_TX_DATA_NUM;
 
     ESP_LOGI(NEC_TAG, "RMT TX DATA");
@@ -290,5 +287,4 @@ void Esp32_infrared_nec_tx::send(uint16_t cmd, uint16_t addr)
     rmt_wait_tx_done(_rmt_channel, portMAX_DELAY);
     //before we free the data, make sure sending is already done.
     free(item);
-    
 }

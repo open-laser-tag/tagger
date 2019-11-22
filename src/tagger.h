@@ -28,8 +28,7 @@
 #include <IRremote.h>
 #include <FastLED.h>
 #include "git_info.h" //if this file is missing, type make
-
-#include "infrared_nec_example.c"
+#include "Esp32_infrared_nec.h"
 
 /* pins */
 //for FastLED.h
@@ -42,6 +41,8 @@
 #define PIN_TRIGGER 21
 #define ONBOARDLED_PIN 2
 
+#define IR_RMT_TX_CHANNEL   RMT_CHANNEL_6     /*!< RMT channel for transmitter */
+#define IR_RMT_TX_GPIO_NUM  GPIO_NUM_18     /*!< GPIO number for transmitter signal */
 #define DEBOUNCETIME 10
 #define BAUD_RATE_IR 9600 //allowed values: 4800, 9600, 19200, 57600
 #define HARDWARE_SERIAL0 0 // rx_pin=3, tx_pin=1 (usb)
@@ -59,37 +60,37 @@
 
 
 
-extern uint32_t             latency_timestamp,
-                            latency,
-                            last_bounce_time;
+extern uint32_t                 latency_timestamp,
+                                latency,
+                                last_bounce_time;
 
-extern uint16_t             count_trigger_interrupts,
-                            msg_nr;
+extern uint16_t                 count_trigger_interrupts,
+                                msg_nr;
 
-extern portMUX_TYPE         mux;
+extern portMUX_TYPE             mux;
 
-extern TaskHandle_t         xHandle_handle_ir,
-                            xHandle_refresh_trigger_status,
-                            xHandle_send_latency;
+extern TaskHandle_t             xHandle_handle_ir,
+                                xHandle_refresh_trigger_status,
+                                xHandle_send_latency;
 
-extern SemaphoreHandle_t    xMutex_BT,
-                            xMutex_USB;
+extern SemaphoreHandle_t        xMutex_BT,
+                                xMutex_USB;
 
-extern BLECharacteristic    *trigger_char,
-                            *ir_receive_char,
-                            *ir_send_char,
-                            *latency_char,
-                            *version_char,
-                            *led_char;
-
-extern Ir_YS_IRTM           ir; 
-extern Led                  led;
-extern Button               trigger;
-extern IRrecv               irrecv_front,
-                            irrecv_right,
-                            irrecv_left;
-extern Logger               usblog;
-extern CRGB                 leds[NUM_LEDS];
+extern BLECharacteristic        *trigger_char,
+                                *ir_receive_char,
+                                *ir_send_char,
+                                *latency_char,
+                                *version_char,
+                                *led_char;
+extern Esp32_infrared_nec_tx    ir_led;
+extern Ir_YS_IRTM               ir;
+extern Led                      led;
+extern Button                   trigger;
+extern IRrecv                   irrecv_front,
+                                irrecv_right,
+                                irrecv_left;
+extern Logger                   usblog;
+extern CRGB                     leds[NUM_LEDS];
 
 void setup();
 void loop();

@@ -8,14 +8,14 @@
 #include <stdio.h>
 #include <string.h>
 #include "freertos/FreeRTOS.h"
-// #include "freertos/task.h"
-// #include "freertos/queue.h"
-// #include "freertos/semphr.h"
+#include "freertos/task.h"
+#include "freertos/queue.h"
+#include "freertos/semphr.h"
 #include "esp_err.h"
 #include "esp_log.h"
 #include "driver/rmt.h"
 
-const char* NEC_TAG = "NEC";
+#define NEC_TAG "NEC"
 
 //CHOOSE SELF TEST OR NORMAL TEST
 #define RMT_RX_SELF_TEST   0
@@ -36,8 +36,6 @@ const char* NEC_TAG = "NEC";
 #define RMT_TX_CARRIER_EN    1   /*!< Enable carrier for IR transmitter test with IR led */
 #endif
 
-#define RMT_TX_CHANNEL   RMT_CHANNEL_6     /*!< RMT channel for transmitter */
-#define RMT_TX_GPIO_NUM  GPIO_NUM_18     /*!< GPIO number for transmitter signal */
 #define RMT_RX_CHANNEL    RMT_CHANNEL_7     /*!< RMT channel for receiver */
 #define RMT_RX_GPIO_NUM  GPIO_NUM_27     /*!< GPIO number for receiver */
 #define RMT_CLK_DIV      100    /*!< RMT counter clock divider */
@@ -54,7 +52,7 @@ const char* NEC_TAG = "NEC";
 
 #define NEC_ITEM_DURATION(d)  ((d & 0x7fff)*10/RMT_TICK_10_US)  /*!< Parse duration time from memory register value */
 #define NEC_DATA_ITEM_NUM   34  /*!< NEC code item number: header + 32bit data + end */
-#define RMT_TX_DATA_NUM  100    /*!< NEC tx test data number */
+#define RMT_TX_DATA_NUM  1    /*!< NEC tx test data number */
 #define rmt_item32_tIMEOUT_US  9500   /*!< RMT receiver timeout value(us) */
 
 
@@ -72,7 +70,7 @@ class Esp32_infrared_nec_tx {
     int build_items(int channel, rmt_item32_t* item, int item_num, uint16_t addr, uint16_t cmd_data);
 
     rmt_channel_t _rmt_channel;
-    gpio_num_t _gpio_num
+    gpio_num_t _gpio_num;
 };
 
 class Esp32_infrared_nec_rx {

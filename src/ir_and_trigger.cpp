@@ -122,6 +122,7 @@ void refresh_trigger_status(void * parameter) {
     //wait until the last bounce is longer ago than DEBOUNCETIME
     while (xTaskGetTickCount() - last_bounce_time < DEBOUNCETIME ) vTaskDelay(10);
 
+
     //refresh trigger.pressed
     trigger.read_pin();
 
@@ -140,6 +141,8 @@ void refresh_trigger_status(void * parameter) {
       uint8_t err_msg[5] = ERROR_MSG;
       usblog.infoln("Device not connected. Sending error message 0xFFFFFF via IR");
       ir.write((const unsigned char*)err_msg, sizeof(err_msg));
+      usblog.infoln("LED send");
+      ir_led.send(0xFFFF, 0xFFFF);
     }
 
     portENTER_CRITICAL_ISR(&mux);

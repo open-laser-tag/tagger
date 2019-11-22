@@ -67,14 +67,15 @@ BLECharacteristic   *version_char;
 
 BLECharacteristic   *led_char;
 
-Led                 led(ONBOARDLED_PIN);
-Button              trigger(PIN_TRIGGER);
-Ir_YS_IRTM          ir(HARDWARE_SERIAL2, BAUD_RATE_IR);
-IRrecv              irrecv_front(IR_RECV_FRONT_PIN),
-                    irrecv_right(IR_RECV_RIGHT_PIN),
-                    irrecv_left(IR_RECV_LEFT_PIN);
-Logger              usblog(HARDWARE_SERIAL0, &xMutex_USB);
-CRGB                leds[NUM_LEDS];
+Led                     led(ONBOARDLED_PIN);
+Button                  trigger(PIN_TRIGGER);
+Esp32_infrared_nec_tx   ir_led;
+Ir_YS_IRTM              ir(HARDWARE_SERIAL2, BAUD_RATE_IR);
+IRrecv                  irrecv_front(IR_RECV_FRONT_PIN),
+                        irrecv_right(IR_RECV_RIGHT_PIN),
+                        irrecv_left(IR_RECV_LEFT_PIN);
+Logger                  usblog(HARDWARE_SERIAL0, &xMutex_USB);
+CRGB                    leds[NUM_LEDS];
 
 /**
  * @brief arduino setup
@@ -82,6 +83,7 @@ CRGB                leds[NUM_LEDS];
  * Inits are done here and RTOS tasks are started here.
  */
 void setup() {
+  esp_log_level_set("*", ESP_LOG_INFO);
 
   usblog.begin(115200);
   usblog.println();
@@ -91,7 +93,6 @@ void setup() {
   usblog.println(GIT_TAG);
   usblog.println("*******************************************");
   usblog.println();
-
 
   usblog.println("DEBUG: Starting init...");
   //create semaphores
@@ -109,15 +110,17 @@ void setup() {
   usblog.debugln("Enabled IRin");
 
   //init fast LED strip
-  FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);
-  leds[0].setRGB( 10, 10, 10);
-  FastLED.show(); 
+  // FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);
+  // leds[0].setRGB( 10, 10, 10);
+  // FastLED.show();
 
-  //blink for telling that setup is done
-  usblog.debugln("Init finished: blink LED");
+  ir_led.init(IR_RMT_TX_CHANNEL, IR_RMT_TX_GPIO_NUM);
 
   //init trigger and ir handling
   create_tasks();
+
+  //blink for telling that setup is done
+  usblog.debugln("Init finished: blink LED");
   led.blinks();
 }
 
