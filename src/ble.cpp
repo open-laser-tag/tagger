@@ -26,9 +26,7 @@ class Ir_send_callbacks: public BLECharacteristicCallbacks {
       usblog.info("BT incoming, sending via IR: ");
       for (int i = 0; i < value.length(); i++) usblog.print(value[i],HEX);
       usblog.println();
-
-      ir.write((const unsigned char*)value.c_str(),value.length());
-      ir_led.send(0xFFFF, 0xFFFF);
+      ir_led.send(0xFFFF);
       latency = millis() - latency_timestamp;
       usblog.info("time in ms since last trigger: ");
       usblog.println(String(latency));

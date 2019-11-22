@@ -22,16 +22,6 @@ void handle_ir(void * parameter) {
   while(true) {
 
     uint32_t ir_data=0;
-
-    //ir module YS-IRTM
-    // while(ir.available() > 0) {
-    //   ir_data = ir.read();
-    //   ir_receive_char->setValue(ir_data);
-    //   usblog.info("Incoming IR: ");
-    //   usblog.println(String(ir_data ,HEX));
-    //   ble_notify(ir_receive_char);
-    // }
-
     irrecv_decode(irrecv_front);
     // multiple receiver not working yet
     // irrecv_decode(irrecv_right);
@@ -138,11 +128,8 @@ void refresh_trigger_status(void * parameter) {
     trigger_char->setValue((int&)trigger.pressed);
     ble_notify(trigger_char);
     if (!device_connected && trigger.pressed) {
-      uint8_t err_msg[5] = ERROR_MSG;
-      usblog.infoln("Device not connected. Sending error message 0xFFFFFF via IR");
-      ir.write((const unsigned char*)err_msg, sizeof(err_msg));
-      usblog.infoln("LED send");
-      ir_led.send(0xFFFF, 0xFFFF);
+      usblog.infoln("Device not connected. Sending error message 0xFFFF via IR");
+      ir_led.send(ERROR_MSG);
     }
 
     portENTER_CRITICAL_ISR(&mux);

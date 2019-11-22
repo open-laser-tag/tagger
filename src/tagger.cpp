@@ -70,7 +70,6 @@ BLECharacteristic   *led_char;
 Led                     led(ONBOARDLED_PIN);
 Button                  trigger(PIN_TRIGGER);
 Esp32_infrared_nec_tx   ir_led;
-Ir_YS_IRTM              ir(HARDWARE_SERIAL2, BAUD_RATE_IR);
 IRrecv                  irrecv_front(IR_RECV_FRONT_PIN),
                         irrecv_right(IR_RECV_RIGHT_PIN),
                         irrecv_left(IR_RECV_LEFT_PIN);

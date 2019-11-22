@@ -13,7 +13,7 @@
 #include "esp_err.h"
 #include "esp_log.h"
 
-#define ERROR_MSG {0xA1, 0xF1, 0xFF, 0xFF, 0xFF}
+#define ERROR_MSG 0xFFFF
 
 void handle_ir(void * parameter);
 void handle_trigger();

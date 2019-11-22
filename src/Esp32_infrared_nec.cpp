@@ -260,11 +260,11 @@ void Esp32_infrared_nec_rx::rmt_example_nec_rx_task(void *arg)
  * @brief send NEC data
  *
  */
-void Esp32_infrared_nec_tx::send(uint16_t cmd, uint16_t addr)
+void Esp32_infrared_nec_tx::send(uint16_t msg, uint16_t nec_tx_num)
 {
-    int nec_tx_num = RMT_TX_DATA_NUM;
-
     ESP_LOGI(NEC_TAG, "RMT TX DATA");
+    uint8_t addr = (uint8_t) msg >> 8;
+    uint8_t cmd = (uint8_t) msg;
     size_t size = (sizeof(rmt_item32_t) * NEC_DATA_ITEM_NUM * nec_tx_num);
     //each item represent a cycle of waveform.
     rmt_item32_t* item = (rmt_item32_t*) malloc(size);

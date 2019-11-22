@@ -59,7 +59,7 @@
 class Esp32_infrared_nec_tx {
     public:
     void init(rmt_channel_t rmt_channel, gpio_num_t gpio_num);
-    void send(uint16_t cmd, uint16_t addr);
+    void send(uint16_t msg, uint16_t nec_tx_num = 1);
 
     private:
     void fill_item_level(rmt_item32_t* item, int high_us, int low_us);

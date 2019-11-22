@@ -22,7 +22,6 @@
 #include <BLEDevice.h>
 #include <BLE2902.h>
 #include "misc.h"
-#include "Ir_YS_IRTM.h"
 #include "ir_and_trigger.h"
 #include "ble.h"
 #include <IRremote.h>
@@ -34,7 +33,6 @@
 //for FastLED.h
 #define NUM_LEDS 1
 #define DATA_PIN 13
-#define IR_LED_PIN 33 //rmt channels can be mapped to any gpio pin
 #define IR_RECV_FRONT_PIN 28 //previous 27
 #define IR_RECV_RIGHT_PIN 26
 #define IR_RECV_LEFT_PIN 25
@@ -44,7 +42,6 @@
 #define IR_RMT_TX_CHANNEL   RMT_CHANNEL_6     /*!< RMT channel for transmitter */
 #define IR_RMT_TX_GPIO_NUM  GPIO_NUM_18     /*!< GPIO number for transmitter signal */
 #define DEBOUNCETIME 10
-#define BAUD_RATE_IR 9600 //allowed values: 4800, 9600, 19200, 57600
 #define HARDWARE_SERIAL0 0 // rx_pin=3, tx_pin=1 (usb)
 #define HARDWARE_SERIAL1 1 // don't use this one
 #define HARDWARE_SERIAL2 2 //rx_pin=16, tx_pin=17
@@ -83,7 +80,6 @@ extern BLECharacteristic        *trigger_char,
                                 *version_char,
                                 *led_char;
 extern Esp32_infrared_nec_tx    ir_led;
-extern Ir_YS_IRTM               ir;
 extern Led                      led;
 extern Button                   trigger;
 extern IRrecv                   irrecv_front,
