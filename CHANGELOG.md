@@ -1,3 +1,6 @@
+# v0.1.0
+* change IR hardware from YS-IRTM module to single IR LED
+
 # v0.0.5
 * add check whether message received via IR is valid (with last inverted byte)
 * add plattformIO support
