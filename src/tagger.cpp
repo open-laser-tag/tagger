@@ -109,10 +109,9 @@ void setup() {
   usblog.debugln("Enabled IRin");
 
   //init fast LED strip
-  // causes the esp32 to crash in combination with IR LED tx rmt
-  // FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);
-  // leds[0].setRGB( 10, 10, 10);
-  // FastLED.show();
+  FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);
+  leds[0].setRGB( 10, 10, 10);
+  FastLED.show();
 
   usblog.debugln("Init IR LED");
   ir_led.init(IR_RMT_TX_CHANNEL, IR_RMT_TX_GPIO_NUM);
