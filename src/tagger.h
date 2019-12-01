@@ -10,7 +10,7 @@
 #define tagger_h
 //this is a hardware identifier for FastLED
 #define ESP32
-//I don't know why this is needed. It is for IRremote.h/IRremoteInt.h 
+//I don't know why this is needed. It is for IRremote.h/IRremoteInt.h
 #define ARDUINO 101
 //FASTLED_ESP32_I2S is defined to tell FastLED to use I2S driver instead of RMT. Reference for this option in FastLED/platforms/esp/32/clockless_i2s_esp32.h. There is a conflict when using RMT with both LED and IR, although it should be possible according to the options in FastLED/platforms/esp/32/clockless_rmt_esp32.h.
 #define FASTLED_ESP32_I2S true
@@ -28,66 +28,74 @@
 
 /* pins */
 //for FastLED.h
-#define NUM_LEDS 1
-#define DATA_PIN 13
+#define NUM_LEDS 4
+#define LED_DATA_PIN 13
 #define IR_RECV_FRONT_PIN 27
 #define IR_RECV_RIGHT_PIN 26
 #define IR_RECV_LEFT_PIN 25
 #define PIN_TRIGGER 21
 #define ONBOARDLED_PIN 2
-
-#define IR_RMT_TX_CHANNEL   RMT_CHANNEL_6     /*!< RMT channel for transmitter */
-#define IR_RMT_TX_GPIO_NUM  GPIO_NUM_18     /*!< GPIO number for transmitter signal */
+#define LED_INDEX_BT 0
+#define LED_INDEX_PLAYER_STATUS 1
+#define LED_INDEX_SHOOT 2
+#define COLOR_BT_CONNECTION_ON 0x0000FF
+#define COLOR_BT_CONNECTION_OFF 0xFF0000
+#define COLOR_PLAYER_STATUS_ON 0x00FF00
+#define COLOR_PLAYER_STATUS_OFF 0xFF0000
+#define LED_OVERALL_BRIGHTNESS 20 //scale 0 to 255
+#define PLAYER_DOWNTIME_IN_MS 3000
+#define IR_RMT_TX_CHANNEL RMT_CHANNEL_6 /*!< RMT channel for transmitter */
+#define IR_RMT_TX_GPIO_NUM GPIO_NUM_18  /*!< GPIO number for transmitter signal */
 #define DEBOUNCETIME 10
 #define HARDWARE_SERIAL0 0 // rx_pin=3, tx_pin=1 (usb)
 #define HARDWARE_SERIAL1 1 // don't use this one
 #define HARDWARE_SERIAL2 2 //rx_pin=16, tx_pin=17
 // See the following for generating UUIDs:
 // https://www.uuidgenerator.net/
-#define SERVICE_UUID                    "08dbb28a-ce2c-467a-9f12-4f15d574a220"
-#define CHARACTERISTIC_TRIGGER_UUID     "756ad6a4-2007-4dc4-9173-72dc7d6b2627"
-#define CHARACTERISTIC_IR_RECEIVE_UUID  "a95980fb-4f18-4b2e-a258-81bf77575117"
-#define CHARACTERISTIC_IR_SEND_UUID     "8b91a0d2-5f7f-49cb-8939-4455d3d24b81"
-#define CHARACTERISTIC_LATENCY_UUID     "60e44cef-5a43-407b-8d1a-bce02377dcfd"
-#define CHARACTERISTIC_VERSION_UUID     "563c139f-3eda-4c88-9fc3-be987038fa6a"
-#define CHARACTERISTIC_LED_UUID         "7a4821c2-80f0-4eba-8070-d659d31e43de"
+#define SERVICE_UUID "08dbb28a-ce2c-467a-9f12-4f15d574a220"
+#define CHARACTERISTIC_TRIGGER_UUID "756ad6a4-2007-4dc4-9173-72dc7d6b2627"
+#define CHARACTERISTIC_IR_RECEIVE_UUID "a95980fb-4f18-4b2e-a258-81bf77575117"
+#define CHARACTERISTIC_IR_SEND_UUID "8b91a0d2-5f7f-49cb-8939-4455d3d24b81"
+#define CHARACTERISTIC_LATENCY_UUID "60e44cef-5a43-407b-8d1a-bce02377dcfd"
+#define CHARACTERISTIC_VERSION_UUID "563c139f-3eda-4c88-9fc3-be987038fa6a"
+#define CHARACTERISTIC_LED_UUID "7a4821c2-80f0-4eba-8070-d659d31e43de"
 
+extern uint32_t latency_timestamp,
+    latency,
+    last_bounce_time;
 
+extern uint16_t count_trigger_interrupts,
+    msg_nr;
 
-extern uint32_t                 latency_timestamp,
-                                latency,
-                                last_bounce_time;
+extern portMUX_TYPE mux;
 
-extern uint16_t                 count_trigger_interrupts,
-                                msg_nr;
+extern TaskHandle_t xHandle_handle_ir,
+    xHandle_refresh_trigger_status,
+    xHandle_send_latency,
+    xHandle_handle_player_status;
 
-extern portMUX_TYPE             mux;
+extern SemaphoreHandle_t xMutex_BT,
+    xMutex_USB;
 
-extern TaskHandle_t             xHandle_handle_ir,
-                                xHandle_refresh_trigger_status,
-                                xHandle_send_latency;
-
-extern SemaphoreHandle_t        xMutex_BT,
-                                xMutex_USB;
-
-extern BLECharacteristic        *trigger_char,
-                                *ir_receive_char,
-                                *ir_send_char,
-                                *latency_char,
-                                *version_char,
-                                *led_char;
-extern Esp32_infrared_nec_tx    ir_led;
-extern Led                      led;
-extern Button                   trigger;
-extern IRrecv                   irrecv_front,
-                                irrecv_right,
-                                irrecv_left;
-extern Logger                   usblog;
-extern CRGB                     leds[NUM_LEDS];
+extern BLECharacteristic *trigger_char,
+    *ir_receive_char,
+    *ir_send_char,
+    *latency_char,
+    *version_char,
+    *led_char;
+extern Esp32_infrared_nec_tx ir_led;
+extern Led led;
+extern Button trigger;
+extern IRrecv irrecv_front,
+    irrecv_right,
+    irrecv_left;
+extern Logger usblog;
+extern CRGB leds[NUM_LEDS];
+extern bool player_is_on;
 
 void setup();
 void loop();
 void create_tasks();
-void send_latency (void * parameter);
+void send_latency(void *parameter);
 void init_mutex();
 #endif // tagger_h
