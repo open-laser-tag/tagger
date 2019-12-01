@@ -1,3 +1,8 @@
+# v0.1.1
+* add player status led
+* add bt connection status led
+* add player status: player is down when hit by ir for some seconds
+
 # v0.1.0
 * change IR hardware from YS-IRTM module to single IR LED
 
