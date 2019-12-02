@@ -157,8 +157,8 @@ void Logger::print_mutex(std::string msg)
     if (*_xSemaphore != NULL)
     {
         /* See if we can obtain the semaphore.  If the semaphore is not
-    available wait 10 ms to see if it becomes free. */
-        if (xSemaphoreTake(*_xSemaphore, 10 / portTICK_PERIOD_MS) == pdTRUE)
+    available wait 100 ms to see if it becomes free. */
+        if (xSemaphoreTake(*_xSemaphore, 100 / portTICK_PERIOD_MS) == pdTRUE)
         {
             /* We were able to obtain the semaphore and can now access the
         shared resource. */
@@ -168,7 +168,7 @@ void Logger::print_mutex(std::string msg)
             xSemaphoreGive(*_xSemaphore);
         }
         else
-            println("Error: USB Mutex locked for over 10ms");
+            println("Error: USB Mutex locked for over 100ms");
     }
     else
         println("Error: USB Mutex not available.");

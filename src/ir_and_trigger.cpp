@@ -122,7 +122,7 @@ void refresh_trigger_status(void *parameter)
 void handle_player_status(void *parameter)
 {
     usblog.debugln("handle player status task started");
-    while(true)
+    while (true)
     {
         player_is_on = true;
         leds[LED_INDEX_PLAYER_STATUS].setColorCode(COLOR_PLAYER_STATUS_ON);
