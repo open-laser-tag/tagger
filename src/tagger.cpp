@@ -175,7 +175,7 @@ void create_tasks()
         2048,                 /* Stack size of task */
         NULL,                 /* parameter of the task */
         1,                    /* priority of the task */
-        &xHandle_send_latency /* Task handle to keep track of created task */
+        &xHandle_handle_player_status /* Task handle to keep track of created task */
     );
 }
 

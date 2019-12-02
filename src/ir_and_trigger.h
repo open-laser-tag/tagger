@@ -10,8 +10,7 @@
 
 #include "tagger.h"
 #include <IRremote.h>
-#include "esp_err.h"
-#include "esp_log.h"
+#include "strings.h"
 
 #define ERROR_MSG 0xFFFF
 

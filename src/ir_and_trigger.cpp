@@ -7,8 +7,6 @@
  */
 
 #include "ir_and_trigger.h"
-#include "strings.h"
-#include <IRremote.h>
 
 /**
  * @brief handle incoming infrared
