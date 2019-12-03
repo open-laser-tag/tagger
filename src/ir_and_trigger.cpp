@@ -98,7 +98,7 @@ void refresh_trigger_status(void *parameter)
         vTaskSuspend(NULL); //suspend task until reactivated by handle_trigger()
         //wait until the last bounce is longer ago than DEBOUNCETIME
         while (xTaskGetTickCount() - last_bounce_time < DEBOUNCETIME)
-            vTaskDelay(10);
+            vTaskDelay(10 / portTICK_PERIOD_MS);
         //refresh trigger.pressed
         trigger.read_pin();
         usblog.info("Button Interrupt Triggered times: ");
@@ -158,7 +158,7 @@ void handle_player_status(void *parameter)
         player_is_on = false;
         leds[LED_INDEX_PLAYER_STATUS].setColorCode(COLOR_PLAYER_STATUS_OFF);
         FastLED.show();
-        vTaskDelay(PLAYER_DOWNTIME_IN_MS);
+        vTaskDelay(PLAYER_DOWNTIME_IN_MS / portTICK_PERIOD_MS);
     }
     return;
 }

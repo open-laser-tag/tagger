@@ -157,10 +157,10 @@ void setup()
         //blink with bt status led while in team selection mode
         leds[LED_INDEX_BT].setColorCode(0);
         FastLED.show();
-        vTaskDelay(200);
+        vTaskDelay(200 / portTICK_PERIOD_MS);
         leds[LED_INDEX_BT].setColorCode(COLOR_BT_CONNECTION_OFF);
         FastLED.show();
-        vTaskDelay(200);
+        vTaskDelay(200 / portTICK_PERIOD_MS);
 
     }
     usblog.infoln("Leaving team selection mode");
