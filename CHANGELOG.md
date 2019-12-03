@@ -2,6 +2,8 @@
 * add player status led
 * add bt connection status led
 * add player status: player is down when hit by ir for some seconds
+* add teams to non-bt mode
+* add a blinking led when shooting ir
 
 # v0.1.0
 * change IR hardware from YS-IRTM module to single IR LED
