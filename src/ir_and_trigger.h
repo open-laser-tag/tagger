@@ -12,8 +12,6 @@
 #include <IRremote.h>
 #include "strings.h"
 
-#define ERROR_MSG 0xFFFF
-
 void handle_ir(void *parameter);
 void handle_trigger();
 void refresh_trigger_status(void *parameter);

@@ -37,13 +37,15 @@
 #define ONBOARDLED_PIN 2
 #define LED_INDEX_BT 0
 #define LED_INDEX_PLAYER_STATUS 1
-#define LED_INDEX_SHOOT 2
+#define LED_INDEX_TEAM 2
+#define LED_INDEX_SHOOT 3
 #define COLOR_BT_CONNECTION_ON 0x0000FF
 #define COLOR_BT_CONNECTION_OFF 0xFF0000
 #define COLOR_PLAYER_STATUS_ON 0x00FF00
 #define COLOR_PLAYER_STATUS_OFF 0xFF0000
 #define LED_OVERALL_BRIGHTNESS 20 //scale 0 to 255
 #define PLAYER_DOWNTIME_IN_MS 3000
+#define TEAM_SELECTION_TIME_IN_MS 5000
 #define IR_RMT_TX_CHANNEL RMT_CHANNEL_6 /*!< RMT channel for transmitter */
 #define IR_RMT_TX_GPIO_NUM GPIO_NUM_18  /*!< GPIO number for transmitter signal */
 #define DEBOUNCETIME 10
@@ -60,12 +62,20 @@
 #define CHARACTERISTIC_VERSION_UUID "563c139f-3eda-4c88-9fc3-be987038fa6a"
 #define CHARACTERISTIC_LED_UUID "7a4821c2-80f0-4eba-8070-d659d31e43de"
 
-extern uint32_t latency_timestamp,
+extern const uint32_t color_team[];
+
+extern uint32_t last_time_button_pressed_timestamp,
     latency,
     last_bounce_time;
 
+extern const uint16_t ir_msg[];
+
 extern uint16_t count_trigger_interrupts,
     msg_nr;
+
+extern uint8_t team;
+
+extern bool team_selection;
 
 extern portMUX_TYPE mux;
 

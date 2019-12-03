@@ -7,13 +7,38 @@
  */
 
 #include "tagger.h"
+const uint32_t color_team[] = 
+{
+    0x0000FF,
+    0x00FF00,
+    0x00FFFF,
+    0xFF0000,
+    0xFF00FF,
+    0xFFFF00,
+    0xFFFFFF,
+};
 
-uint32_t latency_timestamp = 0,
+uint32_t last_time_button_pressed_timestamp = 0,
          latency = 0,
          last_bounce_time = 0;
 
+const uint16_t ir_msg[] =
+{
+    0xFFFF,
+    0xFFFE,
+    0xFFFD,
+    0xFFFC,
+    0xFFFB,
+    0xFFFA,
+    0xFFF9,
+};
+
 uint16_t count_trigger_interrupts = 0,
          msg_nr = 0;
+
+uint8_t team = 0;
+
+extern bool team_selection = false;
 
 portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
 
@@ -123,6 +148,24 @@ void setup()
     //init trigger and ir handling
     create_tasks();
 
+    usblog.infoln("Entering team selection mode");
+    team_selection = true;
+    leds[LED_INDEX_TEAM].setColorCode(color_team[team]);
+    FastLED.show();
+    while(millis() - last_time_button_pressed_timestamp < TEAM_SELECTION_TIME_IN_MS)
+    {
+        //blink with bt status led while in team selection mode
+        leds[LED_INDEX_BT].setColorCode(0);
+        FastLED.show();
+        vTaskDelay(200);
+        leds[LED_INDEX_BT].setColorCode(COLOR_BT_CONNECTION_OFF);
+        FastLED.show();
+        vTaskDelay(200);
+
+    }
+    usblog.infoln("Leaving team selection mode");
+    team_selection = false;
+
     //blink for telling that setup is done
     usblog.debugln("Init finished: blink LED");
     led.blinks();
@@ -170,11 +213,11 @@ void create_tasks()
     );
 
     xTaskCreate(
-        handle_player_status,  /* Task function. */
-        "handle_player_status",/* name of task. */
-        2048,                 /* Stack size of task */
-        NULL,                 /* parameter of the task */
-        1,                    /* priority of the task */
+        handle_player_status,         /* Task function. */
+        "handle_player_status",       /* name of task. */
+        2048,                         /* Stack size of task */
+        NULL,                         /* parameter of the task */
+        1,                            /* priority of the task */
         &xHandle_handle_player_status /* Task handle to keep track of created task */
     );
 }

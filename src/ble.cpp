@@ -31,7 +31,7 @@ class Ir_send_callbacks : public BLECharacteristicCallbacks
                 usblog.print(value[i], HEX);
             usblog.println();
             ir_led.send(0xFFFF);
-            latency = millis() - latency_timestamp;
+            latency = millis() - last_time_button_pressed_timestamp;
             usblog.info("time in ms since last trigger: ");
             usblog.println(String(latency));
             //send latency via BT to app

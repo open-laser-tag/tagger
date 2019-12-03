@@ -42,15 +42,21 @@ void irrecv_decode(IRrecv &irrecv)
         usblog.println(msg_nr);
         if (msg_is_valid(ir_recv_data))
         {
+            uint16_t resv_msg = ir_recv_data >> 8;
             usblog.infoln("message valid");
             if (device_connected)
             {
                 ir_receive_char->setValue((uint32_t &)ir_recv_data);
                 ble_notify(ir_receive_char);
             }
-            else
+            else if (resv_msg != ir_msg[team])
             {
+                usblog.infoln("message from other team");
                 vTaskResume(xHandle_handle_player_status);
+            }
+            else if (resv_msg == ir_msg[team])
+            {
+                usblog.infoln("message from own team, doing nothing");
             }
         }
         else
@@ -101,17 +107,32 @@ void refresh_trigger_status(void *parameter)
         usblog.println(String(xTaskGetTickCount() - last_bounce_time));
         usblog.info("trigger status: ");
         usblog.println(String(trigger.pressed));
-        latency_timestamp = millis();
+        last_time_button_pressed_timestamp = millis();
+        //Three different tagger situations are handled here. The place for doing that feels a bit weird to me, so it maybe should be refacored.
+        //1: Tagger is connected via BT
         if (device_connected)
         {
             usblog.debugln("sending trigger status via bt");
             trigger_char->setValue((int &)trigger.pressed);
             ble_notify(trigger_char);
         }
+        //2: Team selection mode
+        else if (team_selection && trigger.pressed)
+        {
+            usblog.info("increasing team. Team: ");
+            team++;
+            if(team >= 7)
+                team = 0;
+            usblog.println(team);
+            leds[LED_INDEX_TEAM].setColorCode(color_team[team]);
+            FastLED.show();
+        }
+        //3: BT-less playing mode
         else if (trigger.pressed && player_is_on)
         {
-            usblog.infoln("Device not connected. Sending error message 0xFFFF via IR");
-            ir_led.send(ERROR_MSG);
+            usblog.info("Device not connected. Sending team message via IR: ");
+            usblog.println(ir_msg[team]);
+            ir_led.send(ir_msg[team]);
         }
         portENTER_CRITICAL_ISR(&mux);
         count_trigger_interrupts = 0;
@@ -124,10 +145,12 @@ void handle_player_status(void *parameter)
     usblog.debugln("handle player status task started");
     while (true)
     {
+        usblog.infoln("setting player status to active");
         player_is_on = true;
         leds[LED_INDEX_PLAYER_STATUS].setColorCode(COLOR_PLAYER_STATUS_ON);
         FastLED.show();
         vTaskSuspend(NULL); //suspend task until reactivated by handle_ir()
+        usblog.infoln("setting player status to down");
         player_is_on = false;
         leds[LED_INDEX_PLAYER_STATUS].setColorCode(COLOR_PLAYER_STATUS_OFF);
         FastLED.show();
