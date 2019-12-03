@@ -130,9 +130,13 @@ void refresh_trigger_status(void *parameter)
         //3: BT-less playing mode
         else if (trigger.pressed && player_is_on)
         {
+            leds[LED_INDEX_SHOOT].setColorCode(0xFFFFFF);
+            FastLED.show();
             usblog.info("Device not connected. Sending team message via IR: ");
-            usblog.println(ir_msg[team]);
+            usblog.println(ir_msg[team], HEX);
             ir_led.send(ir_msg[team]);
+            leds[LED_INDEX_SHOOT].setColorCode(0);
+            FastLED.show();
         }
         portENTER_CRITICAL_ISR(&mux);
         count_trigger_interrupts = 0;
