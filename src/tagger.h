@@ -25,6 +25,7 @@
 #include <FastLED.h>
 #include "git_info.h" //if this file is missing, type make
 #include "Esp32_infrared_nec.h"
+#include <esp_log.h>
 
 /* pins */
 //for FastLED.h
@@ -84,8 +85,7 @@ extern TaskHandle_t xHandle_handle_ir,
     xHandle_send_latency,
     xHandle_handle_player_status;
 
-extern SemaphoreHandle_t xMutex_BT,
-    xMutex_USB;
+extern SemaphoreHandle_t xMutex_BT;
 
 extern BLECharacteristic *trigger_char,
     *ir_receive_char,
@@ -99,7 +99,6 @@ extern Button trigger;
 extern IRrecv irrecv_front,
     irrecv_right,
     irrecv_left;
-extern Logger usblog;
 extern CRGB leds[NUM_LEDS];
 extern bool player_is_on;
 

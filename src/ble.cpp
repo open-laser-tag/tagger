@@ -26,14 +26,13 @@ class Ir_send_callbacks : public BLECharacteristicCallbacks
 
         if (value.length() > 0)
         {
-            usblog.info("BT incoming, sending via IR: ");
+            ESP_LOGI(logtag, "BT incoming, sending via IR: ");
             for (int i = 0; i < value.length(); i++)
-                usblog.print(value[i], HEX);
-            usblog.println();
-            ir_led.send(0xFFFF);
+                //ESP_LOGI(logtag, value[i], HEX);
+                ir_led.send(0xFFFF);
             latency = millis() - last_time_button_pressed_timestamp;
-            usblog.info("time in ms since last trigger: ");
-            usblog.println(String(latency));
+            ESP_LOGI(logtag, "time in ms since last trigger: ");
+            //ESP_LOGI(logtag,String(latency));
             //send latency via BT to app
             vTaskResume(xHandle_send_latency);
         }
@@ -70,7 +69,7 @@ class MyServerCallbacks : public BLEServerCallbacks
    */
     void onConnect(BLEServer *pServer)
     {
-        usblog.infoln("device connected");
+        ESP_LOGE(logtag, "device connected");
         led.light_on();
         leds[LED_INDEX_BT].setColorCode(COLOR_BT_CONNECTION_ON);
         FastLED.show();
@@ -86,7 +85,9 @@ class MyServerCallbacks : public BLEServerCallbacks
    */
     void onDisconnect(BLEServer *pServer)
     {
-        usblog.infoln("device disconnected");
+        const char *logtag = "BT";
+
+        ESP_LOGI(logtag, "device disconnected");
         led.light_off();
         leds[LED_INDEX_BT].setColorCode(COLOR_BT_CONNECTION_OFF);
         FastLED.show();
@@ -107,66 +108,66 @@ void init_ble()
     Ported to Arduino ESP32 by Evandro Copercini
   */
 
-    usblog.debugln("creating BLE device...");
+    ESP_LOGD(logtag, "creating BLE device...");
     BLEDevice::init("Open Laser Tag Tagger"); // Give it a name
 
-    usblog.debugln("creating BLE server...");
+    ESP_LOGD(logtag, "creating BLE server...");
     BLEServer *pServer = BLEDevice::createServer();
     pServer->setCallbacks(new MyServerCallbacks());
 
-    usblog.debugln("creating BLE service...");
+    ESP_LOGD(logtag, "creating BLE service...");
     BLEService *pService = pServer->createService(SERVICE_UUID);
 
-    usblog.debugln("creating BLE led characteristic...");
+    ESP_LOGD(logtag, "creating BLE led characteristic...");
     led_char = pService->createCharacteristic(
         CHARACTERISTIC_LED_UUID,
         BLECharacteristic::PROPERTY_WRITE);
     // led_char         ->addDescriptor(new BLE2902());
     led_char->setCallbacks(new Led_callbacks());
 
-    usblog.debugln("creating BLE trigger characteristic...");
+    ESP_LOGD(logtag, "creating BLE trigger characteristic...");
     trigger_char = pService->createCharacteristic(
         CHARACTERISTIC_TRIGGER_UUID,
         BLECharacteristic::PROPERTY_NOTIFY);
     trigger_char->addDescriptor(new BLE2902());
 
-    usblog.debugln("creating BLE ir receive characteristic...");
+    ESP_LOGD(logtag, "creating BLE ir receive characteristic...");
     ir_receive_char = pService->createCharacteristic(
         CHARACTERISTIC_IR_RECEIVE_UUID,
         BLECharacteristic::PROPERTY_NOTIFY);
     ir_receive_char->addDescriptor(new BLE2902());
 
-    usblog.debugln("creating BLE ir send characteristic...");
+    ESP_LOGD(logtag, "creating BLE ir send characteristic...");
     ir_send_char = pService->createCharacteristic(
         CHARACTERISTIC_IR_SEND_UUID,
         BLECharacteristic::PROPERTY_WRITE);
     // ir_send_char     ->addDescriptor(new BLE2902());
     ir_send_char->setCallbacks(new Ir_send_callbacks());
 
-    usblog.debugln("creating BLE latency characteristic...");
+    ESP_LOGD(logtag, "creating BLE latency characteristic...");
     latency_char = pService->createCharacteristic(
         CHARACTERISTIC_LATENCY_UUID,
         BLECharacteristic::PROPERTY_NOTIFY);
     latency_char->addDescriptor(new BLE2902());
 
-    usblog.debugln("creating BLE version characteristic...");
+    ESP_LOGD(logtag, "creating BLE version characteristic...");
     version_char = pService->createCharacteristic(
         CHARACTERISTIC_VERSION_UUID,
         BLECharacteristic::PROPERTY_READ);
     // version_char     ->addDescriptor(new BLE2902());
     version_char->setValue(GIT_TAG);
 
-    usblog.debugln("starting BLE service...");
+    ESP_LOGD(logtag, "starting BLE service...");
     pService->start();
 
-    usblog.debugln("starting advertising...");
+    ESP_LOGD(logtag, "starting advertising...");
     BLEAdvertising *pAdvertising = pServer->getAdvertising();
     pAdvertising->start();
 
     /* MAC address */
     BLEAddress mac_address = BLEDevice::getAddress();
     std::string mac_str = mac_address.toString();
-    usblog.infoln("MAC address: " + mac_str);
+    //ESP_LOGE(logtag, "MAC address: " + mac_str);
     return;
 }
 
@@ -179,7 +180,7 @@ void ble_notify(BLECharacteristic *characteristic)
 
     if (device_connected)
     {
-        usblog.debugln("Sending BT...");
+        ESP_LOGD(logtag, "Sending BT...");
         //check if Mutex was successfully created
         if (xMutex_BT != NULL)
         {
@@ -193,17 +194,17 @@ void ble_notify(BLECharacteristic *characteristic)
                 /* We have finished accessing the shared resource.  Release the
           semaphore. */
                 xSemaphoreGive(xMutex_BT);
-                usblog.debugln("BT successfully sent");
+                ESP_LOGD(logtag, "BT successfully sent");
             }
             else
-                usblog.errorln("BT Mutex locked for over 10ms, message possibly dropped");
+                ESP_LOGE(logtag, "BT Mutex locked for over 10ms, message possibly dropped");
         }
         else
-            usblog.errorln("BT Mutex not available.");
+            ESP_LOGE(logtag, "BT Mutex not available.");
     }
     else
     {
-        usblog.warningln("No device connected, no message sent.");
+        ESP_LOGW(logtag, "No device connected, no message sent.");
     }
 
     return;

@@ -15,7 +15,7 @@
  */
 void handle_ir(void *parameter)
 {
-    usblog.debugln("handle IR task started");
+    ESP_LOGD(logtag, "handle IR task started");
     while (true)
     {
         uint32_t ir_data = 0;
@@ -30,20 +30,21 @@ void handle_ir(void *parameter)
 
 void irrecv_decode(IRrecv &irrecv)
 {
+    const char *logtag = "irdecode";
     decode_results results;
     if (irrecv.decode(&results))
     {
         //the bits order changed after transmission, so it is reversed here
         uint32_t ir_recv_data = reverse_bit_order((uint32_t)results.value);
-        usblog.info("Incoming IR: ");
-        usblog.println(ir_recv_data, HEX);
+        ESP_LOGI(logtag, "Incoming IR: ");
+        //ESP_LOGI(logtag, ir_recv_data, HEX);
         msg_nr++;
-        usblog.info("message nr: ");
-        usblog.println(msg_nr);
+        ESP_LOGI(logtag, "message nr: ");
+        //ESP_LOGI(logtag, msg_nr);
         if (msg_is_valid(ir_recv_data))
         {
             uint16_t resv_msg = ir_recv_data >> 8;
-            usblog.infoln("message valid");
+            ESP_LOGD(logtag, "message valid");
             if (device_connected)
             {
                 ir_receive_char->setValue((uint32_t &)ir_recv_data);
@@ -51,16 +52,16 @@ void irrecv_decode(IRrecv &irrecv)
             }
             else if (resv_msg != ir_msg[team])
             {
-                usblog.infoln("message from other team");
+                ESP_LOGI(logtag, "message from other team");
                 vTaskResume(xHandle_handle_player_status);
             }
             else if (resv_msg == ir_msg[team])
             {
-                usblog.infoln("message from own team, doing nothing");
+                ESP_LOGI(logtag, "message from own team, doing nothing");
             }
         }
         else
-            usblog.warningln("invalid message");
+            ESP_LOGW(logtag, "invalid message");
         irrecv.resume(); // Receive the next value
     }
     return;
@@ -92,7 +93,9 @@ void handle_trigger()
 
 void refresh_trigger_status(void *parameter)
 {
-    usblog.debugln("refresh trigger status task started");
+    const char *logtag = "trigger";
+
+    ESP_LOGD(logtag, "refresh trigger status task started");
     while (true)
     {
         vTaskSuspend(NULL); //suspend task until reactivated by handle_trigger()
@@ -101,29 +104,29 @@ void refresh_trigger_status(void *parameter)
             vTaskDelay(10 / portTICK_PERIOD_MS);
         //refresh trigger.pressed
         trigger.read_pin();
-        usblog.info("Button Interrupt Triggered times: ");
-        usblog.println(String(count_trigger_interrupts));
-        usblog.info("time in ms since last trigger: ");
-        usblog.println(String(xTaskGetTickCount() - last_bounce_time));
-        usblog.info("trigger status: ");
-        usblog.println(String(trigger.pressed));
+        ESP_LOGI(logtag, "Button Interrupt Triggered times: ");
+        //ESP_LOGI(logtag, String(count_trigger_interrupts));
+        ESP_LOGI(logtag, "time in ms since last trigger: ");
+        //ESP_LOGI(logtag, String(xTaskGetTickCount() - last_bounce_time));
+        ESP_LOGI(logtag, "trigger status: ");
+        //ESP_LOGI(logtag, String(trigger.pressed));
         last_time_button_pressed_timestamp = millis();
         //Three different tagger situations are handled here. The place for doing that feels a bit weird to me, so it maybe should be refacored.
         //1: Tagger is connected via BT
         if (device_connected)
         {
-            usblog.debugln("sending trigger status via bt");
+            ESP_LOGD(logtag, "sending trigger status via bt");
             trigger_char->setValue((int &)trigger.pressed);
             ble_notify(trigger_char);
         }
         //2: Team selection mode
         else if (team_selection && trigger.pressed)
         {
-            usblog.info("increasing team. Team: ");
+            ESP_LOGI(logtag, "increasing team. Team: ");
             team++;
-            if(team >= 7)
+            if (team >= 7)
                 team = 0;
-            usblog.println(team);
+            //ESP_LOGI(logtag, team);
             leds[LED_INDEX_TEAM].setColorCode(color_team[team]);
             FastLED.show();
         }
@@ -132,8 +135,8 @@ void refresh_trigger_status(void *parameter)
         {
             leds[LED_INDEX_SHOOT].setColorCode(0xFFFFFF);
             FastLED.show();
-            usblog.info("Device not connected. Sending team message via IR: ");
-            usblog.println(ir_msg[team], HEX);
+            ESP_LOGI(logtag, "Device not connected. Sending team message via IR: ");
+            //ESP_LOGI(logtag, ir_msg[team], HEX);
             ir_led.send(ir_msg[team]);
             leds[LED_INDEX_SHOOT].setColorCode(0);
             FastLED.show();
@@ -146,15 +149,15 @@ void refresh_trigger_status(void *parameter)
 
 void handle_player_status(void *parameter)
 {
-    usblog.debugln("handle player status task started");
+    ESP_LOGD(logtag, "handle player status task started");
     while (true)
     {
-        usblog.infoln("setting player status to active");
+        ESP_LOGI(logtag, "setting player status to active");
         player_is_on = true;
         leds[LED_INDEX_PLAYER_STATUS].setColorCode(COLOR_PLAYER_STATUS_ON);
         FastLED.show();
         vTaskSuspend(NULL); //suspend task until reactivated by handle_ir()
-        usblog.infoln("setting player status to down");
+        ESP_LOGI(logtag, "setting player status to down");
         player_is_on = false;
         leds[LED_INDEX_PLAYER_STATUS].setColorCode(COLOR_PLAYER_STATUS_OFF);
         FastLED.show();

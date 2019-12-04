@@ -7,15 +7,15 @@
  */
 
 #include "tagger.h"
-const uint32_t color_team[] = 
-{
-    0x0000FF,
-    0x00FF00,
-    0x00FFFF,
-    0xFF0000,
-    0xFF00FF,
-    0xFFFF00,
-    0xFFFFFF,
+const uint32_t color_team[] =
+    {
+        0x0000FF,
+        0x00FF00,
+        0x00FFFF,
+        0xFF0000,
+        0xFF00FF,
+        0xFFFF00,
+        0xFFFFFF,
 };
 
 uint32_t last_time_button_pressed_timestamp = 0,
@@ -23,14 +23,14 @@ uint32_t last_time_button_pressed_timestamp = 0,
          last_bounce_time = 0;
 
 const uint16_t ir_msg[] =
-{
-    0xFFFF,
-    0xFFFE,
-    0xFFFD,
-    0xFFFC,
-    0xFFFB,
-    0xFFFA,
-    0xFFF9,
+    {
+        0xFFFF,
+        0xFFFE,
+        0xFFFD,
+        0xFFFC,
+        0xFFFB,
+        0xFFFA,
+        0xFFF9,
 };
 
 uint16_t count_trigger_interrupts = 0,
@@ -52,12 +52,6 @@ TaskHandle_t xHandle_handle_ir,
  * This mutex is used to lock/unlock the bluetooth communication.
  */
 SemaphoreHandle_t xMutex_BT;
-
-/**
- * @brief USB mutex
- * This mutex is used to lock/unlock the USB communication.
- */
-SemaphoreHandle_t xMutex_USB;
 
 /**
  * @brief send trigger status
@@ -99,7 +93,6 @@ Esp32_infrared_nec_tx ir_led;
 IRrecv irrecv_front(IR_RECV_FRONT_PIN),
     irrecv_right(IR_RECV_RIGHT_PIN),
     irrecv_left(IR_RECV_LEFT_PIN);
-Logger usblog(HARDWARE_SERIAL0, &xMutex_USB);
 CRGB leds[NUM_LEDS];
 bool player_is_on = true;
 
@@ -110,18 +103,17 @@ bool player_is_on = true;
  */
 void setup()
 {
-    esp_log_level_set("*", ESP_LOG_INFO);
+    const char *logtag = "setup";
 
-    usblog.begin(115200);
-    usblog.println();
-    usblog.println("*******************************************");
-    usblog.println("Hello, this is Open Laser Tag Tagger.");
-    usblog.print("Tagger Firmware version: ");
-    usblog.println(GIT_TAG);
-    usblog.println("*******************************************");
-    usblog.println();
+    Serial.begin(115200);
 
-    usblog.println("DEBUG: Starting init...");
+    ESP_LOGI(logtag, "*******************************************");
+    ESP_LOGI(logtag, "Hello, this is Open Laser Tag Tagger.");
+    ESP_LOGI(logtag, "Tagger Firmware version: ");
+    ESP_LOGI(logtag, GIT_TAG);
+    ESP_LOGI(logtag, "*******************************************");
+
+    ESP_LOGD(logtag, "Starting init...");
     //create semaphores
     init_mutex();
     //trigger pin to interrupt
@@ -129,12 +121,12 @@ void setup()
     //init bluetooth low energy server, services, characteristics
     init_ble();
 
-    usblog.debugln("Enabling IRin...");
+    ESP_LOGD(logtag, "Enabling IRin...");
     irrecv_front.enableIRIn(); // Start the receiver
     //multiple receiver not working yet
     // irrecv_right.enableIRIn(); // Start the receiver
     // irrecv_left.enableIRIn(); // Start the receiver
-    usblog.debugln("Enabled IRin");
+    ESP_LOGD(logtag, "Enabled IRin");
 
     //init fast LED strip
     FastLED.addLeds<NEOPIXEL, LED_DATA_PIN>(leds, NUM_LEDS);
@@ -142,17 +134,17 @@ void setup()
     leds[LED_INDEX_BT].setColorCode(COLOR_BT_CONNECTION_OFF);
     FastLED.show();
 
-    usblog.debugln("Init IR LED");
+    ESP_LOGD(logtag, "Init IR LED");
     ir_led.init(IR_RMT_TX_CHANNEL, IR_RMT_TX_GPIO_NUM);
 
     //init trigger and ir handling
     create_tasks();
 
-    usblog.infoln("Entering team selection mode");
+    ESP_LOGD(logtag, "Entering team selection mode");
     team_selection = true;
     leds[LED_INDEX_TEAM].setColorCode(color_team[team]);
     FastLED.show();
-    while(millis() - last_time_button_pressed_timestamp < TEAM_SELECTION_TIME_IN_MS)
+    while (millis() - last_time_button_pressed_timestamp < TEAM_SELECTION_TIME_IN_MS)
     {
         //blink with bt status led while in team selection mode
         leds[LED_INDEX_BT].setColorCode(0);
@@ -161,13 +153,12 @@ void setup()
         leds[LED_INDEX_BT].setColorCode(COLOR_BT_CONNECTION_OFF);
         FastLED.show();
         vTaskDelay(200 / portTICK_PERIOD_MS);
-
     }
-    usblog.infoln("Leaving team selection mode");
+    ESP_LOGD(logtag, "Leaving team selection mode");
     team_selection = false;
 
     //blink for telling that setup is done
-    usblog.debugln("Init finished: blink LED");
+    ESP_LOGD(logtag, "Init finished: blink LED");
     led.blinks();
 }
 
@@ -224,8 +215,9 @@ void create_tasks()
 
 void send_latency(void *parameter)
 {
+    const char *logtag = "latency";
 
-    usblog.debugln("send latency task started");
+    ESP_LOGD(logtag, "send latency task started");
 
     while (true)
     {
@@ -234,7 +226,7 @@ void send_latency(void *parameter)
         //send latency via BT to app
         latency_char->setValue(latency);
         ble_notify(latency_char);
-        usblog.debugln("latency sent via bt");
+        ESP_LOGD(logtag, "latency sent via bt");
     }
 }
 
@@ -245,17 +237,12 @@ void send_latency(void *parameter)
  */
 void init_mutex()
 {
-    usblog.println("DEBUG: creating USB mutex...");
-    xMutex_USB = xSemaphoreCreateMutex();
-    if (xMutex_USB != NULL)
-        usblog.debugln("USB Mutex successfully created.");
-    else
-        usblog.println("Error: Could not create USB Mutex");
+    const char *logtag = "initmutex";
 
-    usblog.debugln("creating BT mutex...");
+    ESP_LOGD(logtag, "creating BT mutex...");
     xMutex_BT = xSemaphoreCreateMutex();
     if (xMutex_BT != NULL)
-        usblog.debugln("BT Mutex successfully created.");
+        ESP_LOGD(logtag, "BT Mutex successfully created.");
     else
-        usblog.errorln("Could not create BT Mutex");
+        ESP_LOGE(logtag, "Could not create BT Mutex");
 }
