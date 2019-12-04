@@ -36,11 +36,9 @@ void irrecv_decode(IRrecv &irrecv)
     {
         //the bits order changed after transmission, so it is reversed here
         uint32_t ir_recv_data = reverse_bit_order((uint32_t)results.value);
-        ESP_LOGI(logtag, "Incoming IR: ");
-        //ESP_LOGI(logtag, ir_recv_data, HEX);
+        ESP_LOGI(logtag, "Incoming IR: 0x%X", ir_recv_data);
         msg_nr++;
-        ESP_LOGI(logtag, "message nr: ");
-        //ESP_LOGI(logtag, msg_nr);
+        ESP_LOGI(logtag, "message nr: %u", msg_nr);
         if (msg_is_valid(ir_recv_data))
         {
             uint16_t resv_msg = ir_recv_data >> 8;
@@ -104,12 +102,9 @@ void refresh_trigger_status(void *parameter)
             vTaskDelay(10 / portTICK_PERIOD_MS);
         //refresh trigger.pressed
         trigger.read_pin();
-        ESP_LOGI(logtag, "Button Interrupt Triggered times: ");
-        //ESP_LOGI(logtag, String(count_trigger_interrupts));
-        ESP_LOGI(logtag, "time in ms since last trigger: ");
-        //ESP_LOGI(logtag, String(xTaskGetTickCount() - last_bounce_time));
-        ESP_LOGI(logtag, "trigger status: ");
-        //ESP_LOGI(logtag, String(trigger.pressed));
+        ESP_LOGI(logtag, "Button Interrupt Triggered times: %u", count_trigger_interrupts);
+        ESP_LOGI(logtag, "time in ms since last trigger: %u", xTaskGetTickCount() - last_bounce_time);
+        ESP_LOGI(logtag, "trigger status: %u", trigger.pressed);
         last_time_button_pressed_timestamp = millis();
         //Three different tagger situations are handled here. The place for doing that feels a bit weird to me, so it maybe should be refacored.
         //1: Tagger is connected via BT
@@ -122,11 +117,10 @@ void refresh_trigger_status(void *parameter)
         //2: Team selection mode
         else if (team_selection && trigger.pressed)
         {
-            ESP_LOGI(logtag, "increasing team. Team: ");
             team++;
             if (team >= 7)
                 team = 0;
-            //ESP_LOGI(logtag, team);
+            ESP_LOGI(logtag, "increasing team. Team: %u", team);
             leds[LED_INDEX_TEAM].setColorCode(color_team[team]);
             FastLED.show();
         }
@@ -135,8 +129,7 @@ void refresh_trigger_status(void *parameter)
         {
             leds[LED_INDEX_SHOOT].setColorCode(0xFFFFFF);
             FastLED.show();
-            ESP_LOGI(logtag, "Device not connected. Sending team message via IR: ");
-            //ESP_LOGI(logtag, ir_msg[team], HEX);
+            ESP_LOGI(logtag, "Device not connected. Sending team message via IR: 0x%X", ir_msg[team]);
             ir_led.send(ir_msg[team]);
             leds[LED_INDEX_SHOOT].setColorCode(0);
             FastLED.show();

@@ -22,17 +22,17 @@ class Ir_send_callbacks : public BLECharacteristicCallbacks
    */
     void onWrite(BLECharacteristic *ir_send_char)
     {
+        const char *logtag = "BT";
+
         std::string value = ir_send_char->getValue();
 
         if (value.length() > 0)
         {
-            ESP_LOGI(logtag, "BT incoming, sending via IR: ");
-            for (int i = 0; i < value.length(); i++)
-                //ESP_LOGI(logtag, value[i], HEX);
-                ir_led.send(0xFFFF);
+            ESP_LOGI(logtag, "BT incoming: 0x%X", value);
+            ESP_LOGW(logtag, "Sending this data via ir is not implemented, just sending 0xFFFF");
+            ir_led.send(0xFFFF);
             latency = millis() - last_time_button_pressed_timestamp;
-            ESP_LOGI(logtag, "time in ms since last trigger: ");
-            //ESP_LOGI(logtag,String(latency));
+            ESP_LOGI(logtag, "time in ms since last trigger: %u", latency);
             //send latency via BT to app
             vTaskResume(xHandle_send_latency);
         }
@@ -107,6 +107,7 @@ void init_ble()
     Based on Neil Kolban example for IDF: https://github.com/nkolban/esp32-snippets/blob/master/cpp_utils/tests/BLE%20Tests/SampleServer.cpp
     Ported to Arduino ESP32 by Evandro Copercini
   */
+    const char *logtag = "BT";
 
     ESP_LOGD(logtag, "creating BLE device...");
     BLEDevice::init("Open Laser Tag Tagger"); // Give it a name
@@ -167,7 +168,7 @@ void init_ble()
     /* MAC address */
     BLEAddress mac_address = BLEDevice::getAddress();
     std::string mac_str = mac_address.toString();
-    //ESP_LOGE(logtag, "MAC address: " + mac_str);
+    ESP_LOGI(logtag, "MAC address: %s", mac_str);
     return;
 }
 
@@ -177,6 +178,7 @@ void init_ble()
  */
 void ble_notify(BLECharacteristic *characteristic)
 {
+    const char *logtag = "BT";
 
     if (device_connected)
     {
