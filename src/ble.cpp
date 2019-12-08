@@ -69,7 +69,7 @@ class MyServerCallbacks : public BLEServerCallbacks
    */
     void onConnect(BLEServer *pServer)
     {
-        ESP_LOGE(logtag, "device connected");
+        ESP_LOGI(logtag, "device connected");
         led.light_on();
         leds[LED_INDEX_BT].setColorCode(COLOR_BT_CONNECTION_ON);
         FastLED.show();
