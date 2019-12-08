@@ -128,8 +128,14 @@ void setup()
     // irrecv_left.enableIRIn(); // Start the receiver
     ESP_LOGD(logtag, "Enabled IRin");
 
-    //init fast LED strip
+//init fast LED strip
+#if defined LED_TYPE_NEOPIXEL
     FastLED.addLeds<NEOPIXEL, LED_DATA_PIN>(leds, NUM_LEDS);
+#elif defined LED_TYPE_APA102
+    FastLED.addLeds<APA102, LED_DATA_PIN, LED_CLOCK_PIN, BGR>(leds, NUM_LEDS);
+#else
+#error "Please specify one LED type"
+#endif
     FastLED.setBrightness(LED_OVERALL_BRIGHTNESS);
     leds[LED_INDEX_BT].setColorCode(COLOR_BT_CONNECTION_OFF);
     FastLED.show();

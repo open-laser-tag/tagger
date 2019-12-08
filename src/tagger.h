@@ -5,16 +5,43 @@
  * @date 2019-01-23
  * 
  */
-
 #ifndef tagger_h
 #define tagger_h
+
+/* config */
 //this is a hardware identifier for FastLED
 #define ESP32
-//I don't know why this is needed. It is for IRremote.h/IRremoteInt.h
-#define ARDUINO 101
+//choose one LED type
+//#define LED_TYPE_APA102  
+#define LED_TYPE_NEOPIXEL  
+#define LED_CLOCK_PIN 18 //only used for spi leds like APA102
+#define LED_DATA_PIN 19
+#define NUM_LEDS 4
+#define LED_OVERALL_BRIGHTNESS 20 //scale 0 to 255
 //FASTLED_ESP32_I2S is defined to tell FastLED to use I2S driver instead of RMT. Reference for this option in FastLED/platforms/esp/32/clockless_i2s_esp32.h. There is a conflict when using RMT with both LED and IR, although it should be possible according to the options in FastLED/platforms/esp/32/clockless_rmt_esp32.h.
 #define FASTLED_ESP32_I2S true
+//I don't know why this is needed. It is for IRremote.h/IRremoteInt.h
+#define ARDUINO 101
+#define IR_RECV_FRONT_PIN 27
+#define IR_RECV_RIGHT_PIN 26
+#define IR_RECV_LEFT_PIN 25
+#define PIN_TRIGGER 21
+#define ONBOARDLED_PIN 2
+#define PLAYER_DOWNTIME_IN_MS 3000
+#define TEAM_SELECTION_TIME_IN_MS 5000
+#define IR_RMT_TX_CHANNEL RMT_CHANNEL_6 /*!< RMT channel for transmitter */
+#define IR_RMT_TX_GPIO_NUM GPIO_NUM_22  /*!< GPIO number for transmitter signal */
+#define LED_INDEX_BT 0
+#define LED_INDEX_PLAYER_STATUS 1
+#define LED_INDEX_TEAM 2
+#define LED_INDEX_SHOOT 3
+#define COLOR_BT_CONNECTION_ON 0x0000FF
+#define COLOR_BT_CONNECTION_OFF 0xFF0000
+#define COLOR_PLAYER_STATUS_ON 0x00FF00
+#define COLOR_PLAYER_STATUS_OFF 0xFF0000
+#define DEBOUNCETIME 10
 
+/* includes */
 #include <Arduino.h>
 #include <BLEDevice.h>
 #include <BLE2902.h>
@@ -27,29 +54,7 @@
 #include "Esp32_infrared_nec.h"
 #include <esp_log.h>
 
-/* pins */
-//for FastLED.h
-#define NUM_LEDS 4
-#define LED_DATA_PIN 13
-#define IR_RECV_FRONT_PIN 27
-#define IR_RECV_RIGHT_PIN 26
-#define IR_RECV_LEFT_PIN 25
-#define PIN_TRIGGER 21
-#define ONBOARDLED_PIN 2
-#define LED_INDEX_BT 0
-#define LED_INDEX_PLAYER_STATUS 1
-#define LED_INDEX_TEAM 2
-#define LED_INDEX_SHOOT 3
-#define COLOR_BT_CONNECTION_ON 0x0000FF
-#define COLOR_BT_CONNECTION_OFF 0xFF0000
-#define COLOR_PLAYER_STATUS_ON 0x00FF00
-#define COLOR_PLAYER_STATUS_OFF 0xFF0000
-#define LED_OVERALL_BRIGHTNESS 20 //scale 0 to 255
-#define PLAYER_DOWNTIME_IN_MS 3000
-#define TEAM_SELECTION_TIME_IN_MS 5000
-#define IR_RMT_TX_CHANNEL RMT_CHANNEL_6 /*!< RMT channel for transmitter */
-#define IR_RMT_TX_GPIO_NUM GPIO_NUM_18  /*!< GPIO number for transmitter signal */
-#define DEBOUNCETIME 10
+/* macros */
 #define HARDWARE_SERIAL0 0 // rx_pin=3, tx_pin=1 (usb)
 #define HARDWARE_SERIAL1 1 // don't use this one
 #define HARDWARE_SERIAL2 2 //rx_pin=16, tx_pin=17
@@ -63,30 +68,22 @@
 #define CHARACTERISTIC_VERSION_UUID "563c139f-3eda-4c88-9fc3-be987038fa6a"
 #define CHARACTERISTIC_LED_UUID "7a4821c2-80f0-4eba-8070-d659d31e43de"
 
+/* global variables*/
 extern const uint32_t color_team[];
-
 extern uint32_t last_time_button_pressed_timestamp,
     latency,
     last_bounce_time;
-
 extern const uint16_t ir_msg[];
-
 extern uint16_t count_trigger_interrupts,
     msg_nr;
-
 extern uint8_t team;
-
 extern bool team_selection;
-
 extern portMUX_TYPE mux;
-
 extern TaskHandle_t xHandle_handle_ir,
     xHandle_refresh_trigger_status,
     xHandle_send_latency,
     xHandle_handle_player_status;
-
 extern SemaphoreHandle_t xMutex_BT;
-
 extern BLECharacteristic *trigger_char,
     *ir_receive_char,
     *ir_send_char,
@@ -102,6 +99,7 @@ extern IRrecv irrecv_front,
 extern CRGB leds[NUM_LEDS];
 extern bool player_is_on;
 
+/* function declerations */
 void setup();
 void loop();
 void create_tasks();
