@@ -18,7 +18,6 @@ void handle_ir(void *parameter)
     ESP_LOGD(logtag, "handle IR task started");
     while (true)
     {
-        uint32_t ir_data = 0;
         irrecv_decode(irrecv_front);
         // multiple receiver not working yet
         // irrecv_decode(irrecv_right);

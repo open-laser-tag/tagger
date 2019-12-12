@@ -27,7 +27,9 @@ int init_ota(const char *ssid, const char *pw)
     if (WiFi.waitForConnectResult() != WL_CONNECTED)
     {
         ESP_LOGE(lagtag, "Connection Failed!");
-        return 1;
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        ESP_LOGI(logtag, "Rebooting");
+        esp_restart();
     }
     else
         ESP_LOGD(lagtag, "Connection established!");

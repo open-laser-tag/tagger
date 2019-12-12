@@ -38,7 +38,7 @@ uint16_t count_trigger_interrupts = 0,
 
 uint8_t team = 0;
 
-extern bool team_selection = false;
+bool team_selection = false;
 
 portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
 
@@ -110,8 +110,7 @@ void setup()
 
     ESP_LOGI(logtag, "*******************************************");
     ESP_LOGI(logtag, "Hello, this is Open Laser Tag Tagger.");
-    ESP_LOGI(logtag, "Tagger Firmware version: ");
-    ESP_LOGI(logtag, GIT_TAG);
+    ESP_LOGI(logtag, "Tagger Firmware version: %s", GIT_TAG);
     ESP_LOGI(logtag, "*******************************************");
 
     ESP_LOGD(logtag, "Begin EEPROM");
