@@ -95,6 +95,7 @@ IRrecv irrecv_front(IR_RECV_FRONT_PIN),
     irrecv_left(IR_RECV_LEFT_PIN);
 CRGB leds[NUM_LEDS];
 bool player_is_on = true;
+bool ota_flag = false;
 
 /**
  * @brief arduino setup
@@ -113,59 +114,75 @@ void setup()
     ESP_LOGI(logtag, GIT_TAG);
     ESP_LOGI(logtag, "*******************************************");
 
-    ESP_LOGD(logtag, "Starting init...");
-    //create semaphores
-    init_mutex();
-    //trigger pin to interrupt
-    attachInterrupt(digitalPinToInterrupt(PIN_TRIGGER), handle_trigger, CHANGE); //LOW, CHANGE, RISING, FALLING
-    //init bluetooth low energy server, services, characteristics
-    init_ble();
+    ESP_LOGD(logtag, "Begin EEPROM");
+    EEPROM.begin(EEPROM_SIZE);
+    ESP_LOGD(logtag, "Read OTA flag");
+    ota_flag = EEPROM.read(EEPROM_ADDR_OTA);
+    ESP_LOGD(logtag, "OTA flag: %i", ota_flag);
+    if (ota_flag)
+    {
+        ESP_LOGI(logtag, "Entering OTA mode");
+        ESP_LOGI(logtag, "Setting OTA flag to 0");
+        EEPROM.write(EEPROM_ADDR_OTA, 0);
+        EEPROM.commit();
+        init_ota(OTA_WIFI_SSID, OTA_WIWI_PASSWORD);
+    }
+    else
+    {
+        ESP_LOGD(logtag, "Entering normal mode, starting init...");
+        //create semaphores
+        init_mutex();
+        //trigger pin to interrupt
+        attachInterrupt(digitalPinToInterrupt(PIN_TRIGGER), handle_trigger, CHANGE); //LOW, CHANGE, RISING, FALLING
+        //init bluetooth low energy server, services, characteristics
+        init_ble();
 
-    ESP_LOGD(logtag, "Enabling IRin...");
-    irrecv_front.enableIRIn(); // Start the receiver
-    //multiple receiver not working yet
-    // irrecv_right.enableIRIn(); // Start the receiver
-    // irrecv_left.enableIRIn(); // Start the receiver
-    ESP_LOGD(logtag, "Enabled IRin");
+        ESP_LOGD(logtag, "Enabling IRin...");
+        //irrecv_front.enableIRIn(); // Start the receiver
+        //multiple receiver not working yet
+        // irrecv_right.enableIRIn(); // Start the receiver
+        // irrecv_left.enableIRIn(); // Start the receiver
+        ESP_LOGD(logtag, "Enabled IRin");
 
 //init fast LED strip
 #if defined LED_TYPE_NEOPIXEL
-    FastLED.addLeds<NEOPIXEL, LED_DATA_PIN>(leds, NUM_LEDS);
+        FastLED.addLeds<NEOPIXEL, LED_DATA_PIN>(leds, NUM_LEDS);
 #elif defined LED_TYPE_APA102
-    FastLED.addLeds<APA102, LED_DATA_PIN, LED_CLOCK_PIN, BGR>(leds, NUM_LEDS);
+        FastLED.addLeds<APA102, LED_DATA_PIN, LED_CLOCK_PIN, BGR>(leds, NUM_LEDS);
 #else
 #error "Please specify one LED type"
 #endif
-    FastLED.setBrightness(LED_OVERALL_BRIGHTNESS);
-    leds[LED_INDEX_BT].setColorCode(COLOR_BT_CONNECTION_OFF);
-    FastLED.show();
-
-    ESP_LOGD(logtag, "Init IR LED");
-    ir_led.init(IR_RMT_TX_CHANNEL, IR_RMT_TX_GPIO_NUM);
-
-    //init trigger and ir handling
-    create_tasks();
-
-    ESP_LOGD(logtag, "Entering team selection mode");
-    team_selection = true;
-    leds[LED_INDEX_TEAM].setColorCode(color_team[team]);
-    FastLED.show();
-    while (millis() - last_time_button_pressed_timestamp < TEAM_SELECTION_TIME_IN_MS)
-    {
-        //blink with bt status led while in team selection mode
-        leds[LED_INDEX_BT].setColorCode(0);
-        FastLED.show();
-        vTaskDelay(200 / portTICK_PERIOD_MS);
+        FastLED.setBrightness(LED_OVERALL_BRIGHTNESS);
         leds[LED_INDEX_BT].setColorCode(COLOR_BT_CONNECTION_OFF);
         FastLED.show();
-        vTaskDelay(200 / portTICK_PERIOD_MS);
-    }
-    ESP_LOGD(logtag, "Leaving team selection mode");
-    team_selection = false;
 
-    //blink for telling that setup is done
-    ESP_LOGD(logtag, "Init finished: blink LED");
-    led.blinks();
+        ESP_LOGD(logtag, "Init IR LED");
+        ir_led.init(IR_RMT_TX_CHANNEL, IR_RMT_TX_GPIO_NUM);
+
+        //init trigger and ir handling
+        create_tasks();
+
+        ESP_LOGD(logtag, "Entering team selection mode");
+        team_selection = true;
+        leds[LED_INDEX_TEAM].setColorCode(color_team[team]);
+        FastLED.show();
+        while (millis() - last_time_button_pressed_timestamp < TEAM_SELECTION_TIME_IN_MS)
+        {
+            //blink with bt status led while in team selection mode
+            leds[LED_INDEX_BT].setColorCode(0);
+            FastLED.show();
+            vTaskDelay(200 / portTICK_PERIOD_MS);
+            leds[LED_INDEX_BT].setColorCode(COLOR_BT_CONNECTION_OFF);
+            FastLED.show();
+            vTaskDelay(200 / portTICK_PERIOD_MS);
+        }
+        ESP_LOGD(logtag, "Leaving team selection mode");
+        team_selection = false;
+
+        //blink for telling that setup is done
+        ESP_LOGD(logtag, "Init finished: blink LED");
+        led.blinks();
+    }
 }
 
 /**
@@ -174,7 +191,13 @@ void setup()
  * That's why the loop task is delayed max.
  * 
  */
-void loop() { vTaskDelay(portMAX_DELAY); /*wait as much as possible ... */ }
+void loop()
+{
+    if (ota_flag)
+        handle_ota();
+    else
+        vTaskDelay(portMAX_DELAY); /*wait as much as possible ... */
+}
 
 /**
  * @brief Create all tasks object
@@ -238,8 +261,8 @@ void send_latency(void *parameter)
 
 /**
  * @brief create semaphores
- * Create mutex type semaphore for USB and BT communication.
- * Call this before using ble_notify or debug logger outputs.
+ * Create mutex type semaphore for BT communication.
+ * Call this before using ble_notify.
  */
 void init_mutex()
 {

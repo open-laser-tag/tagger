@@ -40,6 +40,8 @@
 #define COLOR_PLAYER_STATUS_ON 0x00FF00
 #define COLOR_PLAYER_STATUS_OFF 0xFF0000
 #define DEBOUNCETIME 10
+#define OTA_WIFI_SSID "wlanssid"
+#define OTA_WIWI_PASSWORD "wlanpassword"
 
 /* includes */
 #include <Arduino.h>
@@ -53,6 +55,8 @@
 #include "git_info.h" //if this file is missing, type make
 #include "Esp32_infrared_nec.h"
 #include <esp_log.h>
+#include "ota.h"
+#include <EEPROM.h>
 
 /* macros */
 #define HARDWARE_SERIAL0 0 // rx_pin=3, tx_pin=1 (usb)
@@ -67,6 +71,9 @@
 #define CHARACTERISTIC_LATENCY_UUID "60e44cef-5a43-407b-8d1a-bce02377dcfd"
 #define CHARACTERISTIC_VERSION_UUID "563c139f-3eda-4c88-9fc3-be987038fa6a"
 #define CHARACTERISTIC_LED_UUID "7a4821c2-80f0-4eba-8070-d659d31e43de"
+#define CHARACTERISTIC_OTA_UUID "eebc6352-2559-40f1-bda8-2715e7c07fbd"
+#define EEPROM_ADDR_OTA 0
+#define EEPROM_SIZE 1
 
 /* global variables*/
 extern const uint32_t color_team[];

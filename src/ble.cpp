@@ -13,7 +13,6 @@ bool device_connected = false;
 
 class Ir_send_callbacks : public BLECharacteristicCallbacks
 {
-
     /**
    * @brief handles ble input data
    * This method is called when data is written to ir_send_char characteristic.
@@ -41,7 +40,6 @@ class Ir_send_callbacks : public BLECharacteristicCallbacks
 
 class Led_callbacks : public BLECharacteristicCallbacks
 {
-
     void onWrite(BLECharacteristic *ir_send_char)
     {
         std::string value = ir_send_char->getValue();
@@ -56,6 +54,18 @@ class Led_callbacks : public BLECharacteristicCallbacks
         }
 
         FastLED.show();
+    }
+};
+
+class OTA_callbacks : public BLECharacteristicCallbacks
+{
+    void onWrite(BLECharacteristic *ota_char)
+    {
+        ESP_LOGI(logtag, "setting OTA flag");
+        EEPROM.write(EEPROM_ADDR_OTA, 1);
+        EEPROM.commit();
+        ESP_LOGI(logtag, "OTA flag set, rebooting");
+        ESP.restart();
     }
 };
 
@@ -125,6 +135,13 @@ void init_ble()
         BLECharacteristic::PROPERTY_WRITE);
     // led_char         ->addDescriptor(new BLE2902());
     led_char->setCallbacks(new Led_callbacks());
+
+    ESP_LOGD(logtag, "creating BLE OTA characteristic...");
+    led_char = pService->createCharacteristic(
+        CHARACTERISTIC_OTA_UUID,
+        BLECharacteristic::PROPERTY_WRITE);
+    // led_char         ->addDescriptor(new BLE2902());
+    led_char->setCallbacks(new OTA_callbacks());
 
     ESP_LOGD(logtag, "creating BLE trigger characteristic...");
     trigger_char = pService->createCharacteristic(
