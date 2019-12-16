@@ -1,0 +1,3 @@
+[submodule "lib/IR32"]
+	path = lib/IR32
+	url = git@github.com:lbernstone/IR32.git

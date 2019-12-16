@@ -9,14 +9,11 @@
 #define ir_and_trigger_h
 
 #include "tagger.h"
-#include <IRremote.h>
 #include "strings.h"
 
 void handle_ir(void *parameter);
 void handle_trigger();
 void refresh_trigger_status(void *parameter);
-void irrecv_decode(IRrecv &irrecv);
-bool msg_is_valid(uint32_t ir_recv_data);
 void handle_player_status(void *parameter);
 
 #endif

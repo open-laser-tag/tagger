@@ -16,66 +16,21 @@
 void handle_ir(void *parameter)
 {
     ESP_LOGD(logtag, "handle IR task started");
+    ESP_LOGD(logtag, "init ir recv front");
+    ir_recv_front.setPreferred("NEC");
+    ir_recv_front.start(IR_RECV_FRONT_PIN);
     while (true)
     {
-        irrecv_decode(irrecv_front);
-        // multiple receiver not working yet
-        // irrecv_decode(irrecv_right);
-        // irrecv_decode(irrecv_left);
-        vTaskDelay(500 / portTICK_PERIOD_MS); //Block for 500ms.
-    }
-    return;
-}
-
-void irrecv_decode(IRrecv &irrecv)
-{
-    const char *logtag = "irdecode";
-    decode_results results;
-    if (irrecv.decode(&results))
-    {
-        //the bits order changed after transmission, so it is reversed here
-        uint32_t ir_recv_data = reverse_bit_order((uint32_t)results.value);
-        ESP_LOGI(logtag, "Incoming IR: 0x%X", ir_recv_data);
-        msg_nr++;
-        ESP_LOGI(logtag, "message nr: %u", msg_nr);
-        if (msg_is_valid(ir_recv_data))
+        if (ir_recv_front.available())
         {
-            uint16_t resv_msg = ir_recv_data >> 8;
-            ESP_LOGD(logtag, "message valid");
-            if (device_connected)
-            {
-                ir_receive_char->setValue((uint32_t &)ir_recv_data);
-                ble_notify(ir_receive_char);
-            }
-            else if (resv_msg != ir_msg[team])
-            {
-                ESP_LOGI(logtag, "message from other team");
-                vTaskResume(xHandle_handle_player_status);
-            }
-            else if (resv_msg == ir_msg[team])
-            {
-                ESP_LOGI(logtag, "message from own team, doing nothing");
-            }
+            ESP_LOGD(logtag, "IR available");
+            char *rcvGroup;
+            uint32_t result = ir_recv_front.read(rcvGroup);
+            if (result)
+                ESP_LOGD(logtag, "Received: %s/0x%x", rcvGroup, result);
         }
-        else
-            ESP_LOGW(logtag, "invalid message");
-        irrecv.resume(); // Receive the next value
     }
     return;
-}
-
-/**
- * @brief check IR msg with inverted last byte
- * Checks whether the 4th byte is the 3rd byte inverted. Returns true when thats the case.
- */
-bool msg_is_valid(uint32_t ir_recv_data)
-{
-    uint8_t third_byte = ir_recv_data >> 8,
-            forth_byte = ~ir_recv_data;
-    if (third_byte == forth_byte)
-        return true;
-    else
-        return false;
 }
 
 void handle_trigger()

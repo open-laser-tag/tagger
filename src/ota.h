@@ -1,4 +1,4 @@
-// from https://github.com/espressif/arduino-esp32/blob/master/libraries/ArduinoOTA/examples/BasicOTA/BasicOTA.ino
+// build from https://github.com/espressif/arduino-esp32/blob/master/libraries/ArduinoOTA/examples/BasicOTA/BasicOTA.ino released under LPGL-2.1
 
 #define TIME_WAITING_FOR_CONNECTION_IN_MS 10000
 

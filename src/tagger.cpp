@@ -22,15 +22,15 @@ uint32_t last_time_button_pressed_timestamp = 0,
          latency = 0,
          last_bounce_time = 0;
 
-const uint16_t ir_msg[] =
+const uint32_t ir_msg[] =
     {
-        0xFFFF,
-        0xFFFE,
-        0xFFFD,
-        0xFFFC,
-        0xFFFB,
-        0xFFFA,
-        0xFFF9,
+        0xFFFFFFFF,
+        0xFFFFFFFE,
+        0xFFFFFFFD,
+        0xFFFFFFFC,
+        0xFFFFFFFB,
+        0xFFFFFFFA,
+        0xFFFFFFF9,
 };
 
 uint16_t count_trigger_interrupts = 0,
@@ -89,10 +89,8 @@ BLECharacteristic *led_char;
 
 Led led(ONBOARDLED_PIN);
 Button trigger(PIN_TRIGGER);
-Esp32_infrared_nec_tx ir_led;
-IRrecv irrecv_front(IR_RECV_FRONT_PIN),
-    irrecv_right(IR_RECV_RIGHT_PIN),
-    irrecv_left(IR_RECV_LEFT_PIN);
+IRSend ir_led(IR_RMT_TX_CHANNEL);
+IRRecv ir_recv_front(IR_RMT_RX_FRONT_CHANNEL);
 CRGB leds[NUM_LEDS];
 bool player_is_on = true;
 bool ota_flag = false;
@@ -105,6 +103,7 @@ bool ota_flag = false;
 void setup()
 {
     const char *logtag = "setup";
+    esp_log_level_set("*", ESP_LOG_DEBUG);
 
     Serial.begin(115200);
 
@@ -135,14 +134,6 @@ void setup()
         attachInterrupt(digitalPinToInterrupt(PIN_TRIGGER), handle_trigger, CHANGE); //LOW, CHANGE, RISING, FALLING
         //init bluetooth low energy server, services, characteristics
         init_ble();
-
-        ESP_LOGD(logtag, "Enabling IRin...");
-        //irrecv_front.enableIRIn(); // Start the receiver
-        //multiple receiver not working yet
-        // irrecv_right.enableIRIn(); // Start the receiver
-        // irrecv_left.enableIRIn(); // Start the receiver
-        ESP_LOGD(logtag, "Enabled IRin");
-
 //init fast LED strip
 #if defined LED_TYPE_NEOPIXEL
         FastLED.addLeds<NEOPIXEL, LED_DATA_PIN>(leds, NUM_LEDS);
@@ -156,7 +147,7 @@ void setup()
         FastLED.show();
 
         ESP_LOGD(logtag, "Init IR LED");
-        ir_led.init(IR_RMT_TX_CHANNEL, IR_RMT_TX_GPIO_NUM);
+        ir_led.start(IR_RMT_TX_GPIO_NUM);
 
         //init trigger and ir handling
         create_tasks();
