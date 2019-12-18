@@ -27,7 +27,23 @@ void handle_ir(void *parameter)
             char *rcvGroup;
             uint32_t result = ir_recv_front.read(rcvGroup);
             if (result)
+            {
                 ESP_LOGD(logtag, "Received: %s/0x%x", rcvGroup, result);
+                if (device_connected)
+                {
+                    ir_receive_char->setValue(result);
+                    ble_notify(ir_receive_char);
+                }
+                else if (result != ir_msg[team])
+                {
+                    ESP_LOGI(logtag, "message from other team");
+                    vTaskResume(xHandle_handle_player_status);
+                }
+                else if (result == ir_msg[team])
+                {
+                    ESP_LOGI(logtag, "message from own team, doing nothing");
+                }
+            }
         }
     }
     return;

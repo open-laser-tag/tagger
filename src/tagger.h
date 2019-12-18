@@ -9,8 +9,6 @@
 #define tagger_h
 
 /* config */
-//this is a hardware identifier for FastLED
-#define ESP32
 //choose one LED type
 #define LED_TYPE_APA102  
 //#define LED_TYPE_NEOPIXEL  
