@@ -66,9 +66,8 @@
 #include <esp_log.h>
 #include "ota.h"
 #include <EEPROM.h>
-#include "IRSend.h"
-#include "IRRecv.h"
-
+#include "IR32/src/IRSend.h"
+#include "IR32/src/IRRecv.h"
 
 /* ++++++ */
 /* macros */
