@@ -147,7 +147,7 @@ void setup()
         FastLED.show();
 
         ESP_LOGD(logtag, "Init IR LED");
-        ir_led.start(IR_RMT_TX_GPIO_NUM);
+        ir_led.start(IR_RMT_TX_GPIO_NUM, IR_PROTOCOL);
 
         //init trigger and ir handling
         create_tasks();

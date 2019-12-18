@@ -13,15 +13,13 @@
 #define ESP32
 //choose one LED type
 #define LED_TYPE_APA102  
-#define LED_TYPE_NEOPIXEL  
+//#define LED_TYPE_NEOPIXEL  
 #define LED_CLOCK_PIN 18 //only used for spi leds like APA102
 #define LED_DATA_PIN 19
 #define NUM_LEDS 4
 #define LED_OVERALL_BRIGHTNESS 1 //scale 0 to 255
-//FASTLED_ESP32_I2S is defined to tell FastLED to use I2S driver instead of RMT. Reference for this option in FastLED/platforms/esp/32/clockless_i2s_esp32.h. There is a conflict when using RMT with both LED and IR, although it should be possible according to the options in FastLED/platforms/esp/32/clockless_rmt_esp32.h.
+//FASTLED_ESP32_I2S is defined to tell FastLED to use I2S driver instead of RMT. Reference for this option in FastLED/platforms/esp/32/clockless_i2s_esp32.h. There is a conflict when using RMT with both LED and IR, although it should be possible according to the options in FastLED/platforms/esp/32/clockless_rmt_esp32.h. Maybe there is a connection to this issue: https://github.com/FastLED/FastLED/issues/835
 #define FASTLED_ESP32_I2S true
-//I don't know why this is needed. It is for IRremote.h/IRremoteInt.h
-#define ARDUINO 101
 #define IR_RECV_FRONT_PIN GPIO_NUM_27
 #define IR_RECV_RIGHT_PIN 26
 #define IR_RECV_LEFT_PIN 25
@@ -43,6 +41,7 @@
 #define DEBOUNCETIME 10
 #define OTA_WIFI_SSID "wlanssid"
 #define OTA_WIWI_PASSWORD "wlanpassword"
+#define IR_PROTOCOL "NEC" //choose from timing groups lib/IR32/src/IR32.h
 
 /* includes */
 #include <Arduino.h>

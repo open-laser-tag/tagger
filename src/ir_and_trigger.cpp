@@ -17,7 +17,7 @@ void handle_ir(void *parameter)
 {
     ESP_LOGD(logtag, "handle IR task started");
     ESP_LOGD(logtag, "init ir recv front");
-    ir_recv_front.setPreferred("NEC");
+    ir_recv_front.setPreferred(IR_PROTOCOL);
     ir_recv_front.start(IR_RECV_FRONT_PIN);
     while (true)
     {
