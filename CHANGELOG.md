@@ -1,3 +1,7 @@
+# v0.1.3
+* add support for ota
+* replace IRremote and own IR RMT module with IR32
+
 # v0.1.2
 * add support for APA102
 * change debug logger from own usblog to esp_log.h
