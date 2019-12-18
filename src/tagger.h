@@ -36,6 +36,7 @@
 #define IR_RECV_RIGHT_PIN 26
 #define IR_RECV_LEFT_PIN 25
 #define IR_RMT_TX_CHANNEL RMT_CHANNEL_0 /*!< RMT channel for transmitter */
+#define IR_RMT_RX_FRONT_CHANNEL RMT_CHANNEL_1
 #define IR_RMT_TX_GPIO_NUM GPIO_NUM_22  /*!< GPIO number for transmitter signal */
 #define IR_PROTOCOL "NEC" //choose from timing groups lib/IR32/src/IR32.h
 
