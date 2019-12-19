@@ -16,10 +16,18 @@ This project currently consists of three parts:
 
 
 ## Developing
+clone repository with **submodules**
+`git clone git@github.com:open-laser-tag/tagger.git --recurse-submodules`
+
+run `$ ./update_git_hash.sh` to make the version hash accessible
+
 
 ### Arduino IDE
 Prepare your IDE like described [here](https://github.com/espressif/arduino-esp32/) and then open
 `src/tagger_firmware.ino`
+
+`chose ESP32 DevModule` as Board
+set partition sceme to `Minimal SPIFFS (Large `
 
 ### Platformio
 When you have installed PlatformIO on your computer, you can just use the provided Makefile in this repository and run
