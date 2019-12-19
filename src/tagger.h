@@ -13,8 +13,8 @@
 
 /* RGB LEDs */
 //choose one LED type
-//#define LED_TYPE_APA102  
-#define LED_TYPE_NEOPIXEL 
+//#define LED_TYPE_APA102
+#define LED_TYPE_NEOPIXEL
 #define LED_CLOCK_PIN 18 //only used for spi leds like APA102
 #define LED_DATA_PIN 19
 #define NUM_LEDS 4
@@ -37,8 +37,8 @@
 #define IR_RECV_LEFT_PIN 25
 #define IR_RMT_TX_CHANNEL RMT_CHANNEL_0 /*!< RMT channel for transmitter */
 #define IR_RMT_RX_FRONT_CHANNEL RMT_CHANNEL_1
-#define IR_RMT_TX_GPIO_NUM GPIO_NUM_22  /*!< GPIO number for transmitter signal */
-#define IR_PROTOCOL "NEC" //choose from timing groups lib/IR32/src/IR32.h
+#define IR_RMT_TX_GPIO_NUM GPIO_NUM_22 /*!< GPIO number for transmitter signal */
+#define IR_PROTOCOL "NEC"              //choose from timing groups lib/IR32/src/IR32.h
 
 /* Trigger Button */
 #define PIN_TRIGGER 21
@@ -52,7 +52,6 @@
 #define PLAYER_DOWNTIME_IN_MS 3000
 #define TEAM_SELECTION_TIME_IN_MS 5000
 
-
 /* ++++++++ */
 /* includes */
 #include <Arduino.h>
@@ -62,12 +61,18 @@
 #include "ir_and_trigger.h"
 #include "ble.h"
 #include <FastLED.h>
-#include "git_info.h" //if this file is missing, type make
 #include <esp_log.h>
 #include "ota.h"
 #include <EEPROM.h>
 #include "IR32/src/IRSend.h"
 #include "IR32/src/IRRecv.h"
+
+/* git version */
+#if __has_include("git_info.h")
+#include "git_info.h"
+#else
+#define GIT_TAG "v0.1.3"
+#endif
 
 /* ++++++ */
 /* macros */
