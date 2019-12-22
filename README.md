@@ -18,7 +18,7 @@ There are a lot of options for writing code for the esp32 and for flashing it e.
 When uploading to esp32, don't forget to press IO0 on it when it tries to connect to the esp32.
 ![Button IO0 on ESP32 board](https://raw.githubusercontent.com/wiki/open-laser-tag/tagger/nodemcu_esp32_buttonio0.jpg)
 
-When you want to keep track of which firmware is flashed on your tagger, you can add [update_git_hash.sh](https://github.com/open-laser-tag/tagger/blob/master/update_git_hash.sh) as git hook to your local git repository. Just add a file named `post-commit` to `.git/hooks/` and add the line `./update_git_hash.sh`.
+When you want to keep track of which firmware is flashed on your tagger, you can add [update_git_hash.sh](https://github.com/open-laser-tag/tagger/blob/master/update_git_hash.sh) as git hook to your local git repository. Just add a file named `post-commit` to `.git/hooks/` and add the line `./update_git_hash.sh` or run this script manually before flashing, when you are not using the makefile.
 
 ### Arduino IDE
 Prepare your IDE like described and then open
