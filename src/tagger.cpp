@@ -135,7 +135,9 @@ void setup()
         //init bluetooth low energy server, services, characteristics
         init_ble();
 //init fast LED strip
-#if defined LED_TYPE_NEOPIXEL
+#if defined LED_TYPE_NEOPIXEL && defined LED_TYPE_APA102
+#error "Please specify only one LED type"
+#elif defined LED_TYPE_NEOPIXEL
         FastLED.addLeds<NEOPIXEL, LED_DATA_PIN>(leds, NUM_LEDS);
 #elif defined LED_TYPE_APA102
         FastLED.addLeds<APA102, LED_DATA_PIN, LED_CLOCK_PIN, BGR>(leds, NUM_LEDS);
@@ -145,13 +147,10 @@ void setup()
         FastLED.setBrightness(LED_OVERALL_BRIGHTNESS);
         leds[LED_INDEX_BT].setColorCode(COLOR_BT_CONNECTION_OFF);
         FastLED.show();
-
         ESP_LOGD(logtag, "Init IR LED");
         ir_led.start(IR_RMT_TX_GPIO_NUM, IR_PROTOCOL);
-
         //init trigger and ir handling
         create_tasks();
-
         ESP_LOGD(logtag, "Entering team selection mode");
         team_selection = true;
         leds[LED_INDEX_TEAM].setColorCode(color_team[team]);
@@ -168,7 +167,6 @@ void setup()
         }
         ESP_LOGD(logtag, "Leaving team selection mode");
         team_selection = false;
-
         //blink for telling that setup is done
         ESP_LOGD(logtag, "Init finished: blink LED");
         led.blinks();
@@ -178,7 +176,7 @@ void setup()
 /**
  * @brief arduino loop
  * This is the arduino loop function. It is not used, instead RTOS tasks are used.
- * That's why the loop task is delayed max.
+ * That's why the loop task is delayed max. When OTA flag is set to active during boot, this loop is used for handling OTA.
  * 
  */
 void loop()

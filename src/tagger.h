@@ -10,6 +10,7 @@
 
 /* ++++++ */
 /* config */
+// these configs can safely be editted for each tagger seperatly
 
 /* RGB LEDs */
 //choose one LED type
@@ -38,7 +39,6 @@
 #define IR_RMT_TX_CHANNEL RMT_CHANNEL_0 /*!< RMT channel for transmitter */
 #define IR_RMT_RX_FRONT_CHANNEL RMT_CHANNEL_1
 #define IR_RMT_TX_GPIO_NUM GPIO_NUM_22 /*!< GPIO number for transmitter signal */
-#define IR_PROTOCOL "NEC"              //choose from timing groups lib/IR32/src/IR32.h
 
 /* Trigger Button */
 #define PIN_TRIGGER 21
@@ -47,6 +47,8 @@
 /* OTA */
 #define OTA_WIFI_SSID "wlanssid"
 #define OTA_WIWI_PASSWORD "wlanpassword"
+#define EEPROM_ADDR_OTA 0
+#define EEPROM_SIZE 1
 
 /* Timings */
 #define PLAYER_DOWNTIME_IN_MS 3000
@@ -76,9 +78,7 @@
 
 /* ++++++ */
 /* macros */
-#define HARDWARE_SERIAL0 0 // rx_pin=3, tx_pin=1 (usb)
-#define HARDWARE_SERIAL1 1 // don't use this one
-#define HARDWARE_SERIAL2 2 //rx_pin=16, tx_pin=17
+// Don't edit this section. It has to be equal on all taggers.
 // See the following for generating UUIDs:
 // https://www.uuidgenerator.net/
 #define SERVICE_UUID "08dbb28a-ce2c-467a-9f12-4f15d574a220"
@@ -89,8 +89,7 @@
 #define CHARACTERISTIC_VERSION_UUID "563c139f-3eda-4c88-9fc3-be987038fa6a"
 #define CHARACTERISTIC_LED_UUID "7a4821c2-80f0-4eba-8070-d659d31e43de"
 #define CHARACTERISTIC_OTA_UUID "eebc6352-2559-40f1-bda8-2715e7c07fbd"
-#define EEPROM_ADDR_OTA 0
-#define EEPROM_SIZE 1
+#define IR_PROTOCOL "NEC"              //choose from timing groups lib/IR32/src/IR32.h
 
 /* global variables*/
 extern const uint32_t color_team[];
