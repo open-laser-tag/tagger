@@ -52,6 +52,8 @@ When you have installed PlatformIO on your computer, you can just use the provid
 ## Tagger Hardware
 One tagger is made of: 1x ESP32, 1x IR LED [TSUS 5202](https://www.conrad.de/de/p/vishay-tsus-5202-cqw-13-ir-emitter-950-nm-15-5-mm-radial-bedrahtet-184551.html), 1x IR receiver [TSOP31238](https://www.segor.de/#Q=TSOP31238&M=1), 1x power bank, 1x micro usb cable, some RGB LEDS WS2812 or APA102, 1x [lense](https://www.ebay.de/itm/2x-Cardboard-Virtual-Reality-VR-BiConvex-Lenses-Only-25mm-x-45mm-OF-T-TPI/352821781036?ssPageName=STRK%3AMEBIDX%3AIT&_trksid=p2057872.m2749.l2649), 1x [20 Ohm Resistor](https://www.segor.de/#Q=MF20R-1%2525&M=1), 1x [push button](https://www.segor.de/#/hilfe-zum-katalog). The price for all this parts is about 10€.
 
+The pins for the wiring can be set or looked up in [tagger.h](https://github.com/open-laser-tag/tagger/blob/dev/src/tagger.h).
+
 ## Licensing
 
 This project is licensed under the terms of the GPL-3.0.
