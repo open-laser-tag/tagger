@@ -13,7 +13,10 @@ This project currently consists of three parts:
 ## Developing
 clone repository with **submodules**
 `git clone git@github.com:open-laser-tag/tagger.git --recurse-submodules`
-There are a lot of options for writing code for the esp32 and for flashing it e.g. Arduino IDE, VScode with Arduino extention, PlattformIO. All possibilities to develop with the esp32 are listed and described [here](https://github.com/espressif/arduino-esp32/)
+There are a lot of options for writing code for the esp32 and for flashing it e.g. Arduino IDE, VScode with Arduino extention, PlattformIO. All possibilities to develop with the esp32 are listed and described [here](https://github.com/espressif/arduino-esp32/).
+
+When uploading to esp32, don't forget to press IO0 on it when it tries to connect to the esp32.
+![Button IO0 on ESP32 board](https://raw.githubusercontent.com/wiki/open-laser-tag/tagger/nodemcu_esp32_buttonio0.jpg)
 
 ### Arduino IDE
 Prepare your IDE like described and then open
@@ -26,7 +29,7 @@ set partition scheme to `Minimal SPIFFS (Large `
 Your arduino.json could look like this
 ```
 {
-    "port": "/dev/USB0",
+    "port": "/dev/ttyUSB0",
     "board": "esp32:esp32:esp32",
     "configuration": "PSRAM=disabled,PartitionScheme=min_spiffs,CPUFreq=240,FlashMode=qio,FlashFreq=80,FlashSize=4M,UploadSpeed=921600,DebugLevel=debug",
     "sketch": "tagger.ino",
