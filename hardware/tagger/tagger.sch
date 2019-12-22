@@ -1,0 +1,231 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L RF_Module:ESP32-WROOM-32 U?
+U 1 1 5DFF9294
+P 5650 3700
+F 0 "U?" H 5650 5281 50  0000 C CNN
+F 1 "ESP32-WROOM-32" H 5650 5190 50  0000 C CNN
+F 2 "RF_Module:ESP32-WROOM-32" H 5650 2200 50  0001 C CNN
+F 3 "https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32_datasheet_en.pdf" H 5350 3750 50  0001 C CNN
+	1    5650 3700
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5DFFCCED
+P 5650 5100
+F 0 "#PWR?" H 5650 4850 50  0001 C CNN
+F 1 "GND" H 5655 4927 50  0000 C CNN
+F 2 "" H 5650 5100 50  0001 C CNN
+F 3 "" H 5650 5100 50  0001 C CNN
+	1    5650 5100
+	1    0    0    -1  
+$EndComp
+$Comp
+L Driver_LED:WS2811 U?
+U 1 1 5DFFD494
+P 8850 4000
+F 0 "U?" H 8850 4481 50  0000 C CNN
+F 1 "WS2811" H 8850 4390 50  0000 C CNN
+F 2 "" H 8550 4150 50  0001 C CNN
+F 3 "https://cdn-shop.adafruit.com/datasheets/WS2811.pdf" H 8650 4250 50  0001 C CNN
+	1    8850 4000
+	1    0    0    -1  
+$EndComp
+$Comp
+L Switch:SW_Push SW?
+U 1 1 5DFFFB33
+P 7000 3900
+F 0 "SW?" H 7000 4185 50  0000 C CNN
+F 1 "SW_Push" H 7000 4094 50  0000 C CNN
+F 2 "" H 7000 4100 50  0001 C CNN
+F 3 "~" H 7000 4100 50  0001 C CNN
+	1    7000 3900
+	1    0    0    -1  
+$EndComp
+$Comp
+L LED:IR26-21C_L110_TR8 D?
+U 1 1 5E000B9A
+P 7100 4300
+F 0 "D?" H 7093 4516 50  0000 C CNN
+F 1 "TSUS5202" H 7093 4425 50  0000 C CNN
+F 2 "LED_SMD:LED_1206_3216Metric" H 7100 4500 50  0001 C CNN
+F 3 "http://www.everlight.com/file/ProductFile/IR26-21C-L110-TR8.pdf" H 7100 4300 50  0001 C CNN
+	1    7100 4300
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 5E0010A5
+P 6650 4300
+F 0 "R?" V 6550 4300 50  0000 L CNN
+F 1 "20R" V 6720 4255 50  0000 L CNN
+F 2 "" V 6580 4300 50  0001 C CNN
+F 3 "~" H 6650 4300 50  0001 C CNN
+	1    6650 4300
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	6800 3900 6250 3900
+$Comp
+L power:GND #PWR?
+U 1 1 5E010B2D
+P 8850 3200
+F 0 "#PWR?" H 8850 2950 50  0001 C CNN
+F 1 "GND" H 8855 3027 50  0000 C CNN
+F 2 "" H 8850 3200 50  0001 C CNN
+F 3 "" H 8850 3200 50  0001 C CNN
+	1    8850 3200
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5E010D45
+P 8850 4300
+F 0 "#PWR?" H 8850 4050 50  0001 C CNN
+F 1 "GND" H 8855 4127 50  0000 C CNN
+F 2 "" H 8850 4300 50  0001 C CNN
+F 3 "" H 8850 4300 50  0001 C CNN
+	1    8850 4300
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5E011C57
+P 7500 4300
+F 0 "#PWR?" H 7500 4050 50  0001 C CNN
+F 1 "GND" H 7505 4127 50  0000 C CNN
+F 2 "" H 7500 4300 50  0001 C CNN
+F 3 "" H 7500 4300 50  0001 C CNN
+	1    7500 4300
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7500 4300 7250 4300
+Wire Wire Line
+	6950 4300 6800 4300
+Wire Wire Line
+	6450 4300 6450 4000
+Wire Wire Line
+	6450 4000 6250 4000
+Wire Wire Line
+	6500 4300 6450 4300
+$Comp
+L LED:APA102 D?
+U 1 1 5DFFEDD7
+P 8850 2900
+F 0 "D?" H 8850 3381 50  0000 C CNN
+F 1 "APA102" H 8850 3290 50  0000 C CNN
+F 2 "LED_SMD:LED_RGB_5050-6" H 8900 2600 50  0001 L TNN
+F 3 "http://www.led-color.com/upload/201506/APA102%20LED.pdf" H 8950 2525 50  0001 L TNN
+	1    8850 2900
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7700 2250 7600 2250
+$Comp
+L power:+3.3V #PWR?
+U 1 1 5E03E674
+P 7600 2250
+F 0 "#PWR?" H 7600 2100 50  0001 C CNN
+F 1 "+3.3V" H 7615 2423 50  0000 C CNN
+F 2 "" H 7600 2250 50  0001 C CNN
+F 3 "" H 7600 2250 50  0001 C CNN
+	1    7600 2250
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7600 1850 7700 1850
+$Comp
+L power:GND #PWR?
+U 1 1 5E03C9AE
+P 7600 1850
+F 0 "#PWR?" H 7600 1600 50  0001 C CNN
+F 1 "GND" H 7605 1677 50  0000 C CNN
+F 2 "" H 7600 1850 50  0001 C CNN
+F 3 "" H 7600 1850 50  0001 C CNN
+	1    7600 1850
+	1    0    0    -1  
+$EndComp
+$Comp
+L Interface_Optical:TSOP312xx U?
+U 1 1 5DFFF700
+P 8100 2050
+F 0 "U?" H 8088 2475 50  0000 C CNN
+F 1 "TSOP312xx" H 8088 2384 50  0000 C CNN
+F 2 "OptoDevice:Vishay_CAST-3Pin" H 8050 1675 50  0001 C CNN
+F 3 "http://www.vishay.com/docs/82492/tsop312.pdf" H 8750 2350 50  0001 C CNN
+	1    8100 2050
+	-1   0    0    1   
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5E00EAED
+P 7200 3900
+F 0 "#PWR?" H 7200 3650 50  0001 C CNN
+F 1 "GND" H 7205 3727 50  0000 C CNN
+F 2 "" H 7200 3900 50  0001 C CNN
+F 3 "" H 7200 3900 50  0001 C CNN
+	1    7200 3900
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7700 2050 6500 2050
+Wire Wire Line
+	6500 2050 6500 3500
+Wire Wire Line
+	6500 3500 6250 3500
+$Comp
+L power:+5V #PWR?
+U 1 1 5E06B13F
+P 8850 3700
+F 0 "#PWR?" H 8850 3550 50  0001 C CNN
+F 1 "+5V" H 8865 3873 50  0000 C CNN
+F 2 "" H 8850 3700 50  0001 C CNN
+F 3 "" H 8850 3700 50  0001 C CNN
+	1    8850 3700
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+5V #PWR?
+U 1 1 5E06C409
+P 8850 2600
+F 0 "#PWR?" H 8850 2450 50  0001 C CNN
+F 1 "+5V" H 8865 2773 50  0000 C CNN
+F 2 "" H 8850 2600 50  0001 C CNN
+F 3 "" H 8850 2600 50  0001 C CNN
+	1    8850 2600
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6250 3700 8150 3700
+Wire Wire Line
+	8150 3700 8150 2900
+Wire Wire Line
+	8150 2900 8550 2900
+Wire Wire Line
+	6250 3800 8250 3800
+Wire Wire Line
+	8250 3800 8250 3900
+Wire Wire Line
+	8250 3900 8450 3900
+Wire Wire Line
+	8250 3800 8250 2800
+Wire Wire Line
+	8250 2800 8550 2800
+Connection ~ 8250 3800
+$EndSCHEMATC
