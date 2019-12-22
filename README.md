@@ -44,6 +44,14 @@ All necessery informations are already provided in platformio.ini. When your esp
 When you have installed PlatformIO on your computer, you can just use the provided Makefile in this repository and run
 `make upload` to download all dependencies, build the code, and upload it to your ESP-32 in one step.
 
+### flashing with esptool.py and release binary
+1. install [esptool.py](https://github.com/espressif/esptool) with their instructions
+2. Download both .bin files from newest [release](https://github.com/open-laser-tag/tagger/releases/).
+3. Flash ESP with `esptool.py --chip esp32 --port /dev/ttyUSB0 write_flash 0x10000 tagger_firmware.ino.bin 0x8000 tagger_firmware.ino.partitions.bin` (+ press Button IO0)
+
+## Tagger Hardware
+One tagger is made of: 1x ESP32, 1x IR LED [TSUS 5202](https://www.conrad.de/de/p/vishay-tsus-5202-cqw-13-ir-emitter-950-nm-15-5-mm-radial-bedrahtet-184551.html), 1x IR receiver [TSOP31238](https://www.segor.de/#Q=TSOP31238&M=1), 1x power bank, 1x micro usb cable, some RGB LEDS WS2812 or APA102, 1x [lense](https://www.ebay.de/itm/2x-Cardboard-Virtual-Reality-VR-BiConvex-Lenses-Only-25mm-x-45mm-OF-T-TPI/352821781036?ssPageName=STRK%3AMEBIDX%3AIT&_trksid=p2057872.m2749.l2649), 1x [20 Ohm Resistor](https://www.segor.de/#Q=MF20R-1%2525&M=1), 1x [push button](https://www.segor.de/#/hilfe-zum-katalog). The price for all this parts is about 10€.
+
 ## Licensing
 
 This project is licensed under the terms of the GPL-3.0.
