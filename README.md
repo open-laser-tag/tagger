@@ -62,6 +62,22 @@ The pins for the wiring can be set or looked up in [tagger.h](https://github.com
 
 ![Tagger fritzing](https://github.com/open-laser-tag/tagger/blob/master/docs/images/tagger_Steckplatine.png)
 
+## Features
+#### Bluetooth (BLE)
+The tagger can be connected via BLE. In BLE there can be different services, characteristics and properties on one device, which are building the BLE API. The tagger is running the following characteristics:
+
+| UUID | Name | Properties | Description |
+|---|---|---|---|
+| 08dbb28a-ce2c-467a-9f12-4f15d574a220 | tagger service | all characteristics below | This service contains all tagger Characteristics. |
+| 756ad6a4-2007-4dc4-9173-72dc7d6b2627 | trigger | notify | Get a notify about the trigger trigger status every time it changes. 1 for pressed, 0 for not pressed |
+| a95980fb-4f18-4b2e-a258-81bf77575117 | IR receive | notify | Get a notify about the message when a message is incoming via infrared. |
+| 8b91a0d2-5f7f-49cb-8939-4455d3d24b81 | IR send | write | Send a message to the tagger, to send it via infrared. |
+| 60e44cef-5a43-407b-8d1a-bce02377dcfd | latency | notify | Get a notify about the time between the pressed trigger and the sent infrared. This is just for testing purpose. |
+| 563c139f-3eda-4c88-9fc3-be987038fa6a | version | read | Read the tagger firmware version. |
+| 7a4821c2-80f0-4eba-8070-d659d31e43de | led | write | Tell the tagger the color codes for the RGB LEDs: 0xNNRRGGBBNNRRGGBB... NN (uint8) is the position of the LED. RR (uint8) is red. GG (uint8) is green. BB (uint8) is blue. |
+| eebc6352-2559-40f1-bda8-2715e7c07fbd | OTA | write | Write any data to this characteristic to turn on OTA mode.
+
+
 ## Licensing
 
 This project is licensed under the terms of the GPL-3.0.
