@@ -57,6 +57,8 @@ One tagger is made of: 1x ESP32, 1x IR LED [TSUS 5202](https://www.conrad.de/de/
 The pins for the wiring can be set or looked up in [tagger.h](https://github.com/open-laser-tag/tagger/blob/dev/src/tagger.h). Or look at the schematics below.
 ![Tagger schematics](https://github.com/open-laser-tag/tagger/blob/dev/docs/images/schematic.png)
 
+![Tagger fritzing](https://github.com/open-laser-tag/tagger/blob/master/docs/images/tagger_Steckplatine.png)
+
 ## Licensing
 
 This project is licensed under the terms of the GPL-3.0.
