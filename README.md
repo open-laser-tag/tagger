@@ -94,6 +94,10 @@ When the tagger is not connected via BLE, it does some things by its own to test
 | 2 | team | shows one of 7 team colors, the team differs the infrared message |
 | 3 | trigger | blinking white when pressing trigger |
 
+#### Debugging
+The makros of [esp_log.h](https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/system/log.html) are used to send serial debug messages. When you open a serial monitor and connect the esp32 via USB you should see them. The build flag `DCORE_DEBUG_LEVEL` must be set for this.
+When you got a JTAG adapter e.g. [jlink](https://www.ebay.de/itm/ARM7-ARM9-ARM11-J-link-V8-Emulator-Cortex-M3-IAR-STM32-JTAG-Schnittstelle-CYED/233389427917?hash=item3657180ccd:g:Ex4AAOSwYIxX-8DR) you can also do inline debugging with the [unified debugger of plattformio](https://docs.platformio.org/en/latest/plus/debugging.html).
+
 ## Licensing
 
 This project is licensed under the terms of the GPL-3.0.
