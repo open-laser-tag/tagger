@@ -64,7 +64,7 @@ The pins for the wiring can be set or looked up in [tagger.h](https://github.com
 
 ## Features
 #### Bluetooth (BLE)
-The tagger can be connected via BLE. In BLE there can be different services, characteristics and properties on one device, which are building the BLE API. The tagger is running the following characteristics:
+When the tagger is connected via BLE, it is reporting the changes of its trigger and the incoming IR. With a connection the tagger doesn't send any infrared by its own and it doesn't control its LEDs. In BLE there can be different services, characteristics and properties on one device, which are building the BLE API. The tagger is running the following characteristics:
 
 | UUID | Name | Properties | Description |
 |---|---|---|---|
@@ -77,6 +77,8 @@ The tagger can be connected via BLE. In BLE there can be different services, cha
 | 7a4821c2-80f0-4eba-8070-d659d31e43de | led | write | Tell the tagger the color codes for the RGB LEDs: 0xNNRRGGBBNNRRGGBB... NN (uint8) is the position of the LED. RR (uint8) is red. GG (uint8) is green. BB (uint8) is blue. |
 | eebc6352-2559-40f1-bda8-2715e7c07fbd | OTA | write | Write any data to this characteristic to turn on OTA mode.
 
+#### Infrared (IR)
+The main communication for a laser tag game is infrared. One IR LED [TSUS 5202](https://www.conrad.de/de/p/vishay-tsus-5202-cqw-13-ir-emitter-950-nm-15-5-mm-radial-bedrahtet-184551.html) is used to send IR. One IR receiver [TSOP31238](https://www.segor.de/#Q=TSOP31238&M=1) is used to detect infrared. Multiple receivers could be probably easily implemented. Both directions are using the [RMT peripheral](https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/peripherals/rmt.html). The infrared protocl can be chosen with IR_PROTOCOL, but it has to be the same on all devices. Currently it is NEC.
 
 ## Licensing
 
