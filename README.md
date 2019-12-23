@@ -78,7 +78,21 @@ When the tagger is connected via BLE, it is reporting the changes of its trigger
 | eebc6352-2559-40f1-bda8-2715e7c07fbd | OTA | write | Write any data to this characteristic to turn on OTA mode.
 
 #### Infrared (IR)
-The main communication for a laser tag game is infrared. One IR LED [TSUS 5202](https://www.conrad.de/de/p/vishay-tsus-5202-cqw-13-ir-emitter-950-nm-15-5-mm-radial-bedrahtet-184551.html) is used to send IR. One IR receiver [TSOP31238](https://www.segor.de/#Q=TSOP31238&M=1) is used to detect infrared. Multiple receivers could be probably easily implemented. Both directions are using the [RMT peripheral](https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/peripherals/rmt.html). The infrared protocl can be chosen with IR_PROTOCOL, but it has to be the same on all devices. Currently it is NEC.
+The main communication for a laser tag game is infrared. One IR LED [TSUS 5202](https://www.conrad.de/de/p/vishay-tsus-5202-cqw-13-ir-emitter-950-nm-15-5-mm-radial-bedrahtet-184551.html) is used to send IR. One IR receiver [TSOP31238](https://www.segor.de/#Q=TSOP31238&M=1) is used to detect infrared. Multiple receivers could be probably easily implemented. Both directions are using the [RMT peripheral](https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/peripherals/rmt.html). The infrared protocol can be chosen with `IR_PROTOCOL`, but it has to be the same on all devices. Currently it is NEC.
+
+#### Over the air firmware update (OTA)
+When the OTA signal is given via BLE, the tagger reboots in OTA mode. In OTA mode the tagger connects to a wifi given by `OTA_WIFI_SSID` and `OTA_WIWI_PASSWORD`. When no connetion is established in `TIME_WAITING_FOR_CONNECTION_IN_MS` (current: 10s), the tagger reboots again in normal mode. When the connection is established, the taggers firmware can be flashed via the local ip address through wifi.
+More informations: https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/system/ota.html
+
+#### BLE-less mode
+When the tagger is not connected via BLE, it does some things by its own to test some basic functionalities.
+
+| LED | name | description |
+| --- | --- | --- |
+| 0 | tagger status | blinking red - choose your team with the trigger, red - tagger on and no BLE, blue - BLE established |
+| 1 | player status | green - active, turns red for `PLAYER_DOWNTIME_IN_MS` (3s) when infrared message by another team is incoming |
+| 2 | team | shows one of 7 team colors, the team differs the infrared message |
+| 3 | trigger | blinking white when pressing trigger |
 
 ## Licensing
 
