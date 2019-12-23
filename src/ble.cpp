@@ -133,15 +133,13 @@ void init_ble()
     led_char = pService->createCharacteristic(
         CHARACTERISTIC_LED_UUID,
         BLECharacteristic::PROPERTY_WRITE);
-    // led_char         ->addDescriptor(new BLE2902());
     led_char->setCallbacks(new Led_callbacks());
 
     ESP_LOGD(logtag, "creating BLE OTA characteristic...");
-    led_char = pService->createCharacteristic(
+    ota_char = pService->createCharacteristic(
         CHARACTERISTIC_OTA_UUID,
         BLECharacteristic::PROPERTY_WRITE);
-    // led_char         ->addDescriptor(new BLE2902());
-    led_char->setCallbacks(new OTA_callbacks());
+    ota_char->setCallbacks(new OTA_callbacks());
 
     ESP_LOGD(logtag, "creating BLE trigger characteristic...");
     trigger_char = pService->createCharacteristic(
@@ -159,7 +157,6 @@ void init_ble()
     ir_send_char = pService->createCharacteristic(
         CHARACTERISTIC_IR_SEND_UUID,
         BLECharacteristic::PROPERTY_WRITE);
-    // ir_send_char     ->addDescriptor(new BLE2902());
     ir_send_char->setCallbacks(new Ir_send_callbacks());
 
     ESP_LOGD(logtag, "creating BLE latency characteristic...");
@@ -172,7 +169,6 @@ void init_ble()
     version_char = pService->createCharacteristic(
         CHARACTERISTIC_VERSION_UUID,
         BLECharacteristic::PROPERTY_READ);
-    // version_char     ->addDescriptor(new BLE2902());
     version_char->setValue(GIT_TAG);
 
     ESP_LOGD(logtag, "starting BLE service...");

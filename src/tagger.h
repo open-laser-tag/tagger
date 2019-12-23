@@ -112,7 +112,8 @@ extern BLECharacteristic *trigger_char,
     *ir_send_char,
     *latency_char,
     *version_char,
-    *led_char;
+    *led_char,
+    *ota_char;
 extern IRSend ir_led;
 extern IRRecv ir_recv_front;
 extern Led led;

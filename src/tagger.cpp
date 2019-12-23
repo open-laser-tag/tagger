@@ -86,6 +86,7 @@ BLECharacteristic *latency_char;
 BLECharacteristic *version_char;
 
 BLECharacteristic *led_char;
+BLECharacteristic *ota_char;
 
 Led led(ONBOARDLED_PIN);
 Button trigger(PIN_TRIGGER);
