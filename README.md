@@ -83,6 +83,7 @@ The main communication for a laser tag game is infrared. One IR LED [TSUS 5202](
 #### Over the air firmware update (OTA)
 When the OTA signal is given via BLE, the tagger reboots in OTA mode. In OTA mode the tagger connects to a wifi given by `OTA_WIFI_SSID` and `OTA_WIWI_PASSWORD`. When no connetion is established in `TIME_WAITING_FOR_CONNECTION_IN_MS` (current: 10s), the tagger reboots again in normal mode. When the connection is established, the taggers firmware can be flashed via the local ip address through wifi.
 More informations: https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/system/ota.html
+When wifi connection is established but no new firmware is coming in, the tagger will stay in this status. When you want to get back to normal mode, just reboot the tagger (cut off power).
 
 #### BLE-less mode
 When the tagger is not connected via BLE, it does some things by its own to test some basic functionalities.
