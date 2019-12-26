@@ -27,11 +27,10 @@ class Ir_send_callbacks : public BLECharacteristicCallbacks
 
         if (value.length() > 0)
         {
-            ESP_LOGI(logtag, "BT incoming: 0x%X", value);
-            ESP_LOGW(logtag, "Sending this data via ir is not implemented, just sending 0xFFFF");
-            ir_led.send(0xFFFF);
+            ESP_LOGI(logtag, "BT incoming, sending via IR: 0x%x", *value.c_str()); //TODO: print format not correct
+            ir_led.send(value);
             latency = millis() - last_time_button_pressed_timestamp;
-            ESP_LOGI(logtag, "time in ms since last trigger: %u", latency);
+            ESP_LOGI(logtag, "time in ms since last trigger: %lu", latency);
             //send latency via BT to app
             vTaskResume(xHandle_send_latency);
         }

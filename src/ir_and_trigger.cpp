@@ -99,7 +99,7 @@ void refresh_trigger_status(void *parameter)
         {
             leds[LED_INDEX_SHOOT].setColorCode(0xFFFFFF);
             FastLED.show();
-            ESP_LOGI(logtag, "Device not connected. Sending team message via IR: 0x%X", ir_msg[team]);
+            ESP_LOGI(logtag, "Device not connected. Sending team message via IR: 0x%x", ir_msg[team]);
             ir_led.send(ir_msg[team]);
             leds[LED_INDEX_SHOOT].setColorCode(0);
             FastLED.show();
