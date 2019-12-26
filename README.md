@@ -83,6 +83,7 @@ The main communication for a laser tag game is infrared. One IR LED [TSUS 5202](
 #### Over the air firmware update (OTA)
 When the OTA signal is given via BLE, the tagger reboots in OTA mode. In OTA mode the tagger connects to a wifi given by `OTA_WIFI_SSID` and `OTA_WIWI_PASSWORD`. When no connetion is established in `TIME_WAITING_FOR_CONNECTION_IN_MS` (current: 10s), the tagger reboots again in normal mode. When the connection is established, the taggers firmware can be flashed via the local ip address through wifi.
 More informations: https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/system/ota.html
+When wifi connection is established but no new firmware is coming in, the tagger will stay in this status. When you want to get back to normal mode, just reboot the tagger (cut off power).
 
 #### BLE-less mode
 When the tagger is not connected via BLE, it does some things by its own to test some basic functionalities.
@@ -95,7 +96,7 @@ When the tagger is not connected via BLE, it does some things by its own to test
 | 3 | trigger | blinking white when pressing trigger |
 
 #### Debugging
-The makros of [esp_log.h](https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/system/log.html) are used to send serial debug messages. When you open a serial monitor and connect the esp32 via USB you should see them. The build flag `DCORE_DEBUG_LEVEL` must be set for this.
+The makros of [esp_log.h](https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/system/log.html) are used to send serial debug messages. When you open a serial monitor and connect the esp32 via USB you should see them. The build flag `DCORE_DEBUG_LEVEL` must be set for this. When you are compiling with plattformio, this is already done in plattformio.ini. In the arduino ide you have to set Tools->Core Debug Level. For the arduino extention in vscode the example above already gives the right flag.
 When you got a JTAG adapter e.g. [jlink](https://www.ebay.de/itm/ARM7-ARM9-ARM11-J-link-V8-Emulator-Cortex-M3-IAR-STM32-JTAG-Schnittstelle-CYED/233389427917?hash=item3657180ccd:g:Ex4AAOSwYIxX-8DR) you can also do inline debugging with the [unified debugger of plattformio](https://docs.platformio.org/en/latest/plus/debugging.html).
 
 ## Licensing
