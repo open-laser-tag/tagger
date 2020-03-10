@@ -11,7 +11,9 @@ This project currently consists of three parts:
 * node.js Server (https://github.com/open-laser-tag/server)
 
 Videos about Open Laser Tag:
-* Lightning Talk from Chaos Commuinication Camp 2019 (German, English dub available): https://media.ccc.de/v/Camp2019-10380-lightning_talks#t=10043
+* Lightning Talk from Chaos Communication Congress 2019, English, multiple other languages available, 2nd last talk:  https://media.ccc.de/v/36c3-10524-lightning_talks_day_2#t=6194
+* Lightning Talk from Chaos Commuinication Camp 2019, German, English dub available, 2nd last talk : https://media.ccc.de/v/Camp2019-10380-lightning_talks#t=10043
+
 
 ## Developing
 clone repository with **submodules**
